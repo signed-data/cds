@@ -147,4 +147,4 @@ To add a new domain or schema to the standard:
 3. Create a PR adding `spec/domains/{domain}.md`
 4. Add models and ingestor to the SDK
 
-See [CONTRIBUTING.md](../CONTRIBUTING.md) for the full process.
+See [CONTRIBUTING.md](./contributing.md) for the full process.

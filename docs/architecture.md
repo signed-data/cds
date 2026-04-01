@@ -117,7 +117,7 @@ Lambda (API handler)       ← GET /events?domain=lottery.brazil
         │ API Gateway v1
 ```
 
-Source code: [signed-data/cds infra](../infra/) (CDK TypeScript).
+Source code: signed-data/cds infra (CDK TypeScript).
 Personal operator deployment: [magj/cds-services](https://github.com/magj/cds-services).
 
 ---

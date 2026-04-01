@@ -15,7 +15,7 @@ and serve your own events.
 | Ingestor | Python script | Lambda / container (cron) |
 | Event store | Local files | S3 (append-only, versioned) |
 | Consumer API | Read from disk | API Gateway + Lambda |
-| MCP server | `python -m cds_mcp_lottery mega-sena` | Lambda Function URL |
+| MCP server | `signeddata-mcp-lottery` | Lambda Function URL |
 
 ---
 
@@ -31,15 +31,20 @@ import os; os.makedirs('keys', exist_ok=True)
 generate_keypair('keys/private.pem', 'keys/public.pem')
 "
 
-# Run ingestor
+# Run ingestor (football example)
 python3 - << 'EOF'
 import asyncio
 from cds import CDSSigner
-from cds.sources.lottery import MegaSenaIngestor
+from cds.sources.football import FootballIngestor, LEAGUE_IDS
 
 signer   = CDSSigner("keys/private.pem", issuer="localhost")
-ingestor = MegaSenaIngestor(signer=signer)
-events   = asyncio.run(ingestor.ingest())
+ingestor = FootballIngestor(
+    signer=signer,
+    api_key="YOUR_API_KEY",
+    league_ids=[LEAGUE_IDS["brasileirao_a"]],
+    season=2026,
+)
+events = asyncio.run(ingestor.ingest())
 
 for e in events:
     print(e.context.summary)

@@ -121,24 +121,6 @@ verifier.verify(event)  # raises: Hash mismatch
 CDS ships with ingestors for several domains. They handle HTTP, parsing,
 fingerprinting, and signing automatically.
 
-### Weather (Open-Meteo — no API key)
-
-```python
-from cds import CDSSigner
-from cds.sources.weather import WeatherIngestor
-import asyncio
-
-signer   = CDSSigner("keys/private.pem", issuer="myorg.example.com")
-ingestor = WeatherIngestor(signer=signer, locations=[
-    { "city": "São Paulo", "lat": -23.55, "lon": -46.63 },
-    { "city": "London",    "lat":  51.51, "lon":  -0.13 },
-])
-
-events = asyncio.run(ingestor.ingest())
-for e in events:
-    print(e.context.summary)
-```
-
 ### Football (api-football.com — free plan: 100 req/day)
 
 ```python
@@ -156,16 +138,10 @@ for e in events:
     print(e.context.summary)
 ```
 
-### Lottery (Caixa — no API key)
+### Other sources
 
-```python
-from cds.sources.lottery import MegaSenaIngestor
-
-ingestor = MegaSenaIngestor(signer=signer)
-events   = asyncio.run(ingestor.ingest())  # latest draw
-print(events[0].context.summary)
-# "Mega Sena concurso 2800 (29/03/2026): 04 · 12 · 25 · 36 · 47 · 59. ..."
-```
+Additional data sources (for example, lotteries or weather) will be documented
+here as they become available in the SDK.
 
 ---
 
@@ -183,8 +159,7 @@ Add to your Claude Desktop config (`~/.config/claude/claude_desktop_config.json`
 {
   "mcpServers": {
     "lottery": {
-      "command": "python",
-      "args": ["-m", "cds_mcp_lottery", "mega-sena"],
+      "command": "signeddata-mcp-lottery",
       "env": {
         "CDS_PRIVATE_KEY_PATH": "/path/to/keys/private.pem",
         "CDS_ISSUER": "myorg.example.com"

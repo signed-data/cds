@@ -71,6 +71,7 @@ pip install signeddata-cds
 from cds import CDSSigner, CDSVerifier
 from cds.sources.football import FootballIngestor, LEAGUE_IDS
 import asyncio
+import os
 
 # Producer — fetch and sign
 signer   = CDSSigner("./keys/private.pem", issuer="your-org.example.com")
@@ -129,10 +130,7 @@ generate_keypair("keys/private.pem", "keys/public.pem")
 ```
 cds/
 ├── spec/
-│   ├── CDS-v0.1.0.md          # Formal specification
-│   └── domains/               # Per-domain payload schemas
-│       ├── lottery.brazil.md
-│       └── ...
+│   └── CDS-v0.1.0.md          # Formal specification
 ├── sdk/
 │   ├── python/                # Python SDK  →  pip install signeddata-cds
 │   │   ├── cds/
@@ -141,10 +139,7 @@ cds/
 │   │   │   ├── ingestor.py    # BaseIngestor
 │   │   │   └── sources/       # Domain ingestors + models
 │   │   │       ├── football_models.py
-│   │   │       ├── football.py
-│   │   │       ├── lottery_models.py
-│   │   │       ├── lottery.py
-│   │   │       └── weather.py
+│   │   │       └── football.py
 │   │   └── tests/
 │   └── typescript/            # TypeScript SDK  →  npm install @signeddata/cds-sdk
 │       └── src/
@@ -162,7 +157,9 @@ cds/
 
 ## How signing works
 
-Signing is deterministic RSA-PSS SHA-256 over a canonical JSON serialisation of the event.
+CDS signing uses RSA-PSS SHA-256 over a canonical JSON serialisation of the event.
+The canonical bytes — and therefore the hash — are deterministic; RSA-PSS signatures
+use a random salt per the standard.
 
 **Sign (producer):**
 1. Serialise the event to canonical JSON — `sort_keys=True`, UTF-8, excluding `integrity` and `ingested_at`
@@ -205,13 +202,13 @@ application/vnd.cds.weather.forecast-current+json;v=1
 
 | Domain | Schema names | Source | Spec |
 |---|---|---|---|
-| `weather` | `forecast.current`, `forecast.daily`, `alert.severe` | Open-Meteo | [domains/weather.md](spec/domains/weather.md) |
-| `sports.football` | `match.result`, `match.live`, `standings.update` | api-football.com | [domains/sports.football.md](spec/domains/sports.football.md) |
-| `news` | `headline`, `breaking`, `summary` | various RSS/APIs | [domains/news.md](spec/domains/news.md) |
-| `finance` | `quote.stock`, `quote.crypto`, `quote.forex` | various | [domains/finance.md](spec/domains/finance.md) |
-| `religion.bible` | `verse`, `passage`, `daily` | public domain | [domains/religion.bible.md](spec/domains/religion.bible.md) |
-| `government.brazil` | `diario.oficial`, `licitacao`, `lei` | official APIs | [domains/government.brazil.md](spec/domains/government.brazil.md) |
-| `lottery.brazil` | `mega-sena.result`, `lotofacil.result`, `quina.result`, `lotomania.result`, `dupla-sena.result` | Caixa oficial | [domains/lottery.brazil.md](spec/domains/lottery.brazil.md) |
+| `weather` | `forecast.current`, `forecast.daily`, `alert.severe` | Open-Meteo | `domains/weather.md` |
+| `sports.football` | `match.result`, `match.live`, `standings.update` | api-football.com | `domains/sports.football.md` |
+| `news` | `headline`, `breaking`, `summary` | various RSS/APIs | `domains/news.md` |
+| `finance` | `quote.stock`, `quote.crypto`, `quote.forex` | various | `domains/finance.md` |
+| `religion.bible` | `verse`, `passage`, `daily` | public domain | `domains/religion.bible.md` |
+| `government.brazil` | `diario.oficial`, `licitacao`, `lei` | official APIs | `domains/government.brazil.md` |
+| `lottery.brazil` | `mega-sena.result`, `lotofacil.result`, `quina.result`, `lotomania.result`, `dupla-sena.result` | Caixa oficial | `domains/lottery.brazil.md` |
 
 ---
 
@@ -262,7 +259,7 @@ For a complete self-hosting example with AWS CDK (Lambda + S3 + EventBridge), se
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](docs/contributing.md).
 
 To propose a new domain or schema, open an issue with the tag `domain-proposal`. Include: the data source, sample API response, and a draft payload schema.
 

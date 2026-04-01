@@ -15,7 +15,7 @@ dependencies = [
 ]
 
 [project.scripts]
-signeddata-mcp-lottery = "mcp.lottery.server:main"
+signeddata-mcp-lottery = "server:main"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
