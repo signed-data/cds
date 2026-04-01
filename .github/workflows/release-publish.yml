@@ -45,10 +45,12 @@ jobs:
       - name: Build distributions
         run: uv build
 
+      # Trusted Publishing (OIDC) when PYPI_API_TOKEN is unset; otherwise API token upload.
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: sdk/python/dist/
+          password: ${{ secrets.PYPI_API_TOKEN }}
 
   publish-npm:
     name: Publish to npm
