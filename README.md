@@ -1,6 +1,6 @@
 # Curated Data Standard (CDS)
 
-[![CI](https://github.com/signed-data/cds/actions/workflows/ci.yml/badge.svg)](https://github.com/signed-data/cds/actions/workflows/ci.yml)
+[![CI](https://github.com/signed-data/cds/actions/workflows/deploy-site.yml/badge.svg)](https://github.com/signed-data/cds/actions/workflows/deploy-site.yml)
 [![PyPI](https://img.shields.io/pypi/v/signeddata-cds)](https://pypi.org/project/signeddata-cds/)
 [![npm](https://img.shields.io/npm/v/@signeddata/cds-sdk)](https://www.npmjs.com/package/@signeddata/cds-sdk)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
