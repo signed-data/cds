@@ -7,3 +7,5 @@ export type {
   FootballMatchPayload, FootballStandingsPayload,
   FootballTeam, FootballVenue, MatchStatus,
 } from "./sources/football.js";
+export { MegaSenaIngestor, LotteryContentTypes } from "./sources/lottery.js";
+export type { MegaSenaResult, MegaSenaIngestorOptions, PrizeTier } from "./sources/lottery.js";
