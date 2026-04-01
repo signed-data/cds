@@ -165,7 +165,7 @@ export class MegaSenaIngestor extends BaseIngestor {
       const raw    = JSON.parse(buf.toString("utf-8")) as R;
       const result = parseResponse(raw);
 
-      // occurred_at = draw date at 21:00 BRT (00:00 UTC next day ~ 21:00 UTC)
+      // occurred_at = draw date at 21:00 BRT (UTC−03:00), which is 00:00 UTC the next day
       let occurred: string;
       try {
         const [d, m, y] = result.data_apuracao.split("/");
