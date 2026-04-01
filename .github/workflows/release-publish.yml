@@ -3,6 +3,7 @@ name: Release publish
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -16,7 +17,6 @@ jobs:
   publish-pypi:
     name: Publish to PyPI
     runs-on: ubuntu-latest
-    environment: pypi
     defaults:
       run:
         working-directory: sdk/python
@@ -53,7 +53,6 @@ jobs:
   publish-npm:
     name: Publish to npm
     runs-on: ubuntu-latest
-    environment: npm
     defaults:
       run:
         working-directory: sdk/typescript

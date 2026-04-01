@@ -1,6 +1,6 @@
 {
   "name": "@signeddata/cds-sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Curated Data Standard SDK — by SignedData.Org",
   "type": "module",
   "main": "./dist/index.js",
