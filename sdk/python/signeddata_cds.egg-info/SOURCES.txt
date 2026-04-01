@@ -1,0 +1,14 @@
+pyproject.toml
+cds/__init__.py
+cds/ingestor.py
+cds/schema.py
+cds/signer.py
+cds/sources/__init__.py
+cds/sources/football.py
+cds/sources/football_models.py
+signeddata_cds.egg-info/PKG-INFO
+signeddata_cds.egg-info/SOURCES.txt
+signeddata_cds.egg-info/dependency_links.txt
+signeddata_cds.egg-info/requires.txt
+signeddata_cds.egg-info/top_level.txt
+tests/test_sdk.py
