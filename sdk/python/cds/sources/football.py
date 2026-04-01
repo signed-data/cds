@@ -15,7 +15,7 @@ Usage:
 from __future__ import annotations
 
 import hashlib
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import httpx
@@ -89,7 +89,7 @@ class FootballIngestor(BaseIngestor):
         super().__init__(signer)
         self.api_key    = api_key
         self.league_ids = league_ids or [LEAGUE_IDS["brasileirao_a"]]
-        self.season     = season or datetime.now(timezone.utc).year
+        self.season     = season or datetime.now(UTC).year
 
     async def fetch(self) -> list[CDSEvent]:
         events: list[CDSEvent] = []
@@ -118,8 +118,10 @@ class FootballIngestor(BaseIngestor):
         status = STATUS_MAP.get(fx.get("status", {}).get("short", "NS"), "scheduled")
         minute = fx.get("status", {}).get("elapsed")
 
-        home_team       = _team(teams["home"]); home_team.score = hs
-        away_team       = _team(teams["away"]); away_team.score = as_
+        home_team = _team(teams["home"])
+        home_team.score = hs
+        away_team = _team(teams["away"])
+        away_team.score = as_
         competition     = league.get("name", "")
 
         ct = (
@@ -147,11 +149,13 @@ class FootballIngestor(BaseIngestor):
             source=SourceMeta(id="api-football.com.v3", fingerprint=fingerprint),
             occurred_at=datetime.fromisoformat(
                 fx["date"].replace("Z", "+00:00")
-            ) if fx.get("date") else datetime.now(timezone.utc),
+            ) if fx.get("date") else datetime.now(UTC),
             lang="en",
             payload=payload.model_dump(mode="json"),
             context=ContextMeta(
-                summary=_summary(home_team.name, away_team.name, hs, as_, status, competition, minute),
+                summary=_summary(
+                    home_team.name, away_team.name, hs, as_, status, competition, minute
+                ),
                 model="rule-based-v1",
             ),
         )

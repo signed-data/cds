@@ -5,6 +5,7 @@ Typed Pydantic payload schemas for sports.football events.
 from __future__ import annotations
 
 from typing import Literal
+
 from pydantic import BaseModel
 
 from cds.schema import CDSContentType

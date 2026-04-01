@@ -2,14 +2,17 @@
 SignedData CDS — Python SDK Test Suite
 """
 import json
-import pytest
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from cds.schema import CDSEvent, CDSContentType, SourceMeta, ContextMeta
+import pytest
+
+from cds.schema import CDSContentType, CDSEvent, ContextMeta, SourceMeta
 from cds.signer import CDSSigner, CDSVerifier, generate_keypair
 from cds.sources.football_models import (
-    FootballContentTypes, FootballMatchPayload,
-    FootballTeam, FootballVenue,
+    FootballContentTypes,
+    FootballMatchPayload,
+    FootballTeam,
+    FootballVenue,
 )
 
 
@@ -47,7 +50,7 @@ def football_event(signer):
     event = CDSEvent(
         content_type=FootballContentTypes.MATCH_RESULT,
         source=SourceMeta(id="api-football.com.v3", fingerprint="sha256:abc"),
-        occurred_at=datetime(2026, 3, 22, 21, 0, tzinfo=timezone.utc),
+        occurred_at=datetime(2026, 3, 22, 21, 0, tzinfo=UTC),
         lang="en",
         payload=payload.model_dump(mode="json"),
         context=ContextMeta(summary="Flamengo 2 x 1 Fluminense", model="rule-based-v1"),
@@ -113,21 +116,21 @@ class TestCDSVerifier:
         raw = json.loads(football_event.model_dump_json())
         t   = CDSEvent(**raw)
         t.payload["home"]["score"] = 99
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             verifier.verify(t)
 
     def test_tampered_summary(self, verifier, football_event):
         raw = json.loads(football_event.model_dump_json())
         t   = CDSEvent(**raw)
         t.context.summary = "tampered"  # type: ignore[union-attr]
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             verifier.verify(t)
 
     def test_no_integrity(self, verifier):
         e = CDSEvent(
             content_type=CDSContentType(domain="news", schema_name="headline"),
             source=SourceMeta(id="test"),
-            occurred_at=datetime.now(timezone.utc),
+            occurred_at=datetime.now(UTC),
             payload={"title": "Test"},
         )
         with pytest.raises(ValueError, match="no integrity"):
