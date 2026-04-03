@@ -6,12 +6,12 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from cds.schema import CDSContentType, CDSEvent
+from cds.schema import CDSEvent
 from cds.signer import CDSSigner
 
 
 class BaseIngestor(ABC):
-    content_type: CDSContentType   # declared by each subclass
+    content_type: str   # URI — declared by each subclass
 
     def __init__(self, signer: CDSSigner) -> None:
         self.signer = signer

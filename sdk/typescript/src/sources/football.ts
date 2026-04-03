@@ -4,15 +4,15 @@
  */
 
 import { createHash } from "node:crypto";
-import { CDSContentType, CDSEvent, ContextMeta, SourceMeta } from "../schema.js";
+import { CDSEvent, ContextMeta, SourceMeta } from "../schema.js";
 import { CDSSigner } from "../signer.js";
 import { BaseIngestor } from "../ingestor.js";
+import { CDSVocab, CDSSources } from "../vocab.js";
 
 export const FootballContentTypes = {
-  MATCH_RESULT: new CDSContentType({ domain: "sports.football", schema_name: "match.result" }),
-  MATCH_LIVE:   new CDSContentType({ domain: "sports.football", schema_name: "match.live"   }),
-  STANDINGS:    new CDSContentType({ domain: "sports.football", schema_name: "standings.update" }),
-  PLAYER_STAT:  new CDSContentType({ domain: "sports.football", schema_name: "player.stat"  }),
+  MATCH_RESULT: CDSVocab.FOOTBALL_MATCH_RESULT,
+  MATCH_LIVE:   CDSVocab.FOOTBALL_MATCH_LIVE,
+  STANDINGS:    CDSVocab.FOOTBALL_STANDINGS,
 } as const;
 
 export const LEAGUE_IDS = {
@@ -139,7 +139,7 @@ export class FootballIngestor extends BaseIngestor {
 
     return new CDSEvent({
       content_type: ct,
-      source: { id: "api-football.com.v3", fingerprint },
+      source: { "@id": CDSSources.API_FOOTBALL, fingerprint },
       occurred_at: (fx["date"] as string) ?? new Date().toISOString(),
       lang: "en",
       payload: payload as unknown as R,

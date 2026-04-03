@@ -28,6 +28,7 @@ from cds.sources.football_models import (
     FootballTeam,
     FootballVenue,
 )
+from cds.vocab import CDSSources
 
 API_BASE = "https://v3.football.api-sports.io"
 
@@ -146,13 +147,13 @@ class FootballIngestor(BaseIngestor):
 
         return CDSEvent(
             content_type=ct,
-            source=SourceMeta(id="api-football.com.v3", fingerprint=fingerprint),
+            source=SourceMeta(id=CDSSources.API_FOOTBALL, fingerprint=fingerprint),
             occurred_at=datetime.fromisoformat(
                 fx["date"].replace("Z", "+00:00")
             ) if fx.get("date") else datetime.now(UTC),
             lang="en",
             payload=payload.model_dump(mode="json"),
-            context=ContextMeta(
+            event_context=ContextMeta(
                 summary=_summary(
                     home_team.name, away_team.name, hs, as_, status, competition, minute
                 ),

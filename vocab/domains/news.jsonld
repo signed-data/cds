@@ -1,0 +1,36 @@
+{
+  "@context": {
+    "@vocab": "https://signed-data.org/vocab/",
+    "rdfs":   "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id":          "https://signed-data.org/vocab/news",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "news",
+      "rdfs:comment": "News headlines, breaking news, and article summaries.",
+      "rdfs:seeAlso": "https://signed-data.org/spec/domains/news"
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/news/headline",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "headline",
+      "rdfs:comment": "A news headline from a curated source.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/news" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/news/breaking",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "breaking",
+      "rdfs:comment": "Breaking news alert.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/news" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/news/summary",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "summary",
+      "rdfs:comment": "Summarised news article.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/news" }
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "@context": {
+    "@vocab": "https://signed-data.org/vocab/",
+    "rdfs":   "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id":          "https://signed-data.org/vocab/weather",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "weather",
+      "rdfs:comment": "Weather forecasts, current conditions, and severe weather alerts.",
+      "rdfs:seeAlso": "https://signed-data.org/spec/domains/weather"
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/weather/forecast-current",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "forecast.current",
+      "rdfs:comment": "Current weather conditions for a location.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/weather" },
+      "cds:source": { "@id": "https://signed-data.org/sources/open-meteo.com.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/weather/forecast-daily",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "forecast.daily",
+      "rdfs:comment": "Daily weather forecast for a location.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/weather" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/weather/alert-severe",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "alert.severe",
+      "rdfs:comment": "Severe weather alert or warning.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/weather" }
+    }
+  ]
+}
