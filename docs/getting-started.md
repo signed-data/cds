@@ -37,8 +37,6 @@ import os
 
 os.makedirs("keys", exist_ok=True)
 generate_keypair("keys/private.pem", "keys/public.pem")
-# ✅ keys/private.pem — keep this secret, never commit
-# ✅ keys/public.pem  — distribute this to your consumers
 ```
 
 **TypeScript**
@@ -57,35 +55,60 @@ generateKeypair("keys/private.pem", "keys/public.pem");
 
 ## Step 3 — Build your first event
 
-You can sign any structured data as a CDS event. Here is a minimal example
-using a custom domain before we get to the built-in ingestors.
-
 **Python**
 ```python
-from cds import CDSSigner, CDSEvent, CDSContentType, SourceMeta, ContextMeta
+from cds import CDSSigner, CDSEvent, SourceMeta, ContextMeta
+from cds import CDSVocab, CDSSources
 from datetime import datetime, timezone
 
-signer = CDSSigner("keys/private.pem", issuer="myorg.example.com")
+signer = CDSSigner("keys/private.pem", issuer="https://myorg.example.com")
 
 event = CDSEvent(
-    content_type = CDSContentType(domain="weather", schema_name="forecast.current"),
-    source       = SourceMeta(id="open-meteo.com.v1"),
-    occurred_at  = datetime.now(timezone.utc),
-    lang         = "en",
-    payload      = {
+    content_type  = CDSVocab.WEATHER_CURRENT,
+    source        = SourceMeta(id=CDSSources.OPEN_METEO),
+    occurred_at   = datetime.now(timezone.utc),
+    lang          = "en",
+    payload       = {
         "location":    { "city": "London", "lat": 51.51, "lon": -0.13 },
         "temperature": { "current": 14.0, "feels_like": 12.0 },
         "condition":   "overcast",
     },
-    context = ContextMeta(
-        summary = "London: overcast, 14°C (feels 12°C).",
+    event_context = ContextMeta(
+        summary = "London: overcast, 14C (feels 12C).",
         model   = "rule-based-v1",
     ),
 )
 
 signer.sign(event)
 print(event.integrity.hash)      # sha256:...
-print(event.integrity.signed_by) # myorg.example.com
+print(event.integrity.signed_by) # https://myorg.example.com
+```
+
+**TypeScript**
+```typescript
+import { CDSEvent, CDSSigner, CDSVocab, CDSSources } from "@signeddata/cds-sdk";
+
+const signer = new CDSSigner("keys/private.pem", "https://myorg.example.com");
+
+const event = new CDSEvent({
+  content_type: CDSVocab.WEATHER_CURRENT,
+  source:       { "@id": CDSSources.OPEN_METEO },
+  occurred_at:  new Date(),
+  lang:         "en",
+  payload:      {
+    location:    { city: "London", lat: 51.51, lon: -0.13 },
+    temperature: { current: 14.0, feels_like: 12.0 },
+    condition:   "overcast",
+  },
+  context: {
+    summary:      "London: overcast, 14C (feels 12C).",
+    model:        "rule-based-v1",
+    generated_at: new Date().toISOString(),
+  },
+});
+
+signer.sign(event);
+console.log(event.toJSON());  // JSON-LD with @context, @type, @id
 ```
 
 ---
@@ -102,9 +125,9 @@ verifier = CDSVerifier("keys/public.pem")
 
 try:
     verifier.verify(event)
-    print("✅ Valid — data is authentic and unmodified")
+    print("Valid — data is authentic and unmodified")
 except Exception as e:
-    print(f"❌ Invalid — {e}")
+    print(f"Invalid — {e}")
 ```
 
 Modify any field in the payload and verify again — the signature will be rejected:
@@ -128,15 +151,12 @@ from cds import CDSSigner
 from cds.sources.weather import WeatherIngestor
 import asyncio
 
-signer   = CDSSigner("keys/private.pem", issuer="myorg.example.com")
-ingestor = WeatherIngestor(signer=signer, locations=[
-    { "city": "São Paulo", "lat": -23.55, "lon": -46.63 },
-    { "city": "London",    "lat":  51.51, "lon":  -0.13 },
-])
+signer   = CDSSigner("keys/private.pem", issuer="https://myorg.example.com")
+ingestor = WeatherIngestor(signer=signer)
 
 events = asyncio.run(ingestor.ingest())
 for e in events:
-    print(e.context.summary)
+    print(e.event_context.summary)
 ```
 
 ### Football (api-football.com — free plan: 100 req/day)
@@ -153,7 +173,7 @@ ingestor = FootballIngestor(
 
 events = asyncio.run(ingestor.ingest())
 for e in events:
-    print(e.context.summary)
+    print(e.event_context.summary)
 ```
 
 ### Lottery (Caixa — no API key)
@@ -163,8 +183,8 @@ from cds.sources.lottery import MegaSenaIngestor
 
 ingestor = MegaSenaIngestor(signer=signer)
 events   = asyncio.run(ingestor.ingest())  # latest draw
-print(events[0].context.summary)
-# "Mega Sena concurso 2800 (29/03/2026): 04 · 12 · 25 · 36 · 47 · 59. ..."
+print(events[0].event_context.summary)
+# "Mega Sena concurso 2800 (29/03/2026): 04 . 12 . 25 . 36 . 47 . 59. ..."
 ```
 
 ---
@@ -187,7 +207,7 @@ Add to your Claude Desktop config (`~/.config/claude/claude_desktop_config.json`
       "args": ["-m", "cds_mcp_lottery", "mega-sena"],
       "env": {
         "CDS_PRIVATE_KEY_PATH": "/path/to/keys/private.pem",
-        "CDS_ISSUER": "myorg.example.com"
+        "CDS_ISSUER": "https://myorg.example.com"
       }
     }
   }
@@ -201,7 +221,8 @@ Claude can now call `get_mega_sena_latest`, `check_mega_sena_ticket`, and more.
 ## Next steps
 
 - [Architecture](architecture.md) — how the full pipeline works
+- [Linked Data](linked-data.md) — why every event is valid JSON-LD
 - [Signing algorithm](signing.md) — the cryptographic details
-- [Content types](content-types.md) — the MIME type system
+- [Content types](content-types.md) — the URI-based type system
 - [Self-hosting](self-hosting.md) — run your own infrastructure
-- [Spec v0.1.0](../spec/CDS-v0.1.0.md) — the formal specification
+- [Spec v0.2.0](../spec/CDS-v0.2.0.md) — the formal specification
