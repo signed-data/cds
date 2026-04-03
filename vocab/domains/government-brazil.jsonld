@@ -1,0 +1,36 @@
+{
+  "@context": {
+    "@vocab": "https://signed-data.org/vocab/",
+    "rdfs":   "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id":          "https://signed-data.org/vocab/government-brazil",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "government.brazil",
+      "rdfs:comment": "Brazilian government official publications, procurement, and legislation.",
+      "rdfs:seeAlso": "https://signed-data.org/spec/domains/government.brazil"
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/government-brazil/diario-oficial",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "diario.oficial",
+      "rdfs:comment": "Di\u00e1rio Oficial da Uni\u00e3o publication entry.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/government-brazil" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/government-brazil/licitacao",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "licitacao",
+      "rdfs:comment": "Government procurement or bidding notice.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/government-brazil" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/government-brazil/lei",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "lei",
+      "rdfs:comment": "New law or legislative act.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/government-brazil" }
+    }
+  ]
+}

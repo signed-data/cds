@@ -1,0 +1,37 @@
+{
+  "@context": {
+    "@vocab": "https://signed-data.org/vocab/",
+    "rdfs":   "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id":          "https://signed-data.org/vocab/religion-bible",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "religion.bible",
+      "rdfs:comment": "Bible verses, passages, and daily readings.",
+      "rdfs:seeAlso": "https://signed-data.org/spec/domains/religion.bible"
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/religion-bible/verse",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "verse",
+      "rdfs:comment": "A single Bible verse.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/religion-bible" },
+      "cds:source": { "@id": "https://signed-data.org/sources/bible-api.com.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/religion-bible/passage",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "passage",
+      "rdfs:comment": "A Bible passage spanning multiple verses.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/religion-bible" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/religion-bible/daily",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "daily",
+      "rdfs:comment": "Daily Bible reading or devotional.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/religion-bible" }
+    }
+  ]
+}
