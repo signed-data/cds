@@ -1,2 +1,29 @@
 **/__pycache__/
 **/node_modules/
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+
+# Test / coverage artifacts
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+test-keys/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
+.env
+*.pem
+keys/
+
+# OS
+.DS_Store
+
+# Spec implementation guide (not a project artifact)
+CDS-v0.2.0-SPEC.md
