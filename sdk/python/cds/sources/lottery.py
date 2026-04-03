@@ -99,7 +99,7 @@ class MegaSenaIngestor(BaseIngestor):
         self.concursos = concursos
 
     async def fetch(self) -> list[CDSEvent]:
-        targets: list[int | None] = self.concursos if self.concursos else [None]
+        targets: list[int | None] = list(self.concursos) if self.concursos else [None]
         events: list[CDSEvent] = []
 
         async with httpx.AsyncClient(timeout=15) as client:
