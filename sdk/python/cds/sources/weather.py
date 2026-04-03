@@ -5,7 +5,7 @@ Source: Open-Meteo API (free, no auth)
 from __future__ import annotations
 
 import hashlib
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import httpx
@@ -68,7 +68,7 @@ class WeatherIngestor(BaseIngestor):
         return [CDSEvent(
             content_type=CDSVocab.WEATHER_CURRENT,
             source=SourceMeta(id=CDSSources.OPEN_METEO, fingerprint=fp),
-            occurred_at=datetime.now(timezone.utc),
+            occurred_at=datetime.now(UTC),
             lang="en",
             payload=payload,
             event_context=ContextMeta(summary=summary, model="rule-based-v1"),

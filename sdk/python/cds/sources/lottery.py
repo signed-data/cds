@@ -9,7 +9,7 @@ Endpoints:
 from __future__ import annotations
 
 import hashlib
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import httpx
@@ -120,7 +120,7 @@ class MegaSenaIngestor(BaseIngestor):
                     d, m, y = result.data_apuracao.split("/")
                     occurred = datetime.fromisoformat(f"{y}-{m}-{d}T21:00:00-03:00")
                 except (ValueError, IndexError):
-                    occurred = datetime.now(timezone.utc)
+                    occurred = datetime.now(UTC)
 
                 events.append(CDSEvent(
                     content_type=LotteryContentTypes.MEGA_SENA,

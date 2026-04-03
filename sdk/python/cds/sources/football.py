@@ -22,13 +22,13 @@ import httpx
 
 from cds.ingestor import BaseIngestor
 from cds.schema import CDSEvent, ContextMeta, SourceMeta
-from cds.vocab import CDSSources
 from cds.sources.football_models import (
     FootballContentTypes,
     FootballMatchPayload,
     FootballTeam,
     FootballVenue,
 )
+from cds.vocab import CDSSources
 
 API_BASE = "https://v3.football.api-sports.io"
 

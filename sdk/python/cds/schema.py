@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import json
 import uuid as _uuid_mod
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -15,7 +15,7 @@ from cds.vocab import CONTEXT_URI, EVENT_TYPE_URI, event_uri
 
 
 def _now_utc() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def _new_uuid() -> str:
@@ -120,7 +120,7 @@ class CDSEvent(BaseModel):
         return json.dumps(data, sort_keys=True, ensure_ascii=False).encode("utf-8")
 
     @classmethod
-    def from_jsonld(cls, data: dict[str, Any]) -> "CDSEvent":
+    def from_jsonld(cls, data: dict[str, Any]) -> CDSEvent:
         return cls.model_validate(data)
 
     @property

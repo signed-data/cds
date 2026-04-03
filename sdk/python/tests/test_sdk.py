@@ -5,21 +5,22 @@ signing/verification, domain models.
 """
 import hashlib
 import json
-import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
-from cds.schema import CDSEvent, ContextMeta, IntegrityMeta, SourceMeta
+from cds.schema import CDSEvent, ContextMeta, SourceMeta
 from cds.signer import CDSSigner, CDSVerifier, generate_keypair
-from cds.vocab import (
-    CDSSources, CDSVocab,
-    CONTEXT_URI, EVENT_TYPE_URI,
-    content_type_uri, source_uri,
-)
-from cds.sources.lottery_models import LotteryContentTypes, MegaSenaResult
 from cds.sources.football_models import FootballContentTypes
-
+from cds.sources.lottery_models import LotteryContentTypes, MegaSenaResult
+from cds.vocab import (
+    CONTEXT_URI,
+    EVENT_TYPE_URI,
+    CDSSources,
+    CDSVocab,
+    content_type_uri,
+    source_uri,
+)
 
 # ── Fixtures ───────────────────────────────────────────────
 
@@ -47,7 +48,7 @@ def lottery_event():
     return CDSEvent(
         content_type  = CDSVocab.LOTTERY_MEGA_SENA,
         source        = SourceMeta(id=CDSSources.CAIXA_LOTERIAS, fingerprint="sha256:mock"),
-        occurred_at   = datetime(2026, 3, 29, tzinfo=timezone.utc),
+        occurred_at   = datetime(2026, 3, 29, tzinfo=UTC),
         lang          = "pt-BR",
         payload       = {"concurso": 2800, "dezenas": ["04","12","25","36","47","59"]},
         event_context = ContextMeta(summary="Mega Sena 2800", model="rule-based-v1"),
@@ -59,7 +60,7 @@ def football_event():
     return CDSEvent(
         content_type  = CDSVocab.FOOTBALL_MATCH_RESULT,
         source        = SourceMeta(id=CDSSources.API_FOOTBALL, fingerprint="sha256:mock"),
-        occurred_at   = datetime(2026, 3, 22, 21, tzinfo=timezone.utc),
+        occurred_at   = datetime(2026, 3, 22, 21, tzinfo=UTC),
         lang          = "pt-BR",
         payload       = {"home": {"name": "Flamengo", "score": 2},
                          "away": {"name": "Fluminense", "score": 1}},
@@ -216,17 +217,17 @@ class TestSigning:
     def test_tamper_payload_fails(self, lottery_event, signer, verifier):
         signer.sign(lottery_event)
         lottery_event.payload["concurso"] = 9999
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             verifier.verify(lottery_event)
 
     def test_tamper_summary_fails(self, football_event, signer, verifier):
         signer.sign(football_event)
         football_event.event_context.summary = "tampered"
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             verifier.verify(football_event)
 
     def test_no_integrity_raises(self, football_event, verifier):
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError, match="no integrity"):
             verifier.verify(football_event)
 
     def test_verify_after_roundtrip(self, football_event, signer, verifier):
