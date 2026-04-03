@@ -1,14 +1,30 @@
+<div align="center">
+
 # Curated Data Standard (CDS)
 
+**An open standard for distributing curated, cryptographically signed, real-time data as 5-star Linked Data with embedded LLM context.**
+
 [![CI](https://github.com/signed-data/cds/actions/workflows/ci.yml/badge.svg)](https://github.com/signed-data/cds/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/signeddata-cds)](https://pypi.org/project/signeddata-cds/)
-[![npm](https://img.shields.io/npm/v/@signeddata/cds-sdk)](https://www.npmjs.com/package/@signeddata/cds-sdk)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Linked Data](https://img.shields.io/badge/Linked_Data-★★★★★-brightgreen)](https://www.w3.org/DesignIssues/LinkedData.html)
+[![Spec](https://img.shields.io/badge/spec-v0.2.0-blue?logo=w3c)](spec/CDS-v0.2.0.md)
+[![Linked Data](https://img.shields.io/badge/Linked_Data-%E2%98%85%E2%98%85%E2%98%85%E2%98%85%E2%98%85-brightgreen?logo=semanticweb)](https://www.w3.org/DesignIssues/LinkedData.html)
+[![JSON-LD](https://img.shields.io/badge/JSON--LD-valid-blue?logo=json)](https://json-ld.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?logo=opensourceinitiative)](LICENSE)
 
-An open standard for distributing **curated, cryptographically signed, real-time data** as **5-star Linked Data** with embedded LLM context.
+[![PyPI](https://img.shields.io/pypi/v/signeddata-cds?logo=pypi&logoColor=white&label=PyPI)](https://pypi.org/project/signeddata-cds/)
+[![npm](https://img.shields.io/npm/v/@signeddata/cds-sdk?logo=npm&logoColor=white&label=npm)](https://www.npmjs.com/package/@signeddata/cds-sdk)
+[![Python](https://img.shields.io/badge/python-3.12+-3776AB?logo=python&logoColor=white)](https://python.org)
+[![TypeScript](https://img.shields.io/badge/typescript-5+-3178C6?logo=typescript&logoColor=white)](https://typescriptlang.org)
 
-→ [signed-data.org](https://signed-data.org) · [Spec v0.2.0](spec/CDS-v0.2.0.md) · [Linked Data](docs/linked-data.md) · [Changelog](#changelog)
+[![Signing](https://img.shields.io/badge/signing-RSA--PSS_SHA--256-critical?logo=letsencrypt&logoColor=white)](docs/signing.md)
+[![MCP](https://img.shields.io/badge/MCP-compatible-8A2BE2?logo=anthropic&logoColor=white)](https://modelcontextprotocol.io)
+
+[Website](https://signed-data.org) ·
+[Spec v0.2.0](spec/CDS-v0.2.0.md) ·
+[Linked Data](docs/linked-data.md) ·
+[Getting Started](docs/getting-started.md) ·
+[Changelog](#changelog)
+
+</div>
 
 ---
 
