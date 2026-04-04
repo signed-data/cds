@@ -11,7 +11,7 @@ Add to your Claude Desktop config (`~/.config/claude/claude_desktop_config.json`
 {
   "mcpServers": {
     "signeddata-finance": {
-      "url": "https://finance.mcp.signed-data.org/sse"
+      "url": "https://finance.mcp.signed-data.org/mcp"
     }
   }
 }
@@ -20,7 +20,9 @@ Add to your Claude Desktop config (`~/.config/claude/claude_desktop_config.json`
 Or test via curl:
 
 ```bash
-curl https://finance.mcp.signed-data.org/tool/get_selic_rate
+curl -X POST https://finance.mcp.signed-data.org/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
 ```
 
 ## Quick Start — Local (30 seconds)
