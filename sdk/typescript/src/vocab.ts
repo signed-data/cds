@@ -35,6 +35,33 @@ export const CDSVocab = {
   BIBLE_VERSE:           contentTypeUri("religion.bible",   "verse"),
   BIBLE_DAILY:           contentTypeUri("religion.bible",   "daily"),
   GOV_BR_DIARIO:         contentTypeUri("government.brazil","diario.oficial"),
+  // finance.brazil
+  FINANCE_SELIC_RATE:     contentTypeUri("finance.brazil", "rate.selic"),
+  FINANCE_CDI_RATE:       contentTypeUri("finance.brazil", "rate.cdi"),
+  FINANCE_IPCA_INDEX:     contentTypeUri("finance.brazil", "index.ipca"),
+  FINANCE_IGPM_INDEX:     contentTypeUri("finance.brazil", "index.igpm"),
+  FINANCE_FX_USD_BRL:     contentTypeUri("finance.brazil", "fx.usd-brl"),
+  FINANCE_FX_EUR_BRL:     contentTypeUri("finance.brazil", "fx.eur-brl"),
+  FINANCE_QUOTE_STOCK:    contentTypeUri("finance.brazil", "quote.stock"),
+  FINANCE_QUOTE_FII:      contentTypeUri("finance.brazil", "quote.fii"),
+  FINANCE_QUOTE_CRYPTO:   contentTypeUri("finance.brazil", "quote.crypto"),
+  FINANCE_DECISION_COPOM: contentTypeUri("finance.brazil", "decision.copom"),
+  // companies.brazil
+  COMPANIES_PROFILE_CNPJ:  contentTypeUri("companies.brazil", "profile.cnpj"),
+  COMPANIES_PARTNERS_CNPJ: contentTypeUri("companies.brazil", "partners.cnpj"),
+  COMPANIES_CNAE_PROFILE:  contentTypeUri("companies.brazil", "cnae.profile"),
+  // commodities.brazil
+  COMMODITY_FUTURES_SOJA:    contentTypeUri("commodities.brazil", "futures.soja"),
+  COMMODITY_FUTURES_MILHO:   contentTypeUri("commodities.brazil", "futures.milho"),
+  COMMODITY_FUTURES_BOI:     contentTypeUri("commodities.brazil", "futures.boi-gordo"),
+  COMMODITY_FUTURES_CAFE:    contentTypeUri("commodities.brazil", "futures.cafe"),
+  COMMODITY_FUTURES_ACUCAR:  contentTypeUri("commodities.brazil", "futures.acucar"),
+  COMMODITY_FUTURES_ETANOL:  contentTypeUri("commodities.brazil", "futures.etanol"),
+  COMMODITY_SPOT_SOJA:       contentTypeUri("commodities.brazil", "spot.soja"),
+  COMMODITY_SPOT_MILHO:      contentTypeUri("commodities.brazil", "spot.milho"),
+  COMMODITY_SPOT_TRIGO:      contentTypeUri("commodities.brazil", "spot.trigo"),
+  COMMODITY_SPOT_ALGODAO:    contentTypeUri("commodities.brazil", "spot.algodao"),
+  COMMODITY_INDEX_WORLDBANK: contentTypeUri("commodities.brazil", "index.worldbank"),
 } as const;
 
 export const CDSSources = {
@@ -43,4 +70,8 @@ export const CDSSources = {
   OPEN_METEO:     sourceUri("open-meteo.com.v1"),
   BRAPI:          sourceUri("brapi.dev.v1"),
   BIBLE_API:      sourceUri("bible-api.com.v1"),
+  BCB_API:        sourceUri("api.bcb.gov.br.v1"),
+  BRASILAPI:      sourceUri("brasilapi.com.br.v1"),
+  CONAB:          sourceUri("conab.gov.br.v1"),
+  WORLDBANK:      sourceUri("api.worldbank.org.v2"),
 } as const;

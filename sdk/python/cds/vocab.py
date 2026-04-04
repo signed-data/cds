@@ -74,6 +74,33 @@ class CDSVocab:
     GOV_BR_DIARIO    = content_type_uri("government.brazil", "diario.oficial")
     GOV_BR_LICITACAO = content_type_uri("government.brazil", "licitacao")
     GOV_BR_LEI       = content_type_uri("government.brazil", "lei")
+    # finance.brazil
+    FINANCE_SELIC_RATE     = content_type_uri("finance.brazil", "rate.selic")
+    FINANCE_CDI_RATE       = content_type_uri("finance.brazil", "rate.cdi")
+    FINANCE_IPCA_INDEX     = content_type_uri("finance.brazil", "index.ipca")
+    FINANCE_IGPM_INDEX     = content_type_uri("finance.brazil", "index.igpm")
+    FINANCE_FX_USD_BRL     = content_type_uri("finance.brazil", "fx.usd-brl")
+    FINANCE_FX_EUR_BRL     = content_type_uri("finance.brazil", "fx.eur-brl")
+    FINANCE_QUOTE_STOCK    = content_type_uri("finance.brazil", "quote.stock")
+    FINANCE_QUOTE_FII      = content_type_uri("finance.brazil", "quote.fii")
+    FINANCE_QUOTE_CRYPTO   = content_type_uri("finance.brazil", "quote.crypto")
+    FINANCE_DECISION_COPOM = content_type_uri("finance.brazil", "decision.copom")
+    # companies.brazil
+    COMPANIES_PROFILE_CNPJ  = content_type_uri("companies.brazil", "profile.cnpj")
+    COMPANIES_PARTNERS_CNPJ = content_type_uri("companies.brazil", "partners.cnpj")
+    COMPANIES_CNAE_PROFILE  = content_type_uri("companies.brazil", "cnae.profile")
+    # commodities.brazil
+    COMMODITY_FUTURES_SOJA    = content_type_uri("commodities.brazil", "futures.soja")
+    COMMODITY_FUTURES_MILHO   = content_type_uri("commodities.brazil", "futures.milho")
+    COMMODITY_FUTURES_BOI     = content_type_uri("commodities.brazil", "futures.boi-gordo")
+    COMMODITY_FUTURES_CAFE    = content_type_uri("commodities.brazil", "futures.cafe")
+    COMMODITY_FUTURES_ACUCAR  = content_type_uri("commodities.brazil", "futures.acucar")
+    COMMODITY_FUTURES_ETANOL  = content_type_uri("commodities.brazil", "futures.etanol")
+    COMMODITY_SPOT_SOJA       = content_type_uri("commodities.brazil", "spot.soja")
+    COMMODITY_SPOT_MILHO      = content_type_uri("commodities.brazil", "spot.milho")
+    COMMODITY_SPOT_TRIGO      = content_type_uri("commodities.brazil", "spot.trigo")
+    COMMODITY_SPOT_ALGODAO    = content_type_uri("commodities.brazil", "spot.algodao")
+    COMMODITY_INDEX_WORLDBANK = content_type_uri("commodities.brazil", "index.worldbank")
 
 
 # ── Pre-built source URI constants ─────────────────────────
@@ -84,3 +111,7 @@ class CDSSources:
     OPEN_METEO     = source_uri("open-meteo.com.v1")
     BRAPI          = source_uri("brapi.dev.v1")
     BIBLE_API      = source_uri("bible-api.com.v1")
+    BCB_API        = source_uri("api.bcb.gov.br.v1")
+    BRASILAPI      = source_uri("brasilapi.com.br.v1")
+    CONAB          = source_uri("conab.gov.br.v1")
+    WORLDBANK      = source_uri("api.worldbank.org.v2")
