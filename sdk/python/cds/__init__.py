@@ -1,19 +1,21 @@
-"""SignedData CDS Python SDK v0.2.0"""
+"""SignedData CDS Python SDK v0.3.0"""
 
 from cds.ingestor import BaseIngestor
 from cds.schema import CDSEvent, ContextMeta, IntegrityMeta, SourceMeta
 from cds.signer import CDSSigner, CDSVerifier, generate_keypair
-from cds.sources.football_models import (
-    FootballContentTypes,
-    FootballMatchPayload,
-    FootballTeam,
-    FootballVenue,
+from cds.sources.commodities_models import (
+    CommodityContentTypes,
+    CommodityFutures,
+    CommodityIndex,
+    CommoditySpot,
 )
-from cds.sources.lottery_models import (
-    LotteryContentTypes,
-    LotteryResult,
-    MegaSenaResult,
-    PrizeTier,
+from cds.sources.companies_models import (
+    CNAECode,
+    CompaniesContentTypes,
+    CompanyAddress,
+    CompanyPartner,
+    CompanyPartners,
+    CompanyProfile,
 )
 from cds.sources.finance_models import (
     CDIRate,
@@ -25,19 +27,17 @@ from cds.sources.finance_models import (
     SELICRate,
     StockQuote,
 )
-from cds.sources.companies_models import (
-    CompaniesContentTypes,
-    CompanyAddress,
-    CompanyPartner,
-    CompanyPartners,
-    CompanyProfile,
-    CNAECode,
+from cds.sources.football_models import (
+    FootballContentTypes,
+    FootballMatchPayload,
+    FootballTeam,
+    FootballVenue,
 )
-from cds.sources.commodities_models import (
-    CommodityContentTypes,
-    CommodityFutures,
-    CommodityIndex,
-    CommoditySpot,
+from cds.sources.lottery_models import (
+    LotteryContentTypes,
+    LotteryResult,
+    MegaSenaResult,
+    PrizeTier,
 )
 from cds.vocab import (
     CONTEXT_URI,

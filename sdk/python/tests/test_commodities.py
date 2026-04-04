@@ -11,21 +11,19 @@ import pytest
 
 from cds.schema import CDSEvent, ContextMeta, SourceMeta
 from cds.signer import CDSSigner, CDSVerifier, generate_keypair
-from cds.sources.commodities_models import (
-    B3_COMMODITY_TICKERS,
-    CONABResponseChangedError,
-    CommodityContentTypes,
-    CommodityFutures,
-    CommodityIndex,
-    CommoditySpot,
-)
 from cds.sources.commodities import (
     B3FuturesIngestor,
     CONABSpotIngestor,
     _parse_conab_response,
 )
+from cds.sources.commodities_models import (
+    CommodityContentTypes,
+    CommodityFutures,
+    CommodityIndex,
+    CommoditySpot,
+    CONABResponseChangedError,
+)
 from cds.vocab import CDSSources, CDSVocab
-
 
 # ── Fixtures ───────────────────────────────────────────────
 
@@ -232,7 +230,9 @@ class TestB3FuturesIngestor:
         mock_signer.sign = lambda e: e
 
         mock_resp = MagicMock()
-        mock_resp.content = b'{"results":[{"symbol":"SFI","regularMarketPrice":146.50,"regularMarketChange":-0.80,"regularMarketChangePercent":-0.54,"regularMarketOpen":147.20,"regularMarketDayHigh":147.50,"regularMarketDayLow":146.20,"regularMarketVolume":12450,"regularMarketTime":"2026-04-02T14:30:00-03:00"}]}'
+        mock_resp.content = json.dumps({
+            "results": [{"symbol": "SFI", "regularMarketPrice": 146.50}],
+        }).encode()
         mock_resp.json.return_value = {
             "results": [{
                 "symbol": "SFI",

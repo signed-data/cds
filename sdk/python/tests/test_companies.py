@@ -10,6 +10,12 @@ import pytest
 
 from cds.schema import CDSEvent, ContextMeta, SourceMeta
 from cds.signer import CDSSigner, CDSVerifier, generate_keypair
+from cds.sources.companies import (
+    CNPJFetcher,
+    _build_profile_summary,
+    _format_cnpj,
+    validate_cnpj,
+)
 from cds.sources.companies_models import (
     CNAECode,
     CompaniesContentTypes,
@@ -18,14 +24,7 @@ from cds.sources.companies_models import (
     CompanyPartners,
     CompanyProfile,
 )
-from cds.sources.companies import (
-    CNPJFetcher,
-    validate_cnpj,
-    _build_profile_summary,
-    _format_cnpj,
-)
 from cds.vocab import CDSSources, CDSVocab
-
 
 # ── Fixtures ───────────────────────────────────────────────
 

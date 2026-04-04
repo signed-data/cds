@@ -152,7 +152,7 @@ class BCBIndicesIngestor(BaseIngestor):
             monthly_data = resp_m.json()
             acc_12m_data = resp_12.json()
 
-            for m_item, a_item in zip(monthly_data, acc_12m_data):
+            for m_item, a_item in zip(monthly_data, acc_12m_data, strict=False):
                 date_iso = _parse_bcb_date(m_item["data"])
                 ipca = IPCAIndex(
                     date=date_iso,
@@ -220,7 +220,7 @@ class BCBFXIngestor(BaseIngestor):
             resp_sell.raise_for_status()
             fp = _fingerprint(resp_buy.content + resp_sell.content)
 
-            for buy_item, sell_item in zip(resp_buy.json(), resp_sell.json()):
+            for buy_item, sell_item in zip(resp_buy.json(), resp_sell.json(), strict=False):
                 date_iso = _parse_bcb_date(buy_item["data"])
                 buy_val = float(buy_item["valor"])
                 sell_val = float(sell_item["valor"])

@@ -2,7 +2,6 @@
 CDS Finance Brazil Test Suite
 Tests for models, content types, ingestors (mocked), signing, and summaries.
 """
-import hashlib
 import json
 from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -12,17 +11,14 @@ import pytest
 from cds.schema import CDSEvent, ContextMeta, SourceMeta
 from cds.signer import CDSSigner, CDSVerifier, generate_keypair
 from cds.sources.finance_models import (
-    CDIRate,
     CopomDecision,
     FinanceContentTypes,
     FXRate,
-    IGPMIndex,
     IPCAIndex,
     SELICRate,
     StockQuote,
 )
 from cds.vocab import CDSSources, CDSVocab
-
 
 # ── Fixtures ───────────────────────────────────────────────
 
@@ -271,7 +267,7 @@ class TestSummaryFormats:
         assert "+1.17%" in summary
 
     def test_copom_summary(self):
-        summary = f"Copom #267: maintain SELIC em 13.75% a.a."
+        summary = "Copom #267: maintain SELIC em 13.75% a.a."
         assert "Copom #267" in summary
         assert "maintain" in summary
 
@@ -389,7 +385,9 @@ class TestBrapiQuotesIngestor:
         mock_signer.sign = lambda e: e
 
         mock_resp = MagicMock()
-        mock_resp.content = b'{"results":[{"symbol":"PETR4","shortName":"PETROBRAS PN","longName":"Petrobras","currency":"BRL","regularMarketPrice":38.92,"regularMarketChange":0.45,"regularMarketChangePercent":1.17,"regularMarketPreviousClose":38.47,"regularMarketOpen":38.50,"regularMarketDayHigh":39.10,"regularMarketDayLow":38.40,"regularMarketVolume":42891300,"marketCap":507840000000,"fullExchangeName":"SAO","marketState":"REGULAR","regularMarketTime":"2026-04-02T17:30:00-03:00"}]}'
+        mock_resp.content = json.dumps({
+            "results": [{"symbol": "PETR4", "regularMarketPrice": 38.92}],
+        }).encode()
         mock_resp.json.return_value = {
             "results": [{
                 "symbol": "PETR4",

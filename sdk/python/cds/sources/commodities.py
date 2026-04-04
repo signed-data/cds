@@ -19,11 +19,11 @@ from cds.schema import CDSEvent, ContextMeta, SourceMeta
 from cds.sources.commodities_models import (
     B3_COMMODITY_TICKERS,
     CONAB_COMMODITY_MAP,
-    CONABResponseChangedError,
     CommodityContentTypes,
     CommodityFutures,
     CommodityIndex,
     CommoditySpot,
+    CONABResponseChangedError,
 )
 from cds.vocab import CDSSources
 
