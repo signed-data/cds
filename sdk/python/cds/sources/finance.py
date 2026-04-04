@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import hashlib
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, Literal
 
 import httpx
 
@@ -56,7 +56,7 @@ def _parse_bcb_date(raw: str) -> str:
 
 def _daily_rate(annual_pct: float) -> float:
     """Convert annual rate (%) to daily rate using 252 business days."""
-    return ((1 + annual_pct / 100) ** (1 / 252) - 1) * 100
+    return float(((1 + annual_pct / 100) ** (1 / 252) - 1) * 100)
 
 
 def _fingerprint(data: bytes) -> str:
@@ -420,6 +420,7 @@ class CopomIngestor(BaseIngestor):
                 rate_before = float(item.get("metaSelicAnterior", rate_after))
                 diff_bps = round((rate_after - rate_before) * 100)
 
+                decision: Literal["raise", "cut", "maintain"]
                 if diff_bps > 0:
                     decision = "raise"
                 elif diff_bps < 0:

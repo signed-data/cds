@@ -183,7 +183,7 @@ class CONABSpotIngestor(BaseIngestor):
         for item in raw_data:
             commodity = str(item.get("produto", "")).lower().strip()
             state = str(item.get("uf", "")).upper().strip()
-            price = item.get("preco")
+            price_raw = item.get("preco")
 
             # Filter by state if requested
             if self.states and state not in self.states:
@@ -194,8 +194,10 @@ class CONABSpotIngestor(BaseIngestor):
             if not content_type:
                 continue
 
+            if price_raw is None:
+                continue
             try:
-                price_val = float(price)
+                price_val = float(price_raw)
             except (TypeError, ValueError):
                 continue
 
