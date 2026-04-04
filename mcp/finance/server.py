@@ -2,48 +2,32 @@
 SignedData CDS — MCP Server: Brazil Finance
 Exposes BCB rates, IPCA, FX, B3 stock quotes, and Copom decisions as MCP tools.
 
-Usage (stdio transport — for Claude Desktop or Claude Code):
-    python -m mcp.finance.server
+Usage (stdio — Claude Desktop / Claude Code):
+    signeddata-mcp-finance
 
-Usage (SSE transport — for web clients):
-    python -m mcp.finance.server --transport sse --port 8010
+Usage (SSE — web clients / remote):
+    signeddata-mcp-finance --transport sse --port 8010
 
 Install:
-    pip install fastmcp httpx pydantic cryptography
+    pip install signeddata-mcp-finance
 """
 from __future__ import annotations
 
-import hashlib
 import json
 import os
-import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 import httpx
-
-# ── Path setup ─────────────────────────────────────────────
-_ROOT = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(_ROOT / "sdk/python"))
-
 from fastmcp import FastMCP
 
 from cds.schema import CDSEvent, ContextMeta, SourceMeta
 from cds.signer import CDSSigner, CDSVerifier
-from cds.sources.finance_models import (
-    CopomDecision,
-    FinanceContentTypes,
-    FXRate,
-    IPCAIndex,
-    SELICRate,
-    StockQuote,
-)
+from cds.sources.finance_models import FinanceContentTypes
 from cds.sources.finance import (
-    BCB_SGS_BASE,
     BRAPI_BASE,
     COPOM_URL,
-    SGS_CDI,
     SGS_EUR_BRL,
     SGS_IGPM,
     SGS_IPCA_12M,
@@ -462,10 +446,11 @@ async def market_summary_resource() -> str:
 # ENTRY POINT
 # ═══════════════════════════════════════════════════════════
 
-if __name__ == "__main__":
+def main() -> None:
+    """Entry point for signeddata-mcp-finance CLI."""
     import argparse
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="SignedData CDS Finance MCP Server")
     parser.add_argument("--transport", choices=["stdio", "sse"], default="stdio")
     parser.add_argument("--port", type=int, default=8010)
     args = parser.parse_args()
@@ -474,3 +459,7 @@ if __name__ == "__main__":
         mcp.run(transport="sse", port=args.port)
     else:
         mcp.run(transport="stdio")
+
+
+if __name__ == "__main__":
+    main()

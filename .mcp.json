@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "signeddata-finance": {
+      "command": "uv",
+      "args": ["run", "--directory", "mcp/finance", "signeddata-mcp-finance"]
+    }
+  }
+}
