@@ -1,0 +1,103 @@
+{
+  "@context": {
+    "@vocab": "https://signed-data.org/vocab/",
+    "rdfs":   "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id":          "https://signed-data.org/vocab/commodities-brazil",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "commodities.brazil",
+      "rdfs:comment": "Brazilian commodity data: B3 futures, CONAB physical prices, and World Bank indices.",
+      "rdfs:seeAlso": "https://signed-data.org/spec/domains/commodities.brazil"
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/commodities-brazil/futures-soja",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "futures.soja",
+      "rdfs:comment": "Soybean (soja) futures contract on B3.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/commodities-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/brapi.dev.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/commodities-brazil/futures-milho",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "futures.milho",
+      "rdfs:comment": "Corn (milho) futures contract on B3.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/commodities-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/brapi.dev.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/commodities-brazil/futures-boi-gordo",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "futures.boi-gordo",
+      "rdfs:comment": "Live cattle (boi gordo) futures contract on B3.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/commodities-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/brapi.dev.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/commodities-brazil/futures-cafe",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "futures.cafe",
+      "rdfs:comment": "Coffee arabica (caf\u00e9) futures contract on B3.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/commodities-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/brapi.dev.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/commodities-brazil/futures-acucar",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "futures.acucar",
+      "rdfs:comment": "Sugar (a\u00e7\u00facar cristal) futures contract on B3.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/commodities-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/brapi.dev.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/commodities-brazil/futures-etanol",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "futures.etanol",
+      "rdfs:comment": "Ethanol (etanol) futures contract on B3.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/commodities-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/brapi.dev.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/commodities-brazil/spot-soja",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "spot.soja",
+      "rdfs:comment": "Physical soybean price from CONAB (weekly).",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/commodities-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/conab.gov.br.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/commodities-brazil/spot-milho",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "spot.milho",
+      "rdfs:comment": "Physical corn price from CONAB (weekly).",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/commodities-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/conab.gov.br.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/commodities-brazil/spot-trigo",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "spot.trigo",
+      "rdfs:comment": "Physical wheat price from CONAB (weekly).",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/commodities-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/conab.gov.br.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/commodities-brazil/spot-algodao",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "spot.algodao",
+      "rdfs:comment": "Physical cotton price from CONAB (weekly).",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/commodities-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/conab.gov.br.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/commodities-brazil/index-worldbank",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "index.worldbank",
+      "rdfs:comment": "World Bank global commodity price index (monthly).",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/commodities-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/api.worldbank.org.v2" }
+    }
+  ]
+}
