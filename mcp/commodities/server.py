@@ -2,11 +2,14 @@
 SignedData CDS — MCP Server: Brazil Commodities
 Exposes B3 agro futures, CONAB physical prices, and World Bank indices as MCP tools.
 
-Usage (stdio transport — for Claude Desktop or Claude Code):
-    python -m mcp.commodities.server
+Usage (stdio — Claude Desktop / Claude Code):
+    signeddata-mcp-commodities
 
-Usage (SSE transport — for web clients):
-    python -m mcp.commodities.server --transport sse --port 8011
+Usage (SSE — web clients / remote):
+    signeddata-mcp-commodities --transport sse --port 8011
+
+Install:
+    pip install signeddata-mcp-commodities
 """
 from __future__ import annotations
 
@@ -264,10 +267,11 @@ async def get_basis(
 # ENTRY POINT
 # ═══════════════════════════════════════════════════════════
 
-if __name__ == "__main__":
+def main() -> None:
+    """Entry point for signeddata-mcp-commodities CLI."""
     import argparse
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="SignedData CDS Commodities MCP Server")
     parser.add_argument("--transport", choices=["stdio", "sse"], default="stdio")
     parser.add_argument("--port", type=int, default=8011)
     args = parser.parse_args()
@@ -276,3 +280,7 @@ if __name__ == "__main__":
         mcp.run(transport="sse", port=args.port)
     else:
         mcp.run(transport="stdio")
+
+
+if __name__ == "__main__":
+    main()

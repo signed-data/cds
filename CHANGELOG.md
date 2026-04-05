@@ -1,3 +1,13 @@
+## 0.3.1 - 2026-04-04
+
+### Fixes
+- Fix `mcp/commodities` packaging so the CLI installs and runs like the finance MCP package
+- Add `mcp/commodities/README.md` with remote, local, and source install instructions
+
+### Documentation
+- Update CDS repo docs to list the finance and commodities MCP products explicitly
+- Refresh architecture docs to describe the current operator deployment shape for finance and commodities
+
 ## 0.3.0 - 2026-04-04
 
 ### Features

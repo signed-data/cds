@@ -134,22 +134,20 @@ to discover what the data is, where it came from, and what the fields mean.
 
 ## Reference deployment (AWS)
 
-The reference deployment at `signed-data.org` uses:
+The reference operator deployment at `signed-data.org` uses domain-specific stacks like `finance.brazil` and `commodities.brazil`:
 
 ```
 EventBridge Schedule (cron)
         │
-Lambda (ingestor)          ← runs CDSSigner, reads key from Secrets Manager
-        │ SQS
-Lambda (processor)         ← enriches with Amazon Bedrock Nova Micro
-        │ S3
-Lambda (API handler)       ← GET /events?domain=lottery.brazil
-        │ API Gateway v1
+Lambda (domain ingestor)   ← runs CDSSigner, reads key from Secrets Manager
+        │ S3 + EventBridge
+Lambda (MCP handler)       ← FastMCP over Lambda Function URL
+        │ CloudFront
 
 CloudFront + S3            ← serves vocab/, contexts/, sources/, .well-known/
 ```
 
-Source code: [signed-data/cds infra](../infra/) (CDK TypeScript).
+Source code for the public product logic: [`mcp/finance`](../mcp/finance/), [`mcp/commodities`](../mcp/commodities/).
 Personal operator deployment: [magj/cds-services](https://github.com/magj/cds-services).
 
 ---
@@ -165,7 +163,7 @@ Claude Desktop
       │ MCP (stdio / SSE)
 FastMCP server
       │ CDSVerifier.verify()
-      │ CDSEvent JSON-LD (from S3 or direct Caixa API fetch)
+      │ CDSEvent JSON-LD (from S3-backed events or direct source fetches)
       └── returns dict to Claude
 ```
 

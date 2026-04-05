@@ -168,6 +168,8 @@ cds/
 │   ├── CDS-v0.2.0.md              # v0.2.0 specification (Linked Data)
 │   ├── MIGRATION-v0.1-to-v0.2.md  # Migration guide
 │   └── domains/
+│       ├── finance.brazil.md
+│       ├── commodities.brazil.md
 │       └── lottery.brazil.md
 ├── vocab/                          # Linked Data vocabulary (JSON-LD)
 │   ├── cds.jsonld                  # Core ontology
@@ -191,6 +193,10 @@ cds/
 │           ├── signer.ts
 │           ├── ingestor.ts
 │           └── sources/
+├── mcp/
+│   ├── finance/                    # signeddata-mcp-finance
+│   ├── commodities/                # signeddata-mcp-commodities
+│   └── lottery/                    # signeddata-mcp-lottery
 └── docs/
     ├── getting-started.md
     ├── architecture.md
@@ -251,6 +257,8 @@ https://signed-data.org/vocab/weather/forecast-current
 | `sports.football` | `match.result`, `match.live`, `standings.update` | api-football.com | [sports-football.jsonld](vocab/domains/sports-football.jsonld) |
 | `news` | `headline`, `breaking`, `summary` | various | [news.jsonld](vocab/domains/news.jsonld) |
 | `finance` | `quote.stock`, `quote.crypto`, `quote.forex`, `index.update` | Brapi | [finance.jsonld](vocab/domains/finance.jsonld) |
+| `finance.brazil` | `rate.selic`, `index.ipca`, `fx.usd-brl`, `decision.copom`, `quote.stock` | Banco Central + Brapi | [finance-brazil.jsonld](vocab/domains/finance-brazil.jsonld) |
+| `commodities.brazil` | `futures.soja`, `spot.soja`, `spot.milho`, `index.worldbank` | Brapi + CONAB + World Bank | [commodities-brazil.jsonld](vocab/domains/commodities-brazil.jsonld) |
 | `religion.bible` | `verse`, `passage`, `daily` | bible-api.com | [religion-bible.jsonld](vocab/domains/religion-bible.jsonld) |
 | `government.brazil` | `diario.oficial`, `licitacao`, `lei` | official APIs | [government-brazil.jsonld](vocab/domains/government-brazil.jsonld) |
 | `lottery.brazil` | `mega-sena.result`, `lotofacil.result`, `quina.result`, `lotomania.result`, `dupla-sena.result` | Caixa | [lottery-brazil.jsonld](vocab/domains/lottery-brazil.jsonld) |
@@ -263,6 +271,8 @@ CDS events are designed to be consumed by LLMs via the [Model Context Protocol](
 
 | Server | Games / domains | Install |
 |---|---|---|
+| [`mcp/finance`](mcp/finance) | SELIC, IPCA, PTAX FX, B3 quotes, Copom | `pip install signeddata-mcp-finance` |
+| [`mcp/commodities`](mcp/commodities) | B3 agro futures, CONAB spot prices, basis spreads | `pip install signeddata-mcp-commodities` |
 | [mcp-lottery](https://github.com/signed-data/mcp-lottery) | Mega Sena, Lotofacil, Quina, Lotomania, Dupla Sena | `pip install signeddata-mcp-lottery` |
 
 ---
@@ -321,6 +331,8 @@ To propose a new domain or schema, open an issue with the tag `domain-proposal`.
 - `integrity.signed_by` is a full URI — **breaking**
 - New `CDSVocab` and `CDSSources` URI constants in both SDKs
 - Vocabulary, context, and source registry as JSON-LD files
+- Domain specs and vocab for `finance.brazil` and `commodities.brazil`
+- MCP packages for `signeddata-mcp-finance` and `signeddata-mcp-commodities`
 - 5-star Linked Data rating achieved
 - See [MIGRATION-v0.1-to-v0.2.md](spec/MIGRATION-v0.1-to-v0.2.md)
 
