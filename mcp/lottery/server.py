@@ -73,7 +73,12 @@ def _brl(value: float) -> str:
 _BRT = timezone(timedelta(hours=-3))
 
 def _occurred_at(data_apuracao: str) -> datetime:
-    """Convert a 'DD/MM/YYYY' draw date (21:00 BRT) to UTC."""
+    """Convert a 'DD/MM/YYYY' draw date to UTC.
+
+    Mega Sena draws occur at 21:00 BRT (UTC−03:00), which is 00:00 UTC the
+    following day.  This function constructs a timezone-aware datetime in BRT
+    and converts it to UTC so all timestamps are stored consistently.
+    """
     d, m, y = data_apuracao.split("/")
     return datetime(int(y), int(m), int(d), 21, 0, 0, tzinfo=_BRT).astimezone(timezone.utc)
 
@@ -303,7 +308,7 @@ async def get_mega_sena_statistics(last_n: int = 20) -> dict[str, Any]:
                 continue
 
     if total_draws == 0:
-        return {"error": "Could not fetch any draw data for the requested range."}
+        return {"error": "Could not fetch any draw data. Check your network connection and that the Caixa API is accessible."}
 
     sorted_freq  = sorted(freq.items(), key=lambda x: x[1], reverse=True)
     most_common  = sorted_freq[:10]
