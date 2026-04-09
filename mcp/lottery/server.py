@@ -18,7 +18,7 @@ import hashlib
 import json
 import os
 import sys
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -32,34 +32,11 @@ sys.path.insert(0, str(_ROOT / "sdk/python"))
 from fastmcp import FastMCP
 from cds.schema import CDSContentType, CDSEvent, ContextMeta, SourceMeta
 from cds.signer import CDSSigner, CDSVerifier
-
-try:
-    from cds.sources.lottery_models import LotteryContentTypes, MegaSenaResult, PrizeTier
-    from cds.sources.lottery import (
-        CAIXA_BASE, SOURCE_ID,
-        _parse_response, _build_summary, _parse_premiacao, _parse_date_iso,
-    )
-except ImportError:  # pragma: no cover - optional lottery SDK
-    LotteryContentTypes = None  # type: ignore[assignment]
-    MegaSenaResult = None       # type: ignore[assignment]
-    PrizeTier = None            # type: ignore[assignment]
-    CAIXA_BASE = ""
-    SOURCE_ID = ""
-
-    def _missing_lottery_sdk(*_args: Any, **_kwargs: Any) -> None:
-        raise RuntimeError(
-            "Lottery SDK modules 'cds.sources.lottery_models' / 'cds.sources.lottery' "
-            "are not available on PYTHONPATH. Ensure the CDS Python SDK with lottery "
-            "support is installed or generated before using this MCP server."
-        )
-
-    _parse_response = _missing_lottery_sdk  # type: ignore[assignment]
-    _build_summary = _missing_lottery_sdk   # type: ignore[assignment]
-    _parse_premiacao = _missing_lottery_sdk # type: ignore[assignment]
-    _parse_date_iso = _missing_lottery_sdk  # type: ignore[assignment]
-
-# BRT is UTC−03:00
-_BRT = timezone(timedelta(hours=-3))
+from cds.sources.lottery_models import LotteryContentTypes, MegaSenaResult, PrizeTier
+from cds.sources.lottery import (
+    CAIXA_BASE, SOURCE_ID,
+    _parse_response, _build_summary, _parse_premiacao, _parse_date_iso,
+)
 
 # ── Server config ───────────────────────────────────────────
 mcp = FastMCP(
@@ -93,19 +70,10 @@ def _brl(value: float) -> str:
     return f"R$ {formatted}"
 
 # ── HTTP helper ─────────────────────────────────────────────
-async def _fetch_caixa(
-    game: str,
-    concurso: int | None = None,
-    *,
-    client: httpx.AsyncClient | None = None,
-) -> dict[str, Any]:
+async def _fetch_caixa(game: str, concurso: int | None = None) -> dict[str, Any]:
     url = f"{CAIXA_BASE}/{game}/{concurso}" if concurso else f"{CAIXA_BASE}/{game}/"
-    if client is not None:
+    async with httpx.AsyncClient(timeout=15, follow_redirects=True) as client:
         resp = await client.get(url, headers={"Accept": "application/json"})
-        resp.raise_for_status()
-        return resp.json()
-    async with httpx.AsyncClient(timeout=15, follow_redirects=True) as c:
-        resp = await c.get(url, headers={"Accept": "application/json"})
         resp.raise_for_status()
         return resp.json()
 
@@ -142,7 +110,7 @@ async def get_mega_sena_latest() -> dict[str, Any]:
 
     try:
         d, m, y = result.data_apuracao.split("/")
-        occurred = datetime(int(y), int(m), int(d), 21, 0, 0, tzinfo=_BRT).astimezone(timezone.utc)
+        occurred = datetime(int(y), int(m), int(d), 21, 0, 0, tzinfo=timezone.utc)
     except Exception:
         occurred = datetime.now(timezone.utc)
 
@@ -175,7 +143,7 @@ async def get_mega_sena_by_concurso(concurso: int) -> dict[str, Any]:
 
     try:
         d, m, y = result.data_apuracao.split("/")
-        occurred = datetime(int(y), int(m), int(d), 21, 0, 0, tzinfo=_BRT).astimezone(timezone.utc)
+        occurred = datetime(int(y), int(m), int(d), 21, 0, 0, tzinfo=timezone.utc)
     except Exception:
         occurred = datetime.now(timezone.utc)
 
@@ -204,39 +172,37 @@ async def get_mega_sena_recent(last_n: int = 5) -> list[dict[str, Any]]:
     """
     last_n = max(1, min(last_n, 20))
 
-    # Use a single client for all requests in this tool invocation
-    async with httpx.AsyncClient(timeout=15, follow_redirects=True) as client:
-        # Get latest first to find current concurso number
-        latest_raw    = await _fetch_caixa("megasena", client=client)
-        latest_result = _parse_response(latest_raw)
-        latest_num    = latest_result.concurso
+    # Get latest first to find current concurso number
+    latest_raw    = await _fetch_caixa("megasena")
+    latest_result = _parse_response(latest_raw)
+    latest_num    = latest_result.concurso
 
-        concursos = list(range(latest_num - last_n + 1, latest_num + 1))
-        results: list[dict[str, Any]] = []
+    concursos = list(range(latest_num - last_n + 1, latest_num + 1))
+    results: list[dict[str, Any]] = []
 
-        for concurso in concursos:
-            raw    = await _fetch_caixa("megasena", concurso, client=client)
-            result = _parse_response(raw)
-            signer = _get_signer()
+    for concurso in concursos:
+        raw    = await _fetch_caixa("megasena", concurso)
+        result = _parse_response(raw)
+        signer = _get_signer()
 
-            try:
-                d, m, y = result.data_apuracao.split("/")
-                occurred = datetime(int(y), int(m), int(d), 21, 0, 0, tzinfo=_BRT).astimezone(timezone.utc)
-            except Exception:
-                occurred = datetime.now(timezone.utc)
+        try:
+            d, m, y = result.data_apuracao.split("/")
+            occurred = datetime(int(y), int(m), int(d), 21, 0, 0, tzinfo=timezone.utc)
+        except Exception:
+            occurred = datetime.now(timezone.utc)
 
-            event = CDSEvent(
-                content_type = LotteryContentTypes.MEGA_SENA,
-                source       = SourceMeta(id=SOURCE_ID),
-                occurred_at  = occurred,
-                lang         = "pt-BR",
-                payload      = result.model_dump(mode="json"),
-                context      = ContextMeta(summary=_build_summary(result), model="rule-based-v1"),
-            )
-            if signer:
-                signer.sign(event)
+        event = CDSEvent(
+            content_type = LotteryContentTypes.MEGA_SENA,
+            source       = SourceMeta(id=SOURCE_ID),
+            occurred_at  = occurred,
+            lang         = "pt-BR",
+            payload      = result.model_dump(mode="json"),
+            context      = ContextMeta(summary=_build_summary(result), model="rule-based-v1"),
+        )
+        if signer:
+            signer.sign(event)
 
-            results.append(_event_to_dict(event))
+        results.append(_event_to_dict(event))
 
     return results
 
@@ -299,31 +265,26 @@ async def get_mega_sena_statistics(last_n: int = 20) -> dict[str, Any]:
     """
     last_n = max(5, min(last_n, 50))
 
-    # Use a single client for all requests in this tool invocation
-    async with httpx.AsyncClient(timeout=15, follow_redirects=True) as client:
-        latest_raw = await _fetch_caixa("megasena", client=client)
-        latest     = _parse_response(latest_raw)
-        latest_num = latest.concurso
+    latest_raw = await _fetch_caixa("megasena")
+    latest     = _parse_response(latest_raw)
+    latest_num = latest.concurso
 
-        concursos = range(max(1, latest_num - last_n + 1), latest_num + 1)
-        freq: dict[str, int] = {}
-        accumulated = 0
-        total_draws = 0
+    concursos = range(max(1, latest_num - last_n + 1), latest_num + 1)
+    freq: dict[str, int] = {}
+    accumulated = 0
+    total_draws = 0
 
-        for concurso in concursos:
-            try:
-                raw    = await _fetch_caixa("megasena", concurso, client=client)
-                result = _parse_response(raw)
-                for d in result.dezenas:
-                    freq[d] = freq.get(d, 0) + 1
-                if result.acumulado:
-                    accumulated += 1
-                total_draws += 1
-            except Exception:
-                continue
-
-    if total_draws == 0:
-        return {"error": "No draws could be fetched.", "draws_analysed": 0}
+    for concurso in concursos:
+        try:
+            raw    = await _fetch_caixa("megasena", concurso)
+            result = _parse_response(raw)
+            for d in result.dezenas:
+                freq[d] = freq.get(d, 0) + 1
+            if result.acumulado:
+                accumulated += 1
+            total_draws += 1
+        except Exception:
+            continue
 
     sorted_freq  = sorted(freq.items(), key=lambda x: x[1], reverse=True)
     most_common  = sorted_freq[:10]
@@ -385,7 +346,7 @@ async def mega_sena_schema_resource() -> str:
 # ENTRY POINT
 # ═══════════════════════════════════════════════════════════
 
-def main() -> None:
+if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--transport", choices=["stdio", "sse"], default="stdio")
@@ -396,7 +357,3 @@ def main() -> None:
         mcp.run(transport="sse", port=args.port)
     else:
         mcp.run(transport="stdio")
-
-
-if __name__ == "__main__":
-    main()

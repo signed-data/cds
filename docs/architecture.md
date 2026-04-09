@@ -1,7 +1,6 @@
 # Architecture
 
-A CDS deployment has four layers. Understanding where each sits
-makes it clear why they are separated the way they are.
+A CDS deployment has four data layers and a Linked Data layer that connects them.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -14,7 +13,7 @@ makes it clear why they are separated the way they are.
 │   Fetches · fingerprints · normalises · signs           │
 │   CDSSigner(private_key, issuer)                        │
 └────────────────────────┬────────────────────────────────┘
-                         │ CDSEvent (signed JSON)
+                         │ CDSEvent (signed JSON-LD)
 ┌────────────────────────▼────────────────────────────────┐
 │                   Transport / Store                     │
 │   S3 (immutable) · SQS · EventBridge · HTTP             │
@@ -24,6 +23,15 @@ makes it clear why they are separated the way they are.
 │                     Consumer                            │
 │   CDSVerifier(public_key) · MCP server · App            │
 └─────────────────────────────────────────────────────────┘
+
+  Linked Data endpoints (signed-data.org)
+  ┌──────────────────────────────────────────────────┐
+  │  /vocab/                     CDS ontology        │
+  │  /vocab/domains/*.jsonld     Domain definitions   │
+  │  /sources/{id}               Source registry     │
+  │  /contexts/cds/v1.jsonld     JSON-LD context     │
+  │  /.well-known/cds-public-key.pem  Public key     │
+  └──────────────────────────────────────────────────┘
 ```
 
 ---
@@ -31,8 +39,8 @@ makes it clear why they are separated the way they are.
 ## Layer 1 — Data sources
 
 CDS only ingests from APIs with structured, reliable output. No scraping.
-Every source is registered in the domain spec with its `source.id` and the
-expected response schema.
+Every source is registered as a JSON-LD document at
+`https://signed-data.org/sources/{source-id}`.
 
 The raw API response is SHA-256 fingerprinted before parsing:
 ```
@@ -52,7 +60,7 @@ Responsibilities:
 1. Fetch from source, capture raw bytes
 2. Parse and normalise into the domain payload schema
 3. Generate `context.summary` via a lightweight LLM (or rule-based logic)
-4. Build the `CDSEvent` envelope
+4. Build the `CDSEvent` envelope with `@context`, `@type`, `@id`
 5. Sign: compute canonical bytes → SHA-256 hash → RSA-PSS signature
 
 The ingestor is a producer. It runs on a schedule (cron) or on-demand.
@@ -69,13 +77,14 @@ class BaseIngestor(ABC):
 
 ## Layer 3 — Transport and store
 
-CDS is transport-agnostic. Signed events are JSON blobs — they can be:
+CDS is transport-agnostic. Signed events are JSON-LD blobs — they can be:
 
 - **Stored in S3** (append-only, partitioned by `domain/date/event_id`)
 - **Queued in SQS** (between ingestor and processor)
 - **Routed via EventBridge** (by `domain` and `event_type`)
 - **Served over HTTP** (API Gateway + Lambda)
 - **Embedded in MCP responses** (tools return the event dict)
+- **Loaded into a triple store** (every event is valid RDF)
 
 The signature is inside the event — it survives any transport. You can
 copy the JSON to a database, a file, a message queue, or a response body
@@ -102,22 +111,43 @@ The public key can be distributed:
 
 ---
 
+## Linked Data layer
+
+Every CDS event is valid JSON-LD. The `@context` field maps snake_case JSON keys
+to RDF predicates defined in the CDS vocabulary.
+
+```
+Event (@id)
+  │
+  ├── @context → /contexts/cds/v1.jsonld   (key mappings)
+  ├── @type → /vocab/CuratedDataEvent      (class definition)
+  ├── content_type → /vocab/{domain}/{schema}  (schema definition)
+  └── source.@id → /sources/{id}           (source metadata)
+                      │
+                      └── domains → /vocab/{domain}/*  (domain vocabulary)
+```
+
+This link structure means any CDS event can be dereferenced: follow the URIs
+to discover what the data is, where it came from, and what the fields mean.
+
+---
+
 ## Reference deployment (AWS)
 
-The reference deployment at `signed-data.org` uses:
+The reference operator deployment at `signed-data.org` uses domain-specific stacks like `finance.brazil` and `commodities.brazil`:
 
 ```
 EventBridge Schedule (cron)
         │
-Lambda (ingestor)          ← runs CDSSigner, reads key from Secrets Manager
-        │ SQS
-Lambda (processor)         ← enriches with Amazon Bedrock Nova Micro
-        │ S3
-Lambda (API handler)       ← GET /events?domain=lottery.brazil
-        │ API Gateway v1
+Lambda (domain ingestor)   ← runs CDSSigner, reads key from Secrets Manager
+        │ S3 + EventBridge
+Lambda (MCP handler)       ← FastMCP over Lambda Function URL
+        │ CloudFront
+
+CloudFront + S3            ← serves vocab/, contexts/, sources/, .well-known/
 ```
 
-Source code: signed-data/cds infra (CDK TypeScript).
+Source code for the public product logic: [`mcp/finance`](../mcp/finance/), [`mcp/commodities`](../mcp/commodities/).
 Personal operator deployment: [magj/cds-services](https://github.com/magj/cds-services).
 
 ---
@@ -133,7 +163,7 @@ Claude Desktop
       │ MCP (stdio / SSE)
 FastMCP server
       │ CDSVerifier.verify()
-      │ CDSEvent JSON (from S3 or direct Caixa API fetch)
+      │ CDSEvent JSON-LD (from S3-backed events or direct source fetches)
       └── returns dict to Claude
 ```
 
@@ -144,9 +174,9 @@ The MCP server does not hold the private key. It only verifies.
 ## Trust model
 
 ```
-Issuer (signed-data.org)       holds private key
+Issuer (https://signed-data.org)  holds private key
        │ signs every event
-Consumer (any app, Claude)     holds public key
+Consumer (any app, Claude)        holds public key
        └── verifies every event
 ```
 

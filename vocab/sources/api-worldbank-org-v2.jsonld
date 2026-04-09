@@ -1,0 +1,16 @@
+{
+  "@context":  "https://signed-data.org/contexts/cds/v1.jsonld",
+  "@type":     "https://signed-data.org/vocab/DataSource",
+  "@id":       "https://signed-data.org/sources/api.worldbank.org.v2",
+  "name":      "World Bank \u2014 Commodities API",
+  "url":       "https://api.worldbank.org/v2/en/indicator",
+  "auth":      "none",
+  "license":   "CC BY 4.0",
+  "country":   "international",
+  "domains": [
+    "https://signed-data.org/vocab/commodities-brazil/index-worldbank"
+  ],
+  "fingerprint_algorithm": "sha256",
+  "certified_at": "2026-04-01",
+  "certified_by": "https://signed-data.org"
+}

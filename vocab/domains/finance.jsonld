@@ -1,0 +1,44 @@
+{
+  "@context": {
+    "@vocab": "https://signed-data.org/vocab/",
+    "rdfs":   "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id":          "https://signed-data.org/vocab/finance",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "finance",
+      "rdfs:comment": "Financial market data including stocks, crypto, forex, and indices.",
+      "rdfs:seeAlso": "https://signed-data.org/spec/domains/finance"
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/finance/quote-stock",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "quote.stock",
+      "rdfs:comment": "Stock market quote.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/finance" },
+      "cds:source": { "@id": "https://signed-data.org/sources/brapi.dev.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/finance/quote-crypto",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "quote.crypto",
+      "rdfs:comment": "Cryptocurrency quote.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/finance" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/finance/quote-forex",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "quote.forex",
+      "rdfs:comment": "Foreign exchange rate quote.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/finance" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/finance/index-update",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "index.update",
+      "rdfs:comment": "Market index value update.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/finance" }
+    }
+  ]
+}

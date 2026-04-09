@@ -59,6 +59,7 @@ New domains require a spec before implementation.
    - Draw/update frequency
 
 3. Once the domain spec is approved (maintainer comment), open a PR with:
+   - `spec/domains/{domain}.md` — the domain spec
    - `sdk/python/cds/sources/{domain}_models.py` — Pydantic models
    - `sdk/python/cds/sources/{domain}.py` — ingestor
    - `sdk/typescript/src/sources/{domain}.ts` — TypeScript equivalent
@@ -93,7 +94,7 @@ chore(deps):   bump cryptography to 43.0
 - [ ] All tests pass (`pytest`, `npm test`)
 - [ ] No new linting errors (`ruff check`, `tsc --noEmit`)
 - [ ] New ingestors have at least one test with mock data
-- [ ] New domain specs follow the domain spec format described in `spec/CDS-v0.1.0.md`
+- [ ] New domain specs follow the format in `spec/domains/lottery.brazil.md`
 - [ ] `CHANGELOG` entry in the relevant section of `README.md`
 
 ---

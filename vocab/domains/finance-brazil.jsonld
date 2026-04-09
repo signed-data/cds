@@ -1,0 +1,95 @@
+{
+  "@context": {
+    "@vocab": "https://signed-data.org/vocab/",
+    "rdfs":   "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id":          "https://signed-data.org/vocab/finance-brazil",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "finance.brazil",
+      "rdfs:comment": "Brazilian financial market data: BCB rates, indices, FX, B3 quotes, and Copom decisions.",
+      "rdfs:seeAlso": "https://signed-data.org/spec/domains/finance.brazil"
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/finance-brazil/rate-selic",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "rate.selic",
+      "rdfs:comment": "SELIC overnight rate from Banco Central do Brasil. Updated daily on business days.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/finance-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/api.bcb.gov.br.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/finance-brazil/rate-cdi",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "rate.cdi",
+      "rdfs:comment": "CDI (Certificado de Depósito Interbancário) daily rate from BCB.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/finance-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/api.bcb.gov.br.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/finance-brazil/index-ipca",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "index.ipca",
+      "rdfs:comment": "IPCA consumer price index (monthly and 12-month accumulated) from BCB.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/finance-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/api.bcb.gov.br.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/finance-brazil/index-igpm",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "index.igpm",
+      "rdfs:comment": "IGP-M general price index (monthly) from BCB.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/finance-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/api.bcb.gov.br.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/finance-brazil/fx-usd-brl",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "fx.usd-brl",
+      "rdfs:comment": "USD/BRL PTAX exchange rate (buy and sell) from BCB.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/finance-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/api.bcb.gov.br.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/finance-brazil/fx-eur-brl",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "fx.eur-brl",
+      "rdfs:comment": "EUR/BRL PTAX exchange rate from BCB.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/finance-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/api.bcb.gov.br.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/finance-brazil/quote-stock",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "quote.stock",
+      "rdfs:comment": "B3 stock quote (ações) via Brapi.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/finance-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/brapi.dev.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/finance-brazil/quote-fii",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "quote.fii",
+      "rdfs:comment": "B3 FII (fundo imobiliário) quote via Brapi.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/finance-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/brapi.dev.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/finance-brazil/quote-crypto",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "quote.crypto",
+      "rdfs:comment": "Cryptocurrency quote in BRL via Brapi.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/finance-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/brapi.dev.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/finance-brazil/decision-copom",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "decision.copom",
+      "rdfs:comment": "Copom monetary policy decision (SELIC target rate change).",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/finance-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/api.bcb.gov.br.v1" }
+    }
+  ]
+}

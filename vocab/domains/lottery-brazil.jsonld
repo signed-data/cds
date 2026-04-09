@@ -1,0 +1,51 @@
+{
+  "@context": {
+    "@vocab": "https://signed-data.org/vocab/",
+    "rdfs":   "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id":          "https://signed-data.org/vocab/lottery-brazil",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "lottery.brazil",
+      "rdfs:comment": "Brazilian lottery draws operated by Caixa Econ\u00f4mica Federal.",
+      "rdfs:seeAlso": "https://signed-data.org/spec/domains/lottery.brazil"
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/lottery-brazil/mega-sena-result",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "mega-sena.result",
+      "rdfs:comment": "Mega Sena draw result. 6 numbers from 1\u201360. Draws Wed/Sat.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/lottery-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/caixa.gov.br.loterias.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/lottery-brazil/lotofacil-result",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "lotofacil.result",
+      "rdfs:comment": "Lotof\u00e1cil draw result. 15 numbers from 1\u201325. Draws Mon\u2013Fri.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/lottery-brazil" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/lottery-brazil/quina-result",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "quina.result",
+      "rdfs:comment": "Quina draw result. 5 numbers from 1\u201380. Draws Mon\u2013Fri.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/lottery-brazil" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/lottery-brazil/lotomania-result",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "lotomania.result",
+      "rdfs:comment": "Lotomania draw result. 20 of 100 numbers. Mon/Wed/Fri.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/lottery-brazil" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/lottery-brazil/dupla-sena-result",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "dupla-sena.result",
+      "rdfs:comment": "Dupla Sena result. Two draws of 6 from 1\u201350. Mon/Fri.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/lottery-brazil" }
+    }
+  ]
+}

@@ -15,7 +15,7 @@ and serve your own events.
 | Ingestor | Python script | Lambda / container (cron) |
 | Event store | Local files | S3 (append-only, versioned) |
 | Consumer API | Read from disk | API Gateway + Lambda |
-| MCP server | `signeddata-mcp-lottery` | Lambda Function URL |
+| MCP server | `python -m cds_mcp_lottery mega-sena` | Lambda Function URL |
 
 ---
 
@@ -31,20 +31,15 @@ import os; os.makedirs('keys', exist_ok=True)
 generate_keypair('keys/private.pem', 'keys/public.pem')
 "
 
-# Run ingestor (football example)
+# Run ingestor
 python3 - << 'EOF'
 import asyncio
 from cds import CDSSigner
-from cds.sources.football import FootballIngestor, LEAGUE_IDS
+from cds.sources.lottery import MegaSenaIngestor
 
 signer   = CDSSigner("keys/private.pem", issuer="localhost")
-ingestor = FootballIngestor(
-    signer=signer,
-    api_key="YOUR_API_KEY",
-    league_ids=[LEAGUE_IDS["brasileirao_a"]],
-    season=2026,
-)
-events = asyncio.run(ingestor.ingest())
+ingestor = MegaSenaIngestor(signer=signer)
+events   = asyncio.run(ingestor.ingest())
 
 for e in events:
     print(e.context.summary)
@@ -101,11 +96,10 @@ docker compose up   # uses docker-compose.yml from mcp-lottery
 
 ## Issuer identity
 
-Set your `issuer` to any string that identifies your organisation.
-A domain name is conventional:
+Set your `issuer` to the URI of your organisation:
 
 ```python
-signer = CDSSigner("keys/private.pem", issuer="mycompany.example.com")
+signer = CDSSigner("keys/private.pem", issuer="https://mycompany.example.com")
 ```
 
 **Publish your public key at:**
@@ -114,6 +108,51 @@ https://mycompany.example.com/.well-known/cds-public-key.pem
 ```
 
 Consumers can then discover and verify your key automatically.
+
+---
+
+## Publishing your vocabulary
+
+If you run your own CDS issuer, you should publish your vocabulary so
+consumers can dereference URIs in your events.
+
+### 1. Create your vocabulary file
+
+Create `vocab/cds.jsonld` for your organisation, listing the classes and
+properties you use. You can copy and adapt the reference vocabulary from
+`https://signed-data.org/vocab/`.
+
+### 2. Serve it at your domain
+
+Upload `vocab/cds.jsonld` and any domain files to your web server or CDN:
+
+```
+https://mycompany.example.com/vocab/          → cds.jsonld
+https://mycompany.example.com/vocab/domains/  → domain files
+https://mycompany.example.com/sources/        → source documents
+https://mycompany.example.com/contexts/       → JSON-LD context
+```
+
+Set `Content-Type: application/ld+json` for all `.jsonld` files.
+
+### 3. Publish your public key
+
+```
+https://mycompany.example.com/.well-known/cds-public-key.pem
+```
+
+### 4. Reference your vocabulary in events
+
+Your events should use your base URI:
+
+```python
+from cds.vocab import content_type_uri, source_uri
+
+# Override the base URI for your organisation
+MY_BASE = "https://mycompany.example.com"
+my_content_type = f"{MY_BASE}/vocab/custom-domain/custom-schema"
+my_source = f"{MY_BASE}/sources/my-api.v1"
+```
 
 ---
 
@@ -131,7 +170,7 @@ key instead of ours.
 
 | Property | signed-data.org | Your deployment |
 |---|---|---|
-| `integrity.signed_by` | `"signed-data.org"` | `"mycompany.example.com"` |
+| `integrity.signed_by` | `"https://signed-data.org"` | `"https://mycompany.example.com"` |
 | Public key URL | `signed-data.org/.well-known/...` | `mycompany.example.com/.well-known/...` |
 | Infrastructure | Our AWS account | Your AWS / GCP / Azure account |
 | Ingestor schedule | Our crons | Your crons |

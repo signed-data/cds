@@ -5,16 +5,16 @@ Typed Pydantic payload schemas for sports.football events.
 from __future__ import annotations
 
 from typing import Literal
+
 from pydantic import BaseModel
 
-from cds.schema import CDSContentType
+from cds.vocab import CDSVocab
 
 
 class FootballContentTypes:
-    MATCH_RESULT = CDSContentType(domain="sports.football", schema_name="match.result")
-    MATCH_LIVE   = CDSContentType(domain="sports.football", schema_name="match.live")
-    STANDINGS    = CDSContentType(domain="sports.football", schema_name="standings.update")
-    PLAYER_STAT  = CDSContentType(domain="sports.football", schema_name="player.stat")
+    MATCH_RESULT  = CDSVocab.FOOTBALL_MATCH_RESULT
+    MATCH_LIVE    = CDSVocab.FOOTBALL_MATCH_LIVE
+    STANDINGS     = CDSVocab.FOOTBALL_STANDINGS
 
 
 MatchStatus = Literal["scheduled", "live", "finished", "postponed", "cancelled"]
