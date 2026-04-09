@@ -203,8 +203,7 @@ Add to your Claude Desktop config (`~/.config/claude/claude_desktop_config.json`
 {
   "mcpServers": {
     "lottery": {
-      "command": "python",
-      "args": ["-m", "cds_mcp_lottery", "mega-sena"],
+      "command": "signeddata-mcp-lottery",
       "env": {
         "CDS_PRIVATE_KEY_PATH": "/path/to/keys/private.pem",
         "CDS_ISSUER": "https://myorg.example.com"

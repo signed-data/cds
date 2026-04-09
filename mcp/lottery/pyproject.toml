@@ -1,6 +1,6 @@
 [build-system]
 requires = ["setuptools>=72"]
-build-backend = "setuptools.backends.legacy:build"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "signeddata-mcp-lottery"
@@ -15,7 +15,7 @@ dependencies = [
 ]
 
 [project.scripts]
-signeddata-mcp-lottery = "mcp.lottery.server:main"
+signeddata-mcp-lottery = "server:main"
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.setuptools]
+py-modules = ["server"]
