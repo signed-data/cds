@@ -1,0 +1,19 @@
+{
+  "@context":  "https://signed-data.org/contexts/cds/v1.jsonld",
+  "@type":     "https://signed-data.org/vocab/DataSource",
+  "@id":       "https://signed-data.org/sources/api.portaldatransparencia.gov.br.v1",
+  "name":      "Portal da Transparência — API de Dados",
+  "url":       "https://api.portaldatransparencia.gov.br/api-de-dados/",
+  "auth":      "api-key",
+  "license":   "LAI 12.527/2011",
+  "country":   "BR",
+  "upstream":  "Controladoria-Geral da União (CGU)",
+  "domains": [
+    "https://signed-data.org/vocab/government-brazil/sanctions-consolidated",
+    "https://signed-data.org/vocab/government-brazil/sanctions-ceis",
+    "https://signed-data.org/vocab/government-brazil/sanctions-cnep"
+  ],
+  "fingerprint_algorithm": "sha256",
+  "certified_at": "2026-04-20",
+  "certified_by": "https://signed-data.org"
+}
