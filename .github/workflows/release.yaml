@@ -13,6 +13,10 @@ concurrency:
   group: release-publish-${{ github.ref }}
   cancel-in-progress: false
 
+env:
+  PYTHON_VERSION: 3.13
+  NODEJS_VERSION: 24
+
 jobs:
   publish-pypi:
     name: Publish to PyPI
@@ -26,7 +30,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - uses: astral-sh/setup-uv@v5
 
@@ -59,7 +63,7 @@ jobs:
         working-directory: sdk/typescript
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-node@v4
         with:
