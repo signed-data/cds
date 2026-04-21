@@ -70,13 +70,13 @@ beforeAll(() => {
 // ── Tests ──────────────────────────────────────────────────
 
 describe("LotteryContentTypes", () => {
-  it("MEGA_SENA has the correct MIME type", () => {
-    expect(LotteryContentTypes.MEGA_SENA.mime_type)
-      .toBe("application/vnd.cds.lottery-brazil.mega-sena-result+json;v=1");
+  it("MEGA_SENA has the correct content type URI", () => {
+    expect(LotteryContentTypes.MEGA_SENA)
+      .toBe("https://signed-data.org/vocab/lottery-brazil/mega-sena-result");
   });
-  it("all content types have distinct MIME types", () => {
-    const mimes = Object.values(LotteryContentTypes).map(ct => ct.mime_type);
-    expect(new Set(mimes).size).toBe(mimes.length);
+  it("all content types have distinct URIs", () => {
+    const contentTypes = Object.values(LotteryContentTypes);
+    expect(new Set(contentTypes).size).toBe(contentTypes.length);
   });
 });
 
