@@ -2,6 +2,7 @@
 SignedData CDS — Weather Ingestor
 Source: Open-Meteo API (free, no auth)
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -65,11 +66,13 @@ class WeatherIngestor(BaseIngestor):
             f"wind {current.get('windspeed', '?')} km/h"
         )
 
-        return [CDSEvent(
-            content_type=CDSVocab.WEATHER_CURRENT,
-            source=SourceMeta(id=CDSSources.OPEN_METEO, fingerprint=fp),
-            occurred_at=datetime.now(UTC),
-            lang="en",
-            payload=payload,
-            event_context=ContextMeta(summary=summary, model="rule-based-v1"),
-        )]
+        return [
+            CDSEvent(
+                content_type=CDSVocab.WEATHER_CURRENT,
+                source=SourceMeta(id=CDSSources.OPEN_METEO, fingerprint=fp),
+                occurred_at=datetime.now(UTC),
+                lang="en",
+                payload=payload,
+                event_context=ContextMeta(summary=summary, model="rule-based-v1"),
+            )
+        ]

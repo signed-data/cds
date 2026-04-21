@@ -9,12 +9,15 @@
   "country":   "BR",
   "upstream":  "Controladoria-Geral da União (CGU)",
   "domains": [
+    "https://signed-data.org/vocab/government-brazil/sanctions-consolidated",
+    "https://signed-data.org/vocab/government-brazil/sanctions-ceis",
+    "https://signed-data.org/vocab/government-brazil/sanctions-cnep",
     "https://signed-data.org/vocab/integrity-brazil/sanctions-consolidated",
     "https://signed-data.org/vocab/integrity-brazil/sanctions-ceis",
     "https://signed-data.org/vocab/integrity-brazil/sanctions-cnep",
     "https://signed-data.org/vocab/integrity-brazil/sanctions-cepim"
   ],
   "fingerprint_algorithm": "sha256",
-  "certified_at": "2026-04-07",
+  "certified_at": "2026-04-20",
   "certified_by": "https://signed-data.org"
 }

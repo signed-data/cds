@@ -2,6 +2,7 @@
 SignedData CDS — Lottery Domain Models
 Typed Pydantic payload schemas for lottery.brazil events.
 """
+
 from __future__ import annotations
 
 from pydantic import BaseModel
@@ -10,10 +11,10 @@ from cds.vocab import CDSVocab
 
 
 class LotteryContentTypes:
-    MEGA_SENA  = CDSVocab.LOTTERY_MEGA_SENA
-    LOTOFACIL  = CDSVocab.LOTTERY_LOTOFACIL
-    QUINA      = CDSVocab.LOTTERY_QUINA
-    LOTOMANIA  = CDSVocab.LOTTERY_LOTOMANIA
+    MEGA_SENA = CDSVocab.LOTTERY_MEGA_SENA
+    LOTOFACIL = CDSVocab.LOTTERY_LOTOFACIL
+    QUINA = CDSVocab.LOTTERY_QUINA
+    LOTOMANIA = CDSVocab.LOTTERY_LOTOMANIA
     DUPLA_SENA = CDSVocab.LOTTERY_DUPLA_SENA
 
 
@@ -21,17 +22,17 @@ class PrizeTier(BaseModel):
     tier: int
     description: str
     winners: int
-    prize_amount: float   # BRL per winner
-    total_prize: float    # winners * prize_amount
+    prize_amount: float  # BRL per winner
+    total_prize: float  # winners * prize_amount
 
 
 class MegaSenaResult(BaseModel):
     concurso: int
-    data_apuracao: str              # "29/03/2026"
-    data_apuracao_iso: str          # "2026-03-29"
+    data_apuracao: str  # "29/03/2026"
+    data_apuracao_iso: str  # "2026-03-29"
     local_sorteio: str = ""
     cidade_uf: str = ""
-    dezenas: list[str]              # sorted: ["04","12","25","36","47","59"]
+    dezenas: list[str]  # sorted: ["04","12","25","36","47","59"]
     dezenas_ordem_sorteio: list[str] = []  # draw order
     acumulado: bool
     premiacoes: list[PrizeTier] = []
@@ -48,6 +49,7 @@ class MegaSenaResult(BaseModel):
 
 class LotteryResult(BaseModel):
     """Generic lottery result for non-Mega-Sena games."""
+
     concurso: int
     data_apuracao: str
     data_apuracao_iso: str

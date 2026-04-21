@@ -221,10 +221,11 @@ async def batch_company_lookup(cnpjs: list[str]) -> list[dict[str, Any]]:
 # ENTRY POINT
 # ═══════════════════════════════════════════════════════════
 
-if __name__ == "__main__":
+def main() -> None:
+    """Entry point for signeddata-mcp-companies CLI."""
     import argparse
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="SignedData CDS Companies MCP Server")
     parser.add_argument("--transport", choices=["stdio", "sse"], default="stdio")
     parser.add_argument("--port", type=int, default=8012)
     args = parser.parse_args()
@@ -233,3 +234,7 @@ if __name__ == "__main__":
         mcp.run(transport="sse", port=args.port)
     else:
         mcp.run(transport="stdio")
+
+
+if __name__ == "__main__":
+    main()
