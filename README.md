@@ -157,6 +157,58 @@ import os; os.makedirs("keys", exist_ok=True)
 generate_keypair("keys/private.pem", "keys/public.pem")
 ```
 
+## MCP Servers
+
+All MCP servers are published to PyPI and Docker Hub. Use them with Claude Desktop, command-line MCP clients, or self-host locally.
+
+| Server | Package | Hosted Endpoint | Tools |
+|--------|---------|-----------------|-------|
+| **Finance** | `signeddata-mcp-finance` | `https://finance.mcp.signed-data.org/mcp` | SELIC, IPCA, PTAX FX, B3 quotes, Copom |
+| **Commodities** | `signeddata-mcp-commodities` | `https://commodities.mcp.signed-data.org/mcp` | B3 agro futures, CONAB spot prices, basis spreads |
+| **Companies** | `signeddata-mcp-companies` | `https://companies.mcp.signed-data.org/mcp` | CNPJ lookup, company verification |
+| **Lottery** | `signeddata-mcp-lottery` | `https://lottery.mcp.signed-data.org/mcp` | Mega Sena, Lotofácil, Quina, Lotomania, Dupla Sena |
+| **Gov-BR** | `signeddata-mcp-gov-br` | `https://gov-br.mcp.signed-data.org/mcp` | Federal sanctions (CEIS/CNEP) lookups |
+
+### Install locally
+
+```bash
+pip install signeddata-mcp-finance
+pip install signeddata-mcp-commodities
+pip install signeddata-mcp-companies
+pip install signeddata-mcp-lottery
+pip install signeddata-mcp-gov-br
+```
+
+Add to Claude Desktop (`~/.config/claude/claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "signeddata-finance": { "command": "signeddata-mcp-finance" },
+    "signeddata-commodities": { "command": "signeddata-mcp-commodities" },
+    "signeddata-companies": { "command": "signeddata-mcp-companies" },
+    "signeddata-lottery": { "command": "signeddata-mcp-lottery" },
+    "signeddata-gov-br": { "command": "signeddata-mcp-gov-br", "env": { "PORTAL_TRANSPARENCIA_TOKEN": "your-free-token" } }
+  }
+}
+```
+
+Or use the hosted endpoints (zero install):
+
+```json
+{
+  "mcpServers": {
+    "signeddata-finance": { "url": "https://finance.mcp.signed-data.org/mcp" },
+    "signeddata-commodities": { "url": "https://commodities.mcp.signed-data.org/mcp" },
+    "signeddata-companies": { "url": "https://companies.mcp.signed-data.org/mcp" },
+    "signeddata-lottery": { "url": "https://lottery.mcp.signed-data.org/mcp" },
+    "signeddata-gov-br": { "url": "https://gov-br.mcp.signed-data.org/mcp" }
+  }
+}
+```
+
+Full product pages with domain specs, tools, and examples: [signed-data.org/products](https://signed-data.org/products)
+
 ---
 
 ## Repository structure
@@ -211,7 +263,9 @@ cds/
 
 ## How signing works
 
-Signing is deterministic RSA-PSS SHA-256 over a canonical JSON serialisation of the event.
+CDS signing uses RSA-PSS SHA-256 over a canonical JSON serialisation of the event.
+The canonical bytes — and therefore the hash — are deterministic; RSA-PSS signatures
+use a random salt per the standard.
 
 **Sign (producer):**
 1. Serialise the event to canonical JSON — `sort_keys=True`, UTF-8, excluding `integrity` and `ingested_at`; including `@context`, `@type`, `@id`
@@ -313,13 +367,13 @@ signer = CDSSigner("./keys/private.pem", issuer="https://mycompany.example.com")
 
 Consumers verify with your public key. The trust anchor is your organisation, not ours. Publish your vocabulary and public key at your domain for full Linked Data compliance.
 
-For a complete self-hosting example with AWS CDK (Lambda + S3 + EventBridge), see the [magj/cds-services](https://github.com/magj/cds-services) reference deployment.
+For a complete self-hosting example with AWS CDK (ECS/Fargate + Lambda + ALB + Route53 + CloudWatch), see the [signed-data/cds-services](https://github.com/signed-data/cds-services) reference deployment. It includes infrastructure as code for running all MCP servers in production.
 
 ---
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](docs/contributing.md).
 
 To propose a new domain or schema, open an issue with the tag `domain-proposal`. Include: the data source, sample API response, and a draft payload schema.
 

@@ -131,7 +131,7 @@ async def check_company_status(cnpj: str) -> dict[str, Any]:
     }
 
 
-@mcp.tool()
+@mcp.tool(name="validate_cnpj")
 async def validate_cnpj_tool(cnpj: str) -> dict[str, Any]:
     """
     Validate a CNPJ number without making any API call.

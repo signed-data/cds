@@ -75,6 +75,19 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras
 
+      - name: Verify lottery install and startup
+        if: needs.determine-server.outputs.server == 'lottery'
+        run: |
+          uv venv .venv-verify
+          uv pip install --python .venv-verify/bin/python ../../sdk/python .
+          .venv-verify/bin/python -m cds_mcp_lottery mega-sena --help
+          timeout 5s .venv-verify/bin/python -m cds_mcp_lottery mega-sena >/tmp/mcp-lottery-smoke.log 2>&1
+          status=$?
+          if [ "$status" -ne 0 ] && [ "$status" -ne 124 ]; then
+            cat /tmp/mcp-lottery-smoke.log
+            exit "$status"
+          fi
+
       - name: Build distributions
         run: uv build
 
@@ -85,7 +98,7 @@ jobs:
 
   publish-docker:
     name: Publish ${{ needs.determine-server.outputs.server }} to Docker Hub
-    needs: determine-server
+    needs: [determine-server, publish-pypi]
     runs-on: ubuntu-latest
 
     steps:
@@ -100,7 +113,19 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push lottery image
+        if: needs.determine-server.outputs.server == 'lottery'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: mcp/lottery/Dockerfile
+          push: true
+          tags: |
+            signeddata/mcp-lottery:latest
+            signeddata/mcp-lottery:v${{ needs.determine-server.outputs.version }}
+
+      - name: Build and push other MCP images
+        if: needs.determine-server.outputs.server != 'lottery'
         uses: docker/build-push-action@v5
         with:
           context: mcp/${{ needs.determine-server.outputs.server }}
