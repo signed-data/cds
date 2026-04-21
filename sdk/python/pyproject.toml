@@ -67,3 +67,12 @@ addopts      = "--cov=cds --cov-report=term-missing --cov-report=xml"
 [tool.coverage.run]
 source = ["cds"]
 omit   = ["tests/*"]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.20.0",
+    "pytest>=9.0.2",
+    "pytest-asyncio>=0.23",
+    "pytest-cov>=5.0",
+    "ruff>=0.15.8",
+]

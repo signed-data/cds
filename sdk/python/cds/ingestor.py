@@ -2,6 +2,7 @@
 SignedData CDS — Base Ingestor
 All data-source adapters extend BaseIngestor.
 """
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -11,7 +12,7 @@ from cds.signer import CDSSigner
 
 
 class BaseIngestor(ABC):
-    content_type: str   # URI — declared by each subclass
+    content_type: str  # URI — declared by each subclass
 
     def __init__(self, signer: CDSSigner) -> None:
         self.signer = signer

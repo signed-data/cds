@@ -3,6 +3,7 @@ CDS Commodities Brazil Test Suite
 Tests for models, content types, ingestors (mocked), CONAB defensive parsing,
 basis computation, and signing.
 """
+
 import json
 from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -124,8 +125,10 @@ class TestCommodityContentTypes:
         assert CommodityContentTypes.FUTURES_SOJA == CDSVocab.COMMODITY_FUTURES_SOJA
 
     def test_futures_soja_uri_value(self):
-        assert CommodityContentTypes.FUTURES_SOJA == \
-            "https://signed-data.org/vocab/commodities-brazil/futures-soja"
+        assert (
+            CommodityContentTypes.FUTURES_SOJA
+            == "https://signed-data.org/vocab/commodities-brazil/futures-soja"
+        )
 
 
 # ── CONAB Defensive Parsing Tests ─────────────────────────
@@ -230,21 +233,25 @@ class TestB3FuturesIngestor:
         mock_signer.sign = lambda e: e
 
         mock_resp = MagicMock()
-        mock_resp.content = json.dumps({
-            "results": [{"symbol": "SFI", "regularMarketPrice": 146.50}],
-        }).encode()
+        mock_resp.content = json.dumps(
+            {
+                "results": [{"symbol": "SFI", "regularMarketPrice": 146.50}],
+            }
+        ).encode()
         mock_resp.json.return_value = {
-            "results": [{
-                "symbol": "SFI",
-                "regularMarketPrice": 146.50,
-                "regularMarketChange": -0.80,
-                "regularMarketChangePercent": -0.54,
-                "regularMarketOpen": 147.20,
-                "regularMarketDayHigh": 147.50,
-                "regularMarketDayLow": 146.20,
-                "regularMarketVolume": 12450,
-                "regularMarketTime": "2026-04-02T14:30:00-03:00",
-            }],
+            "results": [
+                {
+                    "symbol": "SFI",
+                    "regularMarketPrice": 146.50,
+                    "regularMarketChange": -0.80,
+                    "regularMarketChangePercent": -0.54,
+                    "regularMarketOpen": 147.20,
+                    "regularMarketDayHigh": 147.50,
+                    "regularMarketDayLow": 146.20,
+                    "regularMarketVolume": 12450,
+                    "regularMarketTime": "2026-04-02T14:30:00-03:00",
+                }
+            ],
         }
         mock_resp.raise_for_status = MagicMock()
 
