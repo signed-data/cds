@@ -1,12 +1,35 @@
 /**
- * CDS TypeScript SDK — Core Schema v0.2.0
+ * SignedData CDS — Core Schema
+ * TypeScript 5 / ESM.  Issuer: signed-data.org
  */
 import { randomUUID } from "node:crypto";
-import { CDS_CONTEXT_URI, CDS_EVENT_TYPE_URI, eventUri } from "./vocab.js";
+export class CDSContentType {
+    domain;
+    schema_name;
+    version;
+    encoding;
+    constructor(opts) {
+        this.domain = opts.domain;
+        this.schema_name = opts.schema_name;
+        this.version = opts.version ?? "1";
+        this.encoding = opts.encoding ?? "json";
+    }
+    get mime_type() {
+        const d = this.domain.replace(/\./g, "-");
+        const s = this.schema_name.replace(/\./g, "-");
+        return `application/vnd.cds.${d}.${s}+${this.encoding};v=${this.version}`;
+    }
+    toString() { return this.mime_type; }
+    toJSON() {
+        return {
+            domain: this.domain,
+            schema_name: this.schema_name,
+            version: this.version,
+            encoding: this.encoding,
+        };
+    }
+}
 export class CDSEvent {
-    ["@context"];
-    ["@type"];
-    ["@id"];
     spec_version;
     id;
     content_type;
@@ -18,12 +41,8 @@ export class CDSEvent {
     context;
     integrity;
     constructor(opts) {
-        const id = opts.id ?? randomUUID();
-        this["@context"] = CDS_CONTEXT_URI;
-        this["@type"] = CDS_EVENT_TYPE_URI;
-        this["@id"] = eventUri(id);
-        this.spec_version = opts.spec_version ?? "0.2.0";
-        this.id = id;
+        this.spec_version = opts.spec_version ?? "0.1.0";
+        this.id = opts.id ?? randomUUID();
         this.content_type = opts.content_type;
         this.source = opts.source;
         this.occurred_at = opts.occurred_at instanceof Date
@@ -35,62 +54,37 @@ export class CDSEvent {
         this.context = opts.context;
         this.integrity = opts.integrity;
     }
-    get domain() {
-        try {
-            const seg = this.content_type.split("/vocab/")[1] ?? "";
-            return (seg.split("/")[0] ?? "").replace(/-/g, ".");
-        }
-        catch {
-            return "";
-        }
-    }
-    get event_type() {
-        try {
-            const seg = this.content_type.split("/vocab/")[1] ?? "";
-            const parts = seg.split("/");
-            const slug = parts[1] ?? "";
-            // Reverse the LAST hyphen to a dot (the original schema_name separator)
-            const idx = slug.lastIndexOf("-");
-            if (idx >= 0)
-                return slug.slice(0, idx) + "." + slug.slice(idx + 1);
-            return slug;
-        }
-        catch {
-            return "";
-        }
-    }
-    toJSON() {
-        return {
-            "@context": this["@context"],
-            "@type": this["@type"],
-            "@id": this["@id"],
-            spec_version: this.spec_version,
-            id: this.id,
-            content_type: this.content_type,
-            source: this.source,
-            occurred_at: this.occurred_at,
-            ingested_at: this.ingested_at,
-            lang: this.lang,
-            payload: this.payload,
-            ...(this.context ? { context: this.context } : {}),
-            ...(this.integrity ? { integrity: this.integrity } : {}),
-        };
-    }
+    get domain() { return this.content_type.domain; }
+    get event_type() { return this.content_type.schema_name; }
     canonicalBytes() {
         const { integrity: _i, ingested_at: _ia, ...rest } = this.toJSON();
         const sorted = Object.fromEntries(Object.entries(rest).sort(([a], [b]) => a.localeCompare(b)));
         return Buffer.from(JSON.stringify(sorted), "utf-8");
     }
+    toJSON() {
+        return {
+            spec_version: this.spec_version,
+            id: this.id,
+            content_type: this.content_type.toJSON(),
+            source: this.source,
+            occurred_at: this.occurred_at,
+            ingested_at: this.ingested_at,
+            lang: this.lang,
+            payload: this.payload,
+            ...(this.context && { context: this.context }),
+            ...(this.integrity && { integrity: this.integrity }),
+        };
+    }
     static fromJSON(data) {
+        const ct = data["content_type"];
         return new CDSEvent({
-            id: data["id"],
-            content_type: data["content_type"],
-            source: data["source"],
-            occurred_at: data["occurred_at"],
-            lang: data["lang"],
-            payload: data["payload"],
-            context: data["context"],
-            integrity: data["integrity"],
+            ...data,
+            content_type: new CDSContentType({
+                domain: ct["domain"],
+                schema_name: ct["schema_name"],
+                version: ct["version"],
+                encoding: ct["encoding"],
+            }),
         });
     }
 }

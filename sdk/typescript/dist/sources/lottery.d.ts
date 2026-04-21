@@ -11,15 +11,16 @@
  *   /portaldeloterias/api/quina/{concurso}
  *   /portaldeloterias/api/lotomania/{concurso}
  */
-import { CDSEvent } from "../schema.js";
+import { CDSContentType, CDSEvent } from "../schema.js";
 import { CDSSigner } from "../signer.js";
 import { BaseIngestor } from "../ingestor.js";
 export declare const LotteryContentTypes: {
-    readonly MEGA_SENA: string;
-    readonly LOTOFACIL: string;
-    readonly QUINA: string;
-    readonly LOTOMANIA: string;
-    readonly DUPLA_SENA: string;
+    readonly MEGA_SENA: CDSContentType;
+    readonly LOTOFACIL: CDSContentType;
+    readonly QUINA: CDSContentType;
+    readonly LOTOMANIA: CDSContentType;
+    readonly TIMEMANIA: CDSContentType;
+    readonly DUPLA_SENA: CDSContentType;
 };
 export interface PrizeTier {
     tier: number;
@@ -49,7 +50,7 @@ export interface MegaSenaIngestorOptions {
     concursos?: number[];
 }
 export declare class MegaSenaIngestor extends BaseIngestor {
-    readonly contentType: string;
+    readonly contentType: CDSContentType;
     private readonly concursos;
     constructor(signer: CDSSigner, opts?: MegaSenaIngestorOptions);
     fetch(): Promise<CDSEvent[]>;

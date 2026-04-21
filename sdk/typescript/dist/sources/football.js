@@ -3,13 +3,13 @@
  * Source: api-football.com (RapidAPI)
  */
 import { createHash } from "node:crypto";
-import { CDSEvent } from "../schema.js";
+import { CDSContentType, CDSEvent } from "../schema.js";
 import { BaseIngestor } from "../ingestor.js";
-import { CDSVocab, CDSSources } from "../vocab.js";
 export const FootballContentTypes = {
-    MATCH_RESULT: CDSVocab.FOOTBALL_MATCH_RESULT,
-    MATCH_LIVE: CDSVocab.FOOTBALL_MATCH_LIVE,
-    STANDINGS: CDSVocab.FOOTBALL_STANDINGS,
+    MATCH_RESULT: new CDSContentType({ domain: "sports.football", schema_name: "match.result" }),
+    MATCH_LIVE: new CDSContentType({ domain: "sports.football", schema_name: "match.live" }),
+    STANDINGS: new CDSContentType({ domain: "sports.football", schema_name: "standings.update" }),
+    PLAYER_STAT: new CDSContentType({ domain: "sports.football", schema_name: "player.stat" }),
 };
 export const LEAGUE_IDS = {
     brasileirao_a: 71, brasileirao_b: 72, copa_brasil: 73,
@@ -94,7 +94,7 @@ export class FootballIngestor extends BaseIngestor {
         };
         return new CDSEvent({
             content_type: ct,
-            source: { "@id": CDSSources.API_FOOTBALL, fingerprint },
+            source: { id: "api-football.com.v3", fingerprint },
             occurred_at: fx["date"] ?? new Date().toISOString(),
             lang: "en",
             payload: payload,
