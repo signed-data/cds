@@ -22,7 +22,7 @@ from cds.sources.gov_br import (
     _normalise_cnep,
     _parse_consolidated,
 )
-from cds.sources.gov_br_models import GovBrContentTypes, SanctionsConsolidated
+from cds.sources.gov_br_models import GovBrContentTypes
 from cds.vocab import CDSSources, CDSVocab
 
 # ── Fixtures ───────────────────────────────────────────────

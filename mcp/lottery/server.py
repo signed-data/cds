@@ -13,8 +13,6 @@ Install:
 """
 from __future__ import annotations
 
-import asyncio
-import hashlib
 import json
 import os
 import sys
@@ -25,18 +23,22 @@ from typing import Any
 import httpx
 
 # ── Path setup ─────────────────────────────────────────────
-# Note: The signeddata-cds package is now a proper dependency;
-# sys.path injection is no longer needed
+# Allows running directly or as part of the monorepo.
+_ROOT = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(_ROOT / "sdk/python"))
 
 from fastmcp import FastMCP
 from cds.schema import CDSEvent, ContextMeta, SourceMeta
-from cds.vocab import CDSVocab, CDSSources
-from cds.signer import CDSSigner, CDSVerifier
+from cds.vocab import CDSSources
+from cds.signer import CDSSigner
 from cds.sources.lottery_models import LotteryContentTypes, MegaSenaResult, PrizeTier
 from cds.sources.lottery import (
     CAIXA_BASE,
-    _parse_response, _build_summary, _parse_premiacao, _parse_date_iso,
+    _build_summary,
+    _parse_response,
 )
+
+SOURCE_ID = CDSSources.CAIXA_LOTERIAS
 
 # ── Server config ───────────────────────────────────────────
 mcp = FastMCP(
@@ -52,17 +54,13 @@ mcp = FastMCP(
 # ── Signing (optional — uses env var or skips) ──────────────
 _PRIVATE_KEY_PATH = os.environ.get("CDS_PRIVATE_KEY_PATH", "")
 _ISSUER           = os.environ.get("CDS_ISSUER", "signed-data.org")
-_PUBLIC_KEY_PATH  = os.environ.get("CDS_PUBLIC_KEY_PATH", "")
+
 
 def _get_signer() -> CDSSigner | None:
     if _PRIVATE_KEY_PATH and Path(_PRIVATE_KEY_PATH).exists():
         return CDSSigner(_PRIVATE_KEY_PATH, issuer=_ISSUER)
     return None
 
-def _get_verifier() -> CDSVerifier | None:
-    if _PUBLIC_KEY_PATH and Path(_PUBLIC_KEY_PATH).exists():
-        return CDSVerifier(_PUBLIC_KEY_PATH)
-    return None
 
 def _brl(value: float) -> str:
     """Format BRL: 45000000.0 → 'R$ 45.000.000,00'"""
@@ -99,16 +97,17 @@ async def _fetch_caixa(
         resp.raise_for_status()
         return resp.json()
 
+
 def _event_to_dict(event: CDSEvent) -> dict[str, Any]:
     """Serialise a CDSEvent to a plain dict for MCP response."""
     return {
-        "cds_event_id":    event.id,
-        "content_type":    event.content_type.mime_type,
-        "occurred_at":     event.occurred_at,
-        "signed_by":       event.integrity.signed_by if event.integrity else None,
-        "hash":            event.integrity.hash[:20] + "..." if event.integrity else None,
-        "summary":         event.context.summary if event.context else "",
-        "payload":         event.payload,
+        "cds_event_id": event.id,
+        "content_type": event.content_type,
+        "occurred_at": event.occurred_at.isoformat(),
+        "signed_by": event.integrity.signed_by if event.integrity else None,
+        "hash": event.integrity.hash[:20] + "..." if event.integrity else None,
+        "summary": event.event_context.summary if event.event_context else "",
+        "payload": event.payload,
     }
 
 # ═══════════════════════════════════════════════════════════
@@ -141,7 +140,7 @@ async def get_mega_sena_latest() -> dict[str, Any]:
         occurred_at  = occurred,
         lang         = "pt-BR",
         payload      = result.model_dump(mode="json"),
-        context      = ContextMeta(summary=_build_summary(result), model="rule-based-v1"),
+        event_context=ContextMeta(summary=_build_summary(result), model="rule-based-v1"),
     )
     if signer:
         signer.sign(event)
@@ -173,7 +172,7 @@ async def get_mega_sena_by_concurso(concurso: int) -> dict[str, Any]:
         occurred_at  = occurred,
         lang         = "pt-BR",
         payload      = result.model_dump(mode="json"),
-        context      = ContextMeta(summary=_build_summary(result), model="rule-based-v1"),
+        event_context=ContextMeta(summary=_build_summary(result), model="rule-based-v1"),
     )
     if signer:
         signer.sign(event)
@@ -268,7 +267,7 @@ async def check_mega_sena_ticket(
         "prize_tier":     tier_data.description if tier_data else "Sem prêmio",
         "prize_amount":   _brl(tier_data.prize_amount) if tier_data else "R$ 0,00",
         "won":            tier_data is not None,
-        "summary":        result.context.summary if hasattr(result, "context") else _build_summary(result),
+        "summary":        _build_summary(result),
     }
 
 
@@ -349,7 +348,7 @@ async def mega_sena_latest_resource() -> str:
 async def mega_sena_schema_resource() -> str:
     """CDS content type and payload schema for Mega Sena events."""
     return json.dumps({
-        "content_type": LotteryContentTypes.MEGA_SENA.mime_type,
+        "content_type": LotteryContentTypes.MEGA_SENA,
         "issuer":       _ISSUER,
         "source":       SOURCE_ID,
         "payload_fields": {
@@ -381,7 +380,6 @@ def main() -> None:
         mcp.run(transport="sse", port=args.port)
     else:
         mcp.run(transport="stdio")
-
 
 if __name__ == "__main__":
     main()
