@@ -2,14 +2,13 @@
  * SignedData CDS — Football Source
  * Source: api-football.com (RapidAPI)
  */
-import { CDSContentType, CDSEvent } from "../schema.js";
+import { CDSEvent } from "../schema.js";
 import { CDSSigner } from "../signer.js";
 import { BaseIngestor } from "../ingestor.js";
 export declare const FootballContentTypes: {
-    readonly MATCH_RESULT: CDSContentType;
-    readonly MATCH_LIVE: CDSContentType;
-    readonly STANDINGS: CDSContentType;
-    readonly PLAYER_STAT: CDSContentType;
+    readonly MATCH_RESULT: string;
+    readonly MATCH_LIVE: string;
+    readonly STANDINGS: string;
 };
 export declare const LEAGUE_IDS: {
     readonly brasileirao_a: 71;
@@ -72,7 +71,7 @@ export interface FootballIngestorOptions {
     season?: number;
 }
 export declare class FootballIngestor extends BaseIngestor {
-    readonly contentType: CDSContentType;
+    readonly contentType: string;
     private readonly apiKey;
     private readonly leagueIds;
     private readonly season;

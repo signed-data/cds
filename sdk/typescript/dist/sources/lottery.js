@@ -12,20 +12,19 @@
  *   /portaldeloterias/api/lotomania/{concurso}
  */
 import { createHash } from "node:crypto";
-import { CDSContentType, CDSEvent } from "../schema.js";
+import { CDSEvent } from "../schema.js";
 import { BaseIngestor } from "../ingestor.js";
+import { CDSVocab, CDSSources } from "../vocab.js";
 // ── Content Types ──────────────────────────────────────────
 export const LotteryContentTypes = {
-    MEGA_SENA: new CDSContentType({ domain: "lottery.brazil", schema_name: "mega-sena.result" }),
-    LOTOFACIL: new CDSContentType({ domain: "lottery.brazil", schema_name: "lotofacil.result" }),
-    QUINA: new CDSContentType({ domain: "lottery.brazil", schema_name: "quina.result" }),
-    LOTOMANIA: new CDSContentType({ domain: "lottery.brazil", schema_name: "lotomania.result" }),
-    TIMEMANIA: new CDSContentType({ domain: "lottery.brazil", schema_name: "timemania.result" }),
-    DUPLA_SENA: new CDSContentType({ domain: "lottery.brazil", schema_name: "dupla-sena.result" }),
+    MEGA_SENA: CDSVocab.LOTTERY_MEGA_SENA,
+    LOTOFACIL: CDSVocab.LOTTERY_LOTOFACIL,
+    QUINA: CDSVocab.LOTTERY_QUINA,
+    LOTOMANIA: CDSVocab.LOTTERY_LOTOMANIA,
+    DUPLA_SENA: CDSVocab.LOTTERY_DUPLA_SENA,
 };
 // ── Helpers ────────────────────────────────────────────────
 const CAIXA_BASE = "https://servicebus2.caixa.gov.br/portaldeloterias/api";
-const SOURCE_ID = "caixa.gov.br.loterias.v1";
 function parseDateIso(brDate) {
     const [d, m, y] = brDate.split("/");
     return d && m && y ? `${y}-${m}-${d}` : brDate;
@@ -118,7 +117,7 @@ export class MegaSenaIngestor extends BaseIngestor {
             }
             events.push(new CDSEvent({
                 content_type: LotteryContentTypes.MEGA_SENA,
-                source: { id: SOURCE_ID, fingerprint: fp },
+                source: { "@id": CDSSources.CAIXA_LOTERIAS, fingerprint: fp },
                 occurred_at: occurred,
                 lang: "pt-BR",
                 payload: result,
