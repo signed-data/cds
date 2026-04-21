@@ -4,6 +4,7 @@ Source: BrasilAPI — https://brasilapi.com.br/api/cnpj/v1/{cnpj}
 
 Query-driven: no scheduled ingestor. Called per CNPJ lookup from the MCP server.
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -125,14 +126,16 @@ def _parse_partners(raw: dict[str, Any], query_ts: str) -> CompanyPartners:
     cnpj_bare = str(raw.get("cnpj", "")).zfill(14)
     partners = []
     for qsa in raw.get("qsa", []):
-        partners.append(CompanyPartner(
-            name=qsa.get("nome_socio", ""),
-            qualifier=qsa.get("qualificacao_socio", ""),
-            qualifier_code=int(qsa.get("codigo_qualificacao_socio", 0)),
-            entry_date=qsa.get("data_entrada_sociedade"),
-            country=qsa.get("pais"),
-            legal_representative=qsa.get("nome_representante_legal") or None,
-        ))
+        partners.append(
+            CompanyPartner(
+                name=qsa.get("nome_socio", ""),
+                qualifier=qsa.get("qualificacao_socio", ""),
+                qualifier_code=int(qsa.get("codigo_qualificacao_socio", 0)),
+                entry_date=qsa.get("data_entrada_sociedade"),
+                country=qsa.get("pais"),
+                legal_representative=qsa.get("nome_representante_legal") or None,
+            )
+        )
     return CompanyPartners(
         cnpj=cnpj_bare,
         company_name=raw.get("razao_social", ""),

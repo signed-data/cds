@@ -180,15 +180,7 @@ export class SignedDataStack extends cdk.Stack {
     eventsBucket.grantWrite(processorRole);
     ingestQueue.grantConsumeMessages(processorRole);
     eventBus.grantPutEventsTo(processorRole);
-    processorRole.addToPolicy(new iam.PolicyStatement({
-      actions: [
-        "bedrock:InvokeModel",
-      ],
-      resources: [
-        `arn:aws:bedrock:${this.region}::foundation-model/amazon.nova-micro-v1:0`,
-        `arn:aws:bedrock:${this.region}::foundation-model/amazon.nova-lite-v1:0`,
-      ],
-    }));
+    // LLM calls now route through ai-gateway-rs — no direct Bedrock IAM needed
 
     const apiRole = new iam.Role(this, "ApiRole", {
       assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
@@ -250,7 +242,9 @@ export class SignedDataStack extends cdk.Stack {
       environment: {
         EVENTS_BUCKET:    eventsBucket.bucketName,
         EVENT_BUS_NAME:   eventBus.eventBusName,
-        BEDROCK_MODEL_ID: "amazon.nova-micro-v1:0",
+        AI_GATEWAY_URL:   process.env.AI_GATEWAY_URL || "",
+        GATEWAY_API_KEY:  process.env.GATEWAY_API_KEY || "",
+        AI_MODEL:         "nova-micro",
         ENRICH_WITH_LLM:  "true",
       },
       logGroup: new logs.LogGroup(this, "ProcessorLogGroup", {

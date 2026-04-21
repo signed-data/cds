@@ -31,6 +31,30 @@
       "rdfs:label":   "lei",
       "rdfs:comment": "New law or legislative act.",
       "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/government-brazil" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/government-brazil/sanctions-consolidated",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "sanctions.consolidated",
+      "rdfs:comment": "Consolidated federal sanction check (CEIS + CNEP) for a given CNPJ, signed at query time.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/government-brazil" },
+      "cds:source":   { "@id": "https://signed-data.org/sources/api.portaldatransparencia.gov.br.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/government-brazil/sanctions-ceis",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "sanctions.ceis",
+      "rdfs:comment": "CEIS — Cadastro Nacional de Empresas Inidôneas e Suspensas. Single-registry sanction records.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/government-brazil" },
+      "cds:source":   { "@id": "https://signed-data.org/sources/api.portaldatransparencia.gov.br.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/government-brazil/sanctions-cnep",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "sanctions.cnep",
+      "rdfs:comment": "CNEP — Cadastro Nacional de Empresas Punidas (Lei Anticorrupção 12.846/2013). Single-registry sanction records.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/government-brazil" },
+      "cds:source":   { "@id": "https://signed-data.org/sources/api.portaldatransparencia.gov.br.v1" }
     }
   ]
 }

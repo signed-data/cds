@@ -2,6 +2,7 @@
 SignedData CDS — Football Domain Models
 Typed Pydantic payload schemas for sports.football events.
 """
+
 from __future__ import annotations
 
 from typing import Literal
@@ -12,9 +13,9 @@ from cds.vocab import CDSVocab
 
 
 class FootballContentTypes:
-    MATCH_RESULT  = CDSVocab.FOOTBALL_MATCH_RESULT
-    MATCH_LIVE    = CDSVocab.FOOTBALL_MATCH_LIVE
-    STANDINGS     = CDSVocab.FOOTBALL_STANDINGS
+    MATCH_RESULT = CDSVocab.FOOTBALL_MATCH_RESULT
+    MATCH_LIVE = CDSVocab.FOOTBALL_MATCH_LIVE
+    STANDINGS = CDSVocab.FOOTBALL_STANDINGS
 
 
 MatchStatus = Literal["scheduled", "live", "finished", "postponed", "cancelled"]

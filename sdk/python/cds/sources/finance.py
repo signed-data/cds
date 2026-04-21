@@ -5,6 +5,7 @@ Sources:
     Brapi:       https://brapi.dev/api/quote/{tickers}
     Copom:       https://www.bcb.gov.br/api/servico/sitebcb/reunioes-copom/listar
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -89,17 +90,19 @@ class BCBRatesIngestor(BaseIngestor):
                     rate_daily=round(_daily_rate(annual), 6),
                     effective_date=date_iso,
                 )
-                events.append(CDSEvent(
-                    content_type=FinanceContentTypes.SELIC,
-                    source=SourceMeta(id=CDSSources.BCB_API, fingerprint=fp),
-                    occurred_at=datetime.fromisoformat(f"{date_iso}T18:30:00-03:00"),
-                    lang="pt-BR",
-                    payload=rate.model_dump(mode="json"),
-                    event_context=ContextMeta(
-                        summary=f"SELIC: {rate.rate_annual}% a.a. ({rate.date})",
-                        model="rule-based-v1",
-                    ),
-                ))
+                events.append(
+                    CDSEvent(
+                        content_type=FinanceContentTypes.SELIC,
+                        source=SourceMeta(id=CDSSources.BCB_API, fingerprint=fp),
+                        occurred_at=datetime.fromisoformat(f"{date_iso}T18:30:00-03:00"),
+                        lang="pt-BR",
+                        payload=rate.model_dump(mode="json"),
+                        event_context=ContextMeta(
+                            summary=f"SELIC: {rate.rate_annual}% a.a. ({rate.date})",
+                            model="rule-based-v1",
+                        ),
+                    )
+                )
 
             # CDI
             resp = await client.get(_bcb_url(SGS_CDI, self.last_n))
@@ -113,17 +116,19 @@ class BCBRatesIngestor(BaseIngestor):
                     rate_annual=annual,
                     rate_daily=round(_daily_rate(annual), 6),
                 )
-                events.append(CDSEvent(
-                    content_type=FinanceContentTypes.CDI,
-                    source=SourceMeta(id=CDSSources.BCB_API, fingerprint=fp),
-                    occurred_at=datetime.fromisoformat(f"{date_iso}T18:30:00-03:00"),
-                    lang="pt-BR",
-                    payload=cdi.model_dump(mode="json"),
-                    event_context=ContextMeta(
-                        summary=f"CDI: {cdi.rate_annual}% a.a. ({cdi.date})",
-                        model="rule-based-v1",
-                    ),
-                ))
+                events.append(
+                    CDSEvent(
+                        content_type=FinanceContentTypes.CDI,
+                        source=SourceMeta(id=CDSSources.BCB_API, fingerprint=fp),
+                        occurred_at=datetime.fromisoformat(f"{date_iso}T18:30:00-03:00"),
+                        lang="pt-BR",
+                        payload=cdi.model_dump(mode="json"),
+                        event_context=ContextMeta(
+                            summary=f"CDI: {cdi.rate_annual}% a.a. ({cdi.date})",
+                            model="rule-based-v1",
+                        ),
+                    )
+                )
 
         return events
 
@@ -160,20 +165,22 @@ class BCBIndicesIngestor(BaseIngestor):
                     accumulated_12m=float(a_item["valor"]),
                     accumulated_year=0.0,  # requires additional calculation
                 )
-                events.append(CDSEvent(
-                    content_type=FinanceContentTypes.IPCA,
-                    source=SourceMeta(id=CDSSources.BCB_API, fingerprint=fp),
-                    occurred_at=datetime.fromisoformat(f"{date_iso}T12:00:00-03:00"),
-                    lang="pt-BR",
-                    payload=ipca.model_dump(mode="json"),
-                    event_context=ContextMeta(
-                        summary=(
-                            f"IPCA {date_iso}: {ipca.monthly_pct}% no mês, "
-                            f"{ipca.accumulated_12m}% em 12 meses"
+                events.append(
+                    CDSEvent(
+                        content_type=FinanceContentTypes.IPCA,
+                        source=SourceMeta(id=CDSSources.BCB_API, fingerprint=fp),
+                        occurred_at=datetime.fromisoformat(f"{date_iso}T12:00:00-03:00"),
+                        lang="pt-BR",
+                        payload=ipca.model_dump(mode="json"),
+                        event_context=ContextMeta(
+                            summary=(
+                                f"IPCA {date_iso}: {ipca.monthly_pct}% no mês, "
+                                f"{ipca.accumulated_12m}% em 12 meses"
+                            ),
+                            model="rule-based-v1",
                         ),
-                        model="rule-based-v1",
-                    ),
-                ))
+                    )
+                )
 
             # IGP-M
             resp = await client.get(_bcb_url(SGS_IGPM, self.last_n))
@@ -185,17 +192,19 @@ class BCBIndicesIngestor(BaseIngestor):
                     date=date_iso,
                     monthly_pct=float(item["valor"]),
                 )
-                events.append(CDSEvent(
-                    content_type=FinanceContentTypes.IGPM,
-                    source=SourceMeta(id=CDSSources.BCB_API, fingerprint=fp),
-                    occurred_at=datetime.fromisoformat(f"{date_iso}T12:00:00-03:00"),
-                    lang="pt-BR",
-                    payload=igpm.model_dump(mode="json"),
-                    event_context=ContextMeta(
-                        summary=f"IGP-M {date_iso}: {igpm.monthly_pct}% no mês",
-                        model="rule-based-v1",
-                    ),
-                ))
+                events.append(
+                    CDSEvent(
+                        content_type=FinanceContentTypes.IGPM,
+                        source=SourceMeta(id=CDSSources.BCB_API, fingerprint=fp),
+                        occurred_at=datetime.fromisoformat(f"{date_iso}T12:00:00-03:00"),
+                        lang="pt-BR",
+                        payload=igpm.model_dump(mode="json"),
+                        event_context=ContextMeta(
+                            summary=f"IGP-M {date_iso}: {igpm.monthly_pct}% no mês",
+                            model="rule-based-v1",
+                        ),
+                    )
+                )
 
         return events
 
@@ -232,20 +241,21 @@ class BCBFXIngestor(BaseIngestor):
                     currency_from="USD",
                     currency_to="BRL",
                 )
-                events.append(CDSEvent(
-                    content_type=FinanceContentTypes.USD_BRL,
-                    source=SourceMeta(id=CDSSources.BCB_API, fingerprint=fp),
-                    occurred_at=datetime.fromisoformat(f"{date_iso}T18:00:00-03:00"),
-                    lang="pt-BR",
-                    payload=fx.model_dump(mode="json"),
-                    event_context=ContextMeta(
-                        summary=(
-                            f"USD/BRL PTAX {date_iso}: "
-                            f"compra {fx.buy:.4f}, venda {fx.sell:.4f}"
+                events.append(
+                    CDSEvent(
+                        content_type=FinanceContentTypes.USD_BRL,
+                        source=SourceMeta(id=CDSSources.BCB_API, fingerprint=fp),
+                        occurred_at=datetime.fromisoformat(f"{date_iso}T18:00:00-03:00"),
+                        lang="pt-BR",
+                        payload=fx.model_dump(mode="json"),
+                        event_context=ContextMeta(
+                            summary=(
+                                f"USD/BRL PTAX {date_iso}: compra {fx.buy:.4f}, venda {fx.sell:.4f}"
+                            ),
+                            model="rule-based-v1",
                         ),
-                        model="rule-based-v1",
-                    ),
-                ))
+                    )
+                )
 
             # EUR/BRL
             resp = await client.get(_bcb_url(SGS_EUR_BRL, self.last_n))
@@ -262,17 +272,19 @@ class BCBFXIngestor(BaseIngestor):
                     currency_from="EUR",
                     currency_to="BRL",
                 )
-                events.append(CDSEvent(
-                    content_type=FinanceContentTypes.EUR_BRL,
-                    source=SourceMeta(id=CDSSources.BCB_API, fingerprint=fp),
-                    occurred_at=datetime.fromisoformat(f"{date_iso}T18:00:00-03:00"),
-                    lang="pt-BR",
-                    payload=fx.model_dump(mode="json"),
-                    event_context=ContextMeta(
-                        summary=f"EUR/BRL PTAX {date_iso}: {fx.mid:.4f}",
-                        model="rule-based-v1",
-                    ),
-                ))
+                events.append(
+                    CDSEvent(
+                        content_type=FinanceContentTypes.EUR_BRL,
+                        source=SourceMeta(id=CDSSources.BCB_API, fingerprint=fp),
+                        occurred_at=datetime.fromisoformat(f"{date_iso}T18:00:00-03:00"),
+                        lang="pt-BR",
+                        payload=fx.model_dump(mode="json"),
+                        event_context=ContextMeta(
+                            summary=f"EUR/BRL PTAX {date_iso}: {fx.mid:.4f}",
+                            model="rule-based-v1",
+                        ),
+                    )
+                )
 
         return events
 
@@ -327,20 +339,22 @@ class BrapiQuotesIngestor(BaseIngestor):
                 except (ValueError, TypeError):
                     pass
 
-                events.append(CDSEvent(
-                    content_type=ct,
-                    source=SourceMeta(id=CDSSources.BRAPI, fingerprint=fp),
-                    occurred_at=occurred,
-                    lang="pt-BR",
-                    payload=quote.model_dump(mode="json"),
-                    event_context=ContextMeta(
-                        summary=(
-                            f"{quote.ticker}: R$ {quote.market_price:.2f} "
-                            f"({quote.change_pct:+.2f}%) — {quote.market_state}"
+                events.append(
+                    CDSEvent(
+                        content_type=ct,
+                        source=SourceMeta(id=CDSSources.BRAPI, fingerprint=fp),
+                        occurred_at=occurred,
+                        lang="pt-BR",
+                        payload=quote.model_dump(mode="json"),
+                        event_context=ContextMeta(
+                            summary=(
+                                f"{quote.ticker}: R$ {quote.market_price:.2f} "
+                                f"({quote.change_pct:+.2f}%) — {quote.market_state}"
+                            ),
+                            model="rule-based-v1",
                         ),
-                        model="rule-based-v1",
-                    ),
-                ))
+                    )
+                )
 
         return events
 
@@ -378,20 +392,22 @@ class BrapiCryptoIngestor(BaseIngestor):
                     "volume_24h": item.get("regularMarketVolume"),
                     "timestamp": item.get("regularMarketTime", ""),
                 }
-                events.append(CDSEvent(
-                    content_type=FinanceContentTypes.CRYPTO,
-                    source=SourceMeta(id=CDSSources.BRAPI, fingerprint=fp),
-                    occurred_at=datetime.now(UTC),
-                    lang="pt-BR",
-                    payload=payload,
-                    event_context=ContextMeta(
-                        summary=(
-                            f"{payload['coin']}: R$ {payload['price']:,.2f} "
-                            f"({payload['change_pct']:+.2f}%)"
+                events.append(
+                    CDSEvent(
+                        content_type=FinanceContentTypes.CRYPTO,
+                        source=SourceMeta(id=CDSSources.BRAPI, fingerprint=fp),
+                        occurred_at=datetime.now(UTC),
+                        lang="pt-BR",
+                        payload=payload,
+                        event_context=ContextMeta(
+                            summary=(
+                                f"{payload['coin']}: R$ {payload['price']:,.2f} "
+                                f"({payload['change_pct']:+.2f}%)"
+                            ),
+                            model="rule-based-v1",
                         ),
-                        model="rule-based-v1",
-                    ),
-                ))
+                    )
+                )
 
         return events
 
@@ -414,7 +430,7 @@ class CopomIngestor(BaseIngestor):
             fp = _fingerprint(resp.content)
             data = resp.json()
 
-            meetings = data.get("conteudo", [])[:self.last_n]
+            meetings = data.get("conteudo", [])[: self.last_n]
             for item in meetings:
                 rate_after = float(item.get("metaSelic", 0))
                 rate_before = float(item.get("metaSelicAnterior", rate_after))
@@ -444,19 +460,21 @@ class CopomIngestor(BaseIngestor):
                 except (ValueError, TypeError):
                     occurred = datetime.now(UTC)
 
-                events.append(CDSEvent(
-                    content_type=FinanceContentTypes.COPOM,
-                    source=SourceMeta(id=CDSSources.BCB_API, fingerprint=fp),
-                    occurred_at=occurred,
-                    lang="pt-BR",
-                    payload=copom.model_dump(mode="json"),
-                    event_context=ContextMeta(
-                        summary=(
-                            f"Copom #{copom.meeting_number}: "
-                            f"{copom.decision} SELIC em {copom.rate_after}% a.a."
+                events.append(
+                    CDSEvent(
+                        content_type=FinanceContentTypes.COPOM,
+                        source=SourceMeta(id=CDSSources.BCB_API, fingerprint=fp),
+                        occurred_at=occurred,
+                        lang="pt-BR",
+                        payload=copom.model_dump(mode="json"),
+                        event_context=ContextMeta(
+                            summary=(
+                                f"Copom #{copom.meeting_number}: "
+                                f"{copom.decision} SELIC em {copom.rate_after}% a.a."
+                            ),
+                            model="rule-based-v1",
                         ),
-                        model="rule-based-v1",
-                    ),
-                ))
+                    )
+                )
 
         return events

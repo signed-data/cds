@@ -1,19 +1,21 @@
 """
 SignedData CDS — Processor Lambda
-SQS → optional Bedrock enrichment → S3 → EventBridge
+SQS → optional LLM enrichment via ai-gateway-rs → S3 → EventBridge
 """
 import json, os
+import urllib.request
 import boto3
 from datetime import datetime, timezone
 
 s3          = boto3.client("s3")
 eventbridge = boto3.client("events")
-bedrock     = boto3.client("bedrock-runtime")
 
 BUCKET       = os.environ["EVENTS_BUCKET"]
 EVENT_BUS    = os.environ["EVENT_BUS_NAME"]
-MODEL_ID     = os.environ.get("BEDROCK_MODEL_ID", "amazon.nova-micro-v1:0")
+MODEL_ID     = os.environ.get("AI_MODEL", "nova-micro")
 ENRICH       = os.environ.get("ENRICH_WITH_LLM", "false").lower() == "true"
+_GATEWAY_URL = os.environ.get("AI_GATEWAY_URL", "").rstrip("/")
+_GATEWAY_KEY = os.environ.get("GATEWAY_API_KEY", "")
 
 
 def _enrich(event_dict: dict) -> str:
@@ -24,13 +26,21 @@ def _enrich(event_dict: dict) -> str:
         "Generate a single concise insight (max 2 sentences) about this data. "
         "Be factual and specific."
     )
-    resp = bedrock.invoke_model(
-        modelId=MODEL_ID,
-        body=json.dumps({"messages": [{"role": "user", "content": prompt}], "max_tokens": 150}),
-        contentType="application/json", accept="application/json",
+    req = urllib.request.Request(
+        f"{_GATEWAY_URL}/v1/chat/completions",
+        data=json.dumps({
+            "model": MODEL_ID,
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": 150,
+        }).encode(),
+        headers={
+            "Authorization": f"Bearer {_GATEWAY_KEY}",
+            "Content-Type": "application/json",
+        },
     )
-    body = json.loads(resp["body"].read())
-    return body["output"]["message"]["content"][0]["text"].strip()
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        body = json.loads(resp.read())
+    return body["choices"][0]["message"]["content"].strip()
 
 
 def handler(event, context):
