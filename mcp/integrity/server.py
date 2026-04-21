@@ -43,7 +43,8 @@ mcp = FastMCP(
     instructions=(
         "Returns Brazilian federal sanction status (CEIS, CNEP, CEPIM) "
         "from Portal da Transparência for a given CNPJ. "
-        "All data is signed and timestamped by signed-data.org. "
+        "Events are signed when CDS_PRIVATE_KEY_PATH is configured; "
+        "otherwise events are returned unsigned. "
         "Sanction records include public CPF/CNPJ of sanctioned parties as "
         "published by the Controladoria-Geral da União (CGU) under "
         "Lei de Acesso à Informação 12.527/2011."
@@ -90,12 +91,12 @@ async def check_sanctions_by_cnpj(cnpj: str) -> dict[str, Any]:
 
     Queries CEIS (empresas inidôneas e suspensas), CNEP (Lei Anticorrupção),
     and CEPIM (entidades sem fins lucrativos impedidas) in parallel and
-    returns one signed consolidated result.
+    returns one consolidated result (signed if `CDS_PRIVATE_KEY_PATH` is configured).
 
     This is the primary due-diligence/KYC primitive for the integrity.brazil
-    domain. The signature proves that Portal da Transparência returned this
-    data at the query timestamp — a cryptographically verifiable audit record
-    of "we checked CNPJ X at T and this is what was published".
+    domain. When signing is enabled, the signature proves that Portal da
+    Transparência returned this data at the query timestamp — a cryptographically
+    verifiable audit record of "we checked CNPJ X at T and this is what was published".
 
     Args:
         cnpj: Brazilian CNPJ number (e.g., "33.000.167/0001-01" or "33000167000101").

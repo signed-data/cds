@@ -1,6 +1,6 @@
 # SignedData MCP Server — Brazil Integrity (Sanctions)
 
-Signed, cryptographically timestamped Brazilian federal sanction lookups as MCP tools for Claude. Queries CEIS, CNEP, and CEPIM in parallel from Portal da Transparência (Controladoria-Geral da União) and returns one consolidated, signed CDS event per CNPJ — the KYC/AML/due-diligence companion to `mcp/companies`.
+Brazilian federal sanction lookups as MCP tools for Claude. Queries CEIS, CNEP, and CEPIM in parallel from Portal da Transparência (Controladoria-Geral da União) and returns one consolidated CDS event per CNPJ — signed when `CDS_PRIVATE_KEY_PATH` is configured, otherwise unsigned.
 
 ## Quick Start — Remote (10 seconds, zero install)
 
@@ -64,7 +64,7 @@ signeddata-mcp-integrity
 
 | Tool | Description |
 |---|---|
-| `check_sanctions_by_cnpj` | Parallel CEIS/CNEP/CEPIM lookup for a CNPJ. Returns one signed consolidated event with `sanction_found`, `sanction_count`, and the per-registry record list. |
+| `check_sanctions_by_cnpj` | Parallel CEIS/CNEP/CEPIM lookup for a CNPJ. Returns one consolidated event (signed if `CDS_PRIVATE_KEY_PATH` is set) with `sanction_found`, `sanction_count`, and the per-registry record list. |
 
 Reserved for future phases:
 
@@ -85,7 +85,7 @@ get_company_profile("11.222.333/0001-44")        # signeddata-companies → Bras
 check_sanctions_by_cnpj("11.222.333/0001-44")    # signeddata-integrity → Portal da Transparência
 ```
 
-Each call returns its own CDS-signed event. Together they form a complete, independently verifiable due-diligence record: who the company is, and whether the federal government has sanctioned it.
+Each call returns its own CDS event (signed when server signing is configured). Together they form a complete, independently verifiable due-diligence record: who the company is, and whether the federal government has sanctioned it.
 
 ## HTTP API (deployed endpoint)
 
