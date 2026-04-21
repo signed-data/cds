@@ -430,3 +430,18 @@ class TestBrapiQuotesIngestor:
             assert events[0].content_type == FinanceContentTypes.STOCK
             assert events[0].payload["ticker"] == "PETR4"
             assert events[0].payload["market_price"] == 38.92
+
+
+class TestFinanceServerToolCount:
+    def test_ten_tools_in_server_file(self):
+        from pathlib import Path
+        server_path = Path(__file__).parent.parent.parent.parent / "mcp/finance/server.py"
+        source = server_path.read_text()
+        expected_tools = [
+            "get_selic_rate", "get_ipca", "get_igpm",
+            "get_usd_brl", "get_fx_rates",
+            "get_stock_quote", "get_b3_indices", "get_market_summary",
+            "get_copom_history", "get_copom_latest",
+        ]
+        for tool in expected_tools:
+            assert f"async def {tool}" in source, f"Missing tool: {tool}"

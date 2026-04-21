@@ -5,13 +5,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-COPY sdk/python /tmp/sdk/python
-COPY mcp/lottery /tmp/mcp/lottery
+COPY . .
 
-RUN pip install --no-cache-dir /tmp/sdk/python /tmp/mcp/lottery \
-    && rm -rf /tmp/sdk /tmp/mcp
+RUN pip install --no-cache-dir .
 
 EXPOSE 8001
 
-ENTRYPOINT ["python", "-m", "cds_mcp_lottery"]
+ENTRYPOINT ["signeddata-mcp-lottery"]
 CMD ["mega-sena"]

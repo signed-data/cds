@@ -25,7 +25,7 @@ from typing import Any
 import httpx
 
 # ── Path setup ─────────────────────────────────────────────
-# Allows running directly or as part of the monorepo
+# Allows running directly or as part of the monorepo.
 _ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(_ROOT / "sdk/python"))
 
