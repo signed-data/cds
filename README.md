@@ -262,7 +262,9 @@ cds/
 
 ## How signing works
 
-Signing is deterministic RSA-PSS SHA-256 over a canonical JSON serialisation of the event.
+CDS signing uses RSA-PSS SHA-256 over a canonical JSON serialisation of the event.
+The canonical bytes — and therefore the hash — are deterministic; RSA-PSS signatures
+use a random salt per the standard.
 
 **Sign (producer):**
 1. Serialise the event to canonical JSON — `sort_keys=True`, UTF-8, excluding `integrity` and `ingested_at`; including `@context`, `@type`, `@id`
@@ -366,7 +368,7 @@ For a complete self-hosting example with AWS CDK (ECS/Fargate + Lambda + ALB + R
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](docs/contributing.md).
 
 To propose a new domain or schema, open an issue with the tag `domain-proposal`. Include: the data source, sample API response, and a draft payload schema.
 
