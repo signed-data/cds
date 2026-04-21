@@ -14,7 +14,7 @@ Install:
 from __future__ import annotations
 
 import asyncio
-import hashlib
+import argparse
 import json
 import os
 import sys
@@ -25,18 +25,20 @@ from typing import Any
 import httpx
 
 # ── Path setup ─────────────────────────────────────────────
-# Note: The signeddata-cds package is now a proper dependency;
-# sys.path injection is no longer needed
+# Allows running directly or as part of the monorepo.
+_ROOT = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(_ROOT / "sdk/python"))
 
 from fastmcp import FastMCP
 from cds.schema import CDSEvent, ContextMeta, SourceMeta
-from cds.vocab import CDSVocab, CDSSources
 from cds.signer import CDSSigner, CDSVerifier
-from cds.sources.lottery_models import LotteryContentTypes, MegaSenaResult, PrizeTier
+from cds.sources.lottery_models import LotteryContentTypes
 from cds.sources.lottery import (
     CAIXA_BASE,
-    _parse_response, _build_summary, _parse_premiacao, _parse_date_iso,
+    _build_summary,
+    _parse_response,
 )
+from cds.vocab import CDSSources
 
 # ── Server config ───────────────────────────────────────────
 mcp = FastMCP(
@@ -81,11 +83,11 @@ def _event_to_dict(event: CDSEvent) -> dict[str, Any]:
     """Serialise a CDSEvent to a plain dict for MCP response."""
     return {
         "cds_event_id":    event.id,
-        "content_type":    event.content_type.mime_type,
-        "occurred_at":     event.occurred_at,
+        "content_type":    event.content_type,
+        "occurred_at":     event.occurred_at.isoformat() if isinstance(event.occurred_at, datetime) else event.occurred_at,
         "signed_by":       event.integrity.signed_by if event.integrity else None,
         "hash":            event.integrity.hash[:20] + "..." if event.integrity else None,
-        "summary":         event.context.summary if event.context else "",
+        "summary":         event.event_context.summary if event.event_context else "",
         "payload":         event.payload,
     }
 
@@ -116,11 +118,11 @@ async def get_mega_sena_latest() -> dict[str, Any]:
 
     event = CDSEvent(
         content_type = LotteryContentTypes.MEGA_SENA,
-        source       = SourceMeta(id=SOURCE_ID),
+        source       = SourceMeta(id=CDSSources.CAIXA_LOTERIAS),
         occurred_at  = occurred,
         lang         = "pt-BR",
         payload      = result.model_dump(mode="json"),
-        context      = ContextMeta(summary=_build_summary(result), model="rule-based-v1"),
+        event_context= ContextMeta(summary=_build_summary(result), model="rule-based-v1"),
     )
     if signer:
         signer.sign(event)
@@ -149,11 +151,11 @@ async def get_mega_sena_by_concurso(concurso: int) -> dict[str, Any]:
 
     event = CDSEvent(
         content_type = LotteryContentTypes.MEGA_SENA,
-        source       = SourceMeta(id=SOURCE_ID),
+        source       = SourceMeta(id=CDSSources.CAIXA_LOTERIAS),
         occurred_at  = occurred,
         lang         = "pt-BR",
         payload      = result.model_dump(mode="json"),
-        context      = ContextMeta(summary=_build_summary(result), model="rule-based-v1"),
+        event_context= ContextMeta(summary=_build_summary(result), model="rule-based-v1"),
     )
     if signer:
         signer.sign(event)
@@ -193,11 +195,11 @@ async def get_mega_sena_recent(last_n: int = 5) -> list[dict[str, Any]]:
 
         event = CDSEvent(
             content_type = LotteryContentTypes.MEGA_SENA,
-            source       = SourceMeta(id=SOURCE_ID),
+            source       = SourceMeta(id=CDSSources.CAIXA_LOTERIAS),
             occurred_at  = occurred,
             lang         = "pt-BR",
             payload      = result.model_dump(mode="json"),
-            context      = ContextMeta(summary=_build_summary(result), model="rule-based-v1"),
+            event_context= ContextMeta(summary=_build_summary(result), model="rule-based-v1"),
         )
         if signer:
             signer.sign(event)
@@ -248,7 +250,7 @@ async def check_mega_sena_ticket(
         "prize_tier":     tier_data.description if tier_data else "Sem prêmio",
         "prize_amount":   _brl(tier_data.prize_amount) if tier_data else "R$ 0,00",
         "won":            tier_data is not None,
-        "summary":        result.context.summary if hasattr(result, "context") else _build_summary(result),
+        "summary":        _build_summary(result),
     }
 
 
@@ -325,9 +327,9 @@ async def mega_sena_latest_resource() -> str:
 async def mega_sena_schema_resource() -> str:
     """CDS content type and payload schema for Mega Sena events."""
     return json.dumps({
-        "content_type": LotteryContentTypes.MEGA_SENA.mime_type,
+        "content_type": LotteryContentTypes.MEGA_SENA,
         "issuer":       _ISSUER,
-        "source":       SOURCE_ID,
+        "source":       CDSSources.CAIXA_LOTERIAS,
         "payload_fields": {
             "concurso":               "int — draw number",
             "data_apuracao":          "str — draw date (DD/MM/YYYY)",
@@ -342,18 +344,29 @@ async def mega_sena_schema_resource() -> str:
     }, ensure_ascii=False, indent=2)
 
 
-# ═══════════════════════════════════════════════════════════
-# ENTRY POINT
-# ═══════════════════════════════════════════════════════════
-
-if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser()
+def main(argv: list[str] | None = None) -> None:
+    """Entry point for signeddata-mcp-lottery CLI."""
+    parser = argparse.ArgumentParser(description="SignedData CDS Lottery MCP Server")
+    parser.add_argument(
+        "game",
+        nargs="?",
+        default="mega-sena",
+        choices=["mega-sena"],
+        help="Lottery game to expose. Only mega-sena is available in this release.",
+    )
     parser.add_argument("--transport", choices=["stdio", "sse"], default="stdio")
     parser.add_argument("--port", type=int, default=8001)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     if args.transport == "sse":
         mcp.run(transport="sse", port=args.port)
     else:
         mcp.run(transport="stdio")
+
+
+# ═══════════════════════════════════════════════════════════
+# ENTRY POINT
+# ═══════════════════════════════════════════════════════════
+
+if __name__ == "__main__":
+    main()

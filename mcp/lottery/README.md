@@ -22,20 +22,17 @@ Exposes Mega Sena (and other Caixa games) as MCP tools for Claude.
 ## Install
 
 ```bash
-cd mcp/lottery
-pip install fastmcp httpx pydantic cryptography
-# also needs the CDS SDK
-pip install -e ../../sdk/python
+pip install signeddata-mcp-lottery
 ```
 
 ## Run
 
 ```bash
 # stdio (Claude Desktop / Claude Code)
-python server.py
+python -m cds_mcp_lottery mega-sena
 
 # SSE (web clients)
-python server.py --transport sse --port 8001
+signeddata-mcp-lottery mega-sena --transport sse --port 8001
 ```
 
 ## Claude Desktop config (~/.config/claude/claude_desktop_config.json)
@@ -45,7 +42,7 @@ python server.py --transport sse --port 8001
   "mcpServers": {
     "signeddata-lottery": {
       "command": "python",
-      "args": ["/path/to/cds/mcp/lottery/server.py"],
+      "args": ["-m", "cds_mcp_lottery", "mega-sena"],
       "env": {
         "CDS_PRIVATE_KEY_PATH": "/path/to/keys/private.pem",
         "CDS_PUBLIC_KEY_PATH":  "/path/to/keys/public.pem",
