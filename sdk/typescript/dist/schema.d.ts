@@ -1,5 +1,9 @@
+/**
+ * SignedData CDS — Core Schema
+ * TypeScript 5 / ESM.  Issuer: signed-data.org
+ */
 export interface SourceMeta {
-    "@id": string;
+    id: string;
     fingerprint?: string;
 }
 export interface ContextMeta {
@@ -12,8 +16,24 @@ export interface IntegrityMeta {
     signature: string;
     signed_by: string;
 }
+export interface CDSContentTypeOptions {
+    domain: string;
+    schema_name: string;
+    version?: string;
+    encoding?: string;
+}
+export declare class CDSContentType {
+    readonly domain: string;
+    readonly schema_name: string;
+    readonly version: string;
+    readonly encoding: string;
+    constructor(opts: CDSContentTypeOptions);
+    get mime_type(): string;
+    toString(): string;
+    toJSON(): Record<string, string>;
+}
 export interface CDSEventOptions {
-    content_type: string;
+    content_type: CDSContentType;
     source: SourceMeta;
     occurred_at: Date | string;
     payload: Record<string, unknown>;
@@ -24,24 +44,21 @@ export interface CDSEventOptions {
     spec_version?: string;
 }
 export declare class CDSEvent {
-    readonly ["@context"]: string;
-    readonly ["@type"]: string;
-    readonly ["@id"]: string;
     readonly spec_version: string;
     readonly id: string;
-    readonly content_type: string;
+    readonly content_type: CDSContentType;
     readonly source: SourceMeta;
     readonly occurred_at: string;
     readonly ingested_at: string;
     readonly lang: string;
     readonly payload: Record<string, unknown>;
-    readonly context?: ContextMeta;
+    context?: ContextMeta;
     integrity?: IntegrityMeta;
     constructor(opts: CDSEventOptions);
     get domain(): string;
     get event_type(): string;
-    toJSON(): Record<string, unknown>;
     canonicalBytes(): Buffer;
+    toJSON(): Record<string, unknown>;
     static fromJSON(data: Record<string, unknown>): CDSEvent;
 }
 //# sourceMappingURL=schema.d.ts.map
