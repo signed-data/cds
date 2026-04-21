@@ -20,12 +20,20 @@ import { CDSVocab, CDSSources } from "../vocab.js";
 
 // ── Content Types ──────────────────────────────────────────
 
-export type LotteryContentType = Readonly<{
+export type LotteryContentTypeMeta = Readonly<{
   uri: string;
   mime_type: string;
 }>;
 
 export const LotteryContentTypes = {
+  MEGA_SENA: CDSVocab.LOTTERY_MEGA_SENA,
+  LOTOFACIL: CDSVocab.LOTTERY_LOTOFACIL,
+  QUINA: CDSVocab.LOTTERY_QUINA,
+  LOTOMANIA: CDSVocab.LOTTERY_LOTOMANIA,
+  DUPLA_SENA: CDSVocab.LOTTERY_DUPLA_SENA,
+} as const;
+
+export const LotteryContentTypeMeta = {
   MEGA_SENA: {
     uri: CDSVocab.LOTTERY_MEGA_SENA,
     mime_type: "application/vnd.cds.lottery-brazil.mega-sena-result+json;v=1",
@@ -46,7 +54,7 @@ export const LotteryContentTypes = {
     uri: CDSVocab.LOTTERY_DUPLA_SENA,
     mime_type: "application/vnd.cds.lottery-brazil.dupla-sena-result+json;v=1",
   },
-} as const satisfies Record<string, LotteryContentType>;
+} as const satisfies Record<string, LotteryContentTypeMeta>;
 
 // ── Payload Types ──────────────────────────────────────────
 
@@ -158,7 +166,7 @@ export interface MegaSenaIngestorOptions {
 }
 
 export class MegaSenaIngestor extends BaseIngestor {
-  readonly contentType = LotteryContentTypes.MEGA_SENA.uri;
+  readonly contentType = LotteryContentTypes.MEGA_SENA;
   private readonly concursos: number[] | undefined;
 
   constructor(signer: CDSSigner, opts: MegaSenaIngestorOptions = {}) {
@@ -195,7 +203,7 @@ export class MegaSenaIngestor extends BaseIngestor {
 
       events.push(
         new CDSEvent({
-          content_type: LotteryContentTypes.MEGA_SENA.uri,
+          content_type: LotteryContentTypes.MEGA_SENA,
           source: { "@id": CDSSources.CAIXA_LOTERIAS, fingerprint: fp },
           occurred_at: occurred,
           lang: "pt-BR",
