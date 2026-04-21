@@ -117,10 +117,8 @@ jobs:
         if: needs.determine-server.outputs.server == 'lottery'
         uses: docker/build-push-action@v5
         with:
-          context: mcp/lottery
+          context: .
           file: mcp/lottery/Dockerfile
-          build-contexts: |
-            sdk_python=./sdk/python
           push: true
           tags: |
             signeddata/mcp-lottery:latest
