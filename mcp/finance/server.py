@@ -335,19 +335,72 @@ async def get_stock_quote(tickers: list[str]) -> list[dict[str, Any]]:
     return results
 
 
+_B3_INDICES = ["^BVSP", "^IBXX", "^SMLL", "^IDIV"]
+
+
+@mcp.tool()
+async def get_b3_indices(
+    indices: list[str] | None = None,
+) -> list[dict[str, Any]]:
+    """
+    Get current values of B3 stock market indices (IBOVESPA, IBRX-100, etc.).
+
+    Defaults to the four main indices: IBOVESPA (^BVSP), IBRX-100 (^IBXX),
+    Small Cap (^SMLL), and Dividends (^IDIV).
+
+    Args:
+        indices: Optional list of index tickers. Defaults to the 4 main B3 indices.
+    """
+    tickers = (indices or _B3_INDICES)[:8]
+    ticker_str = ",".join(tickers)
+    data, fp = await _fetch_brapi(f"quote/{ticker_str}")
+    results = []
+    for item in data.get("results", []):
+        ticker = item.get("symbol", "")
+        price = float(item.get("regularMarketPrice", 0))
+        change_pct = float(item.get("regularMarketChangePercent", 0))
+        state = item.get("marketState", "CLOSED")
+        payload = {
+            "ticker": ticker,
+            "short_name": item.get("shortName", ticker),
+            "long_name": item.get("longName", ""),
+            "currency": item.get("currency", "BRL"),
+            "market_price": price,
+            "change": float(item.get("regularMarketChange", 0)),
+            "change_pct": change_pct,
+            "previous_close": float(item.get("regularMarketPreviousClose", 0)),
+            "day_high": float(item.get("regularMarketDayHigh", 0)),
+            "day_low": float(item.get("regularMarketDayLow", 0)),
+            "volume": int(item.get("regularMarketVolume", 0)),
+            "exchange": item.get("fullExchangeName", "SAO"),
+            "market_state": state,
+            "timestamp": item.get("regularMarketTime", datetime.now(UTC).isoformat()),
+        }
+        results.append(_make_event(
+            FinanceContentTypes.STOCK, CDSSources.BRAPI, fp,
+            datetime.now(UTC), payload,
+            f"{ticker}: {price:,.0f} pts ({change_pct:+.2f}%) — {state}",
+        ))
+    return results
+
+
 @mcp.tool()
 async def get_market_summary() -> dict[str, Any]:
     """
-    Get a quick market summary: SELIC rate, USD/BRL PTAX, and IBOV index
+    Get a quick market summary: SELIC rate, USD/BRL PTAX, and IBOVESPA index
     in one call. Useful for a daily market overview.
     """
-    selic_results = await get_selic_rate(1)
-    fx_results = await get_usd_brl(1)
-
+    import asyncio
+    selic_results, fx_results, ibov_results = await asyncio.gather(
+        get_selic_rate(1),
+        get_usd_brl(1),
+        get_b3_indices(["^BVSP"]),
+    )
     return {
         "selic": selic_results[0] if selic_results else None,
         "usd_brl": fx_results[0] if fx_results else None,
-        "summary": "Market summary with SELIC rate and USD/BRL PTAX.",
+        "ibov": ibov_results[0] if ibov_results else None,
+        "summary": "Market summary with SELIC rate, USD/BRL PTAX, and IBOVESPA.",
     }
 
 
