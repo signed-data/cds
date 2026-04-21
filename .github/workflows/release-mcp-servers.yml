@@ -98,7 +98,7 @@ jobs:
 
   publish-docker:
     name: Publish ${{ needs.determine-server.outputs.server }} to Docker Hub
-    needs: determine-server
+    needs: [determine-server, publish-pypi]
     runs-on: ubuntu-latest
 
     steps:
@@ -113,7 +113,19 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push lottery image
+        if: needs.determine-server.outputs.server == 'lottery'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: mcp/lottery/Dockerfile
+          push: true
+          tags: |
+            signeddata/mcp-lottery:latest
+            signeddata/mcp-lottery:v${{ needs.determine-server.outputs.version }}
+
+      - name: Build and push other MCP images
+        if: needs.determine-server.outputs.server != 'lottery'
         uses: docker/build-push-action@v5
         with:
           context: mcp/${{ needs.determine-server.outputs.server }}
