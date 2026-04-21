@@ -5,6 +5,7 @@ Sources:
     CONAB:      https://consultaweb.conab.gov.br/consultas/consultaGrao/listar
     World Bank: https://api.worldbank.org/v2/en/indicator/{code}
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -98,20 +99,22 @@ class B3FuturesIngestor(BaseIngestor):
             except (ValueError, TypeError):
                 pass
 
-            events.append(CDSEvent(
-                content_type=content_type,
-                source=SourceMeta(id=CDSSources.BRAPI, fingerprint=fp),
-                occurred_at=occurred,
-                lang="pt-BR",
-                payload=futures.model_dump(mode="json"),
-                event_context=ContextMeta(
-                    summary=(
-                        f"{commodity_name.capitalize()} B3 ({symbol}): "
-                        f"R$ {price:.2f} ({change_pct:+.2f}%)"
+            events.append(
+                CDSEvent(
+                    content_type=content_type,
+                    source=SourceMeta(id=CDSSources.BRAPI, fingerprint=fp),
+                    occurred_at=occurred,
+                    lang="pt-BR",
+                    payload=futures.model_dump(mode="json"),
+                    event_context=ContextMeta(
+                        summary=(
+                            f"{commodity_name.capitalize()} B3 ({symbol}): "
+                            f"R$ {price:.2f} ({change_pct:+.2f}%)"
+                        ),
+                        model="rule-based-v1",
                     ),
-                    model="rule-based-v1",
-                ),
-            ))
+                )
+            )
 
         return events
 
@@ -125,9 +128,7 @@ def _parse_conab_response(raw: Any) -> list[dict[str, Any]]:
     Raises CONABResponseChangedError if the structure is unexpected.
     """
     if not isinstance(raw, list):
-        raise CONABResponseChangedError(
-            f"Expected list, got {type(raw).__name__}"
-        )
+        raise CONABResponseChangedError(f"Expected list, got {type(raw).__name__}")
     if len(raw) == 0:
         return []
 
@@ -135,14 +136,10 @@ def _parse_conab_response(raw: Any) -> list[dict[str, Any]]:
     first = raw[0]
     required_keys = {"produto", "uf", "preco"}
     if not isinstance(first, dict):
-        raise CONABResponseChangedError(
-            f"Expected dict items, got {type(first).__name__}"
-        )
+        raise CONABResponseChangedError(f"Expected dict items, got {type(first).__name__}")
     missing = required_keys - set(first.keys())
     if missing:
-        raise CONABResponseChangedError(
-            f"Missing expected keys: {missing}"
-        )
+        raise CONABResponseChangedError(f"Missing expected keys: {missing}")
 
     return raw
 
@@ -174,9 +171,7 @@ class CONABSpotIngestor(BaseIngestor):
             try:
                 raw_data = _parse_conab_response(resp.json())
             except CONABResponseChangedError as e:
-                logger.error(
-                    "CONAB API response structure changed — skip this cycle: %s", e
-                )
+                logger.error("CONAB API response structure changed — skip this cycle: %s", e)
                 return []
 
         now = datetime.now(UTC)
@@ -213,20 +208,21 @@ class CONABSpotIngestor(BaseIngestor):
                 conab_notes=item.get("observacao"),
             )
 
-            events.append(CDSEvent(
-                content_type=content_type,
-                source=SourceMeta(id=CDSSources.CONAB, fingerprint=fp),
-                occurred_at=now,
-                lang="pt-BR",
-                payload=spot.model_dump(mode="json"),
-                event_context=ContextMeta(
-                    summary=(
-                        f"{commodity.capitalize()} {state}: "
-                        f"R$ {price_val:.2f}/60kg (CONAB)"
+            events.append(
+                CDSEvent(
+                    content_type=content_type,
+                    source=SourceMeta(id=CDSSources.CONAB, fingerprint=fp),
+                    occurred_at=now,
+                    lang="pt-BR",
+                    payload=spot.model_dump(mode="json"),
+                    event_context=ContextMeta(
+                        summary=(
+                            f"{commodity.capitalize()} {state}: R$ {price_val:.2f}/60kg (CONAB)"
+                        ),
+                        model="rule-based-v1",
                     ),
-                    model="rule-based-v1",
-                ),
-            ))
+                )
+            )
 
         return events
 
@@ -252,10 +248,7 @@ class WorldBankIndexIngestor(BaseIngestor):
 
         async with httpx.AsyncClient(timeout=30) as client:
             for indicator, name in WORLDBANK_INDICATORS.items():
-                url = (
-                    f"{WORLDBANK_BASE}/{indicator}"
-                    "?date=2025:2026&format=json&per_page=1"
-                )
+                url = f"{WORLDBANK_BASE}/{indicator}?date=2025:2026&format=json&per_page=1"
                 try:
                     resp = await client.get(url)
                     resp.raise_for_status()
@@ -287,16 +280,18 @@ class WorldBankIndexIngestor(BaseIngestor):
                     unit="USD/mt",
                 )
 
-                events.append(CDSEvent(
-                    content_type=CommodityContentTypes.INDEX_WORLDBANK,
-                    source=SourceMeta(id=CDSSources.WORLDBANK, fingerprint=fp),
-                    occurred_at=datetime.now(UTC),
-                    lang="en",
-                    payload=idx.model_dump(mode="json"),
-                    event_context=ContextMeta(
-                        summary=f"{name} ({indicator}): ${value:.2f}/mt ({date})",
-                        model="rule-based-v1",
-                    ),
-                ))
+                events.append(
+                    CDSEvent(
+                        content_type=CommodityContentTypes.INDEX_WORLDBANK,
+                        source=SourceMeta(id=CDSSources.WORLDBANK, fingerprint=fp),
+                        occurred_at=datetime.now(UTC),
+                        lang="en",
+                        payload=idx.model_dump(mode="json"),
+                        event_context=ContextMeta(
+                            summary=f"{name} ({indicator}): ${value:.2f}/mt ({date})",
+                            model="rule-based-v1",
+                        ),
+                    )
+                )
 
         return events

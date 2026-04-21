@@ -6,6 +6,7 @@ Endpoints:
     Latest:   GET /portaldeloterias/api/megasena/
     Specific: GET /portaldeloterias/api/megasena/{concurso}
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -104,11 +105,7 @@ class MegaSenaIngestor(BaseIngestor):
 
         async with httpx.AsyncClient(timeout=15) as client:
             for concurso in targets:
-                url = (
-                    f"{CAIXA_BASE}/megasena/{concurso}"
-                    if concurso
-                    else f"{CAIXA_BASE}/megasena/"
-                )
+                url = f"{CAIXA_BASE}/megasena/{concurso}" if concurso else f"{CAIXA_BASE}/megasena/"
                 resp = await client.get(url, headers={"Accept": "application/json"})
                 resp.raise_for_status()
 
@@ -122,16 +119,18 @@ class MegaSenaIngestor(BaseIngestor):
                 except (ValueError, IndexError):
                     occurred = datetime.now(UTC)
 
-                events.append(CDSEvent(
-                    content_type=LotteryContentTypes.MEGA_SENA,
-                    source=SourceMeta(id=CDSSources.CAIXA_LOTERIAS, fingerprint=fp),
-                    occurred_at=occurred,
-                    lang="pt-BR",
-                    payload=result.model_dump(mode="json"),
-                    event_context=ContextMeta(
-                        summary=_build_summary(result),
-                        model="rule-based-v1",
-                    ),
-                ))
+                events.append(
+                    CDSEvent(
+                        content_type=LotteryContentTypes.MEGA_SENA,
+                        source=SourceMeta(id=CDSSources.CAIXA_LOTERIAS, fingerprint=fp),
+                        occurred_at=occurred,
+                        lang="pt-BR",
+                        payload=result.model_dump(mode="json"),
+                        event_context=ContextMeta(
+                            summary=_build_summary(result),
+                            model="rule-based-v1",
+                        ),
+                    )
+                )
 
         return events
