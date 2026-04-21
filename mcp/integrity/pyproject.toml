@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=72"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "signeddata-mcp-integrity"
+version = "0.1.0"
+description = "SignedData CDS MCP Server — Brazil Integrity (CEIS/CNEP/CEPIM sanctions)"
+requires-python = ">=3.12"
+dependencies = [
+    "signeddata-cds>=0.4.0,<0.5.0",
+    "fastmcp>=0.4",
+    "httpx>=0.27",
+    "pydantic>=2.0",
+    "cryptography>=42.0",
+]
+
+[project.scripts]
+signeddata-mcp-integrity = "server:main"
+
+[tool.setuptools]
+py-modules = ["server"]
