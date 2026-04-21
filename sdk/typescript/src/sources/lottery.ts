@@ -13,20 +13,40 @@
  */
 
 import { createHash } from "node:crypto";
-import { CDSEvent, ContextMeta, SourceMeta } from "../schema.js";
+import { CDSEvent, ContextMeta } from "../schema.js";
 import { CDSSigner } from "../signer.js";
 import { BaseIngestor } from "../ingestor.js";
 import { CDSVocab, CDSSources } from "../vocab.js";
 
 // ── Content Types ──────────────────────────────────────────
 
+export type LotteryContentType = Readonly<{
+  uri: string;
+  mime_type: string;
+}>;
+
 export const LotteryContentTypes = {
-  MEGA_SENA:  CDSVocab.LOTTERY_MEGA_SENA,
-  LOTOFACIL:  CDSVocab.LOTTERY_LOTOFACIL,
-  QUINA:      CDSVocab.LOTTERY_QUINA,
-  LOTOMANIA:  CDSVocab.LOTTERY_LOTOMANIA,
-  DUPLA_SENA: CDSVocab.LOTTERY_DUPLA_SENA,
-} as const;
+  MEGA_SENA: {
+    uri: CDSVocab.LOTTERY_MEGA_SENA,
+    mime_type: "application/vnd.cds.lottery-brazil.mega-sena-result+json;v=1",
+  },
+  LOTOFACIL: {
+    uri: CDSVocab.LOTTERY_LOTOFACIL,
+    mime_type: "application/vnd.cds.lottery-brazil.lotofacil-result+json;v=1",
+  },
+  QUINA: {
+    uri: CDSVocab.LOTTERY_QUINA,
+    mime_type: "application/vnd.cds.lottery-brazil.quina-result+json;v=1",
+  },
+  LOTOMANIA: {
+    uri: CDSVocab.LOTTERY_LOTOMANIA,
+    mime_type: "application/vnd.cds.lottery-brazil.lotomania-result+json;v=1",
+  },
+  DUPLA_SENA: {
+    uri: CDSVocab.LOTTERY_DUPLA_SENA,
+    mime_type: "application/vnd.cds.lottery-brazil.dupla-sena-result+json;v=1",
+  },
+} as const satisfies Record<string, LotteryContentType>;
 
 // ── Payload Types ──────────────────────────────────────────
 
@@ -34,18 +54,18 @@ export interface PrizeTier {
   tier: number;
   description: string;
   winners: number;
-  prize_amount: number;   // BRL per winner
-  total_prize: number;    // winners * prize_amount
+  prize_amount: number; // BRL per winner
+  total_prize: number; // winners * prize_amount
 }
 
 export interface MegaSenaResult {
   concurso: number;
-  data_apuracao: string;          // "29/03/2026"
-  data_apuracao_iso: string;      // "2026-03-29"
+  data_apuracao: string; // "29/03/2026"
+  data_apuracao_iso: string; // "2026-03-29"
   local_sorteio: string;
   cidade_uf: string;
-  dezenas: string[];              // sorted: ["04","12","25","36","47","59"]
-  dezenas_ordem_sorteio: string[];// draw order
+  dezenas: string[]; // sorted
+  dezenas_ordem_sorteio: string[]; // draw order
   acumulado: boolean;
   premiacoes: PrizeTier[];
   valor_arrecadado: number;
@@ -68,20 +88,22 @@ function parseDateIso(brDate: string): string {
 
 function brl(value: number): string {
   return new Intl.NumberFormat("pt-BR", {
-    style: "currency", currency: "BRL", minimumFractionDigits: 2,
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 2,
   }).format(value);
 }
 
 function parsePremiacao(raw: R[]): PrizeTier[] {
   return raw.map((item, i) => {
     const winners = Number(item["numeroDeGanhadores"] ?? 0);
-    const prize   = Number(item["valorPremio"] ?? 0);
+    const prize = Number(item["valorPremio"] ?? 0);
     return {
-      tier:        i + 1,
+      tier: i + 1,
       description: (item["descricao"] as string) ?? `Faixa ${i + 1}`,
       winners,
       prize_amount: prize,
-      total_prize:  winners * prize,
+      total_prize: winners * prize,
     };
   });
 }
@@ -95,10 +117,10 @@ function buildSummary(r: MegaSenaResult): string {
       `Próximo prêmio estimado: ${brl(r.valor_acumulado_proximo)} em ${r.data_proximo_concurso}.`
     );
   }
-  const tier1   = r.premiacoes.find(t => t.tier === 1);
+  const tier1 = r.premiacoes.find((t) => t.tier === 1);
   const winners = tier1?.winners ?? 0;
-  const prize   = tier1?.prize_amount ?? 0;
-  const plural  = winners === 1 ? "ganhador" : "ganhadores";
+  const prize = tier1?.prize_amount ?? 0;
+  const plural = winners === 1 ? "ganhador" : "ganhadores";
   return (
     `Mega Sena concurso ${r.concurso} (${r.data_apuracao}): ` +
     `dezenas: ${dezenas}. ` +
@@ -107,24 +129,24 @@ function buildSummary(r: MegaSenaResult): string {
 }
 
 function parseResponse(raw: R): MegaSenaResult {
-  const brDate  = (raw["dataApuracao"] as string) ?? "";
+  const brDate = (raw["dataApuracao"] as string) ?? "";
   const dezenas = ((raw["listaDezenas"] as string[]) ?? []).slice().sort();
 
   return {
-    concurso:               Number(raw["numero"]   ?? 0),
-    data_apuracao:          brDate,
-    data_apuracao_iso:      parseDateIso(brDate),
-    local_sorteio:          (raw["localSorteio"] as string)           ?? "",
-    cidade_uf:              (raw["nomeMunicipiUFSorteio"] as string)  ?? "",
+    concurso: Number(raw["numero"] ?? 0),
+    data_apuracao: brDate,
+    data_apuracao_iso: parseDateIso(brDate),
+    local_sorteio: (raw["localSorteio"] as string) ?? "",
+    cidade_uf: (raw["nomeMunicipiUFSorteio"] as string) ?? "",
     dezenas,
-    dezenas_ordem_sorteio:  (raw["listaDezenasOrdemSorteio"] as string[]) ?? [],
-    acumulado:              Boolean(raw["acumulado"] ?? false),
-    premiacoes:             parsePremiacao((raw["listaRateioPremio"] as R[]) ?? []),
-    valor_arrecadado:       Number(raw["valorArrecadado"]                 ?? 0),
-    valor_acumulado_proximo:Number(raw["valorEstimadoProximoConcurso"]   ?? 0),
-    data_proximo_concurso:  (raw["dataProximoConcurso"] as string)        ?? "",
-    concurso_anterior:      raw["numeroConcursoAnterior"] as number | undefined,
-    concurso_proximo:       raw["numeroConcursoProximo"]  as number | undefined,
+    dezenas_ordem_sorteio: (raw["listaDezenasOrdemSorteio"] as string[]) ?? [],
+    acumulado: Boolean(raw["acumulado"] ?? false),
+    premiacoes: parsePremiacao((raw["listaRateioPremio"] as R[]) ?? []),
+    valor_arrecadado: Number(raw["valorArrecadado"] ?? 0),
+    valor_acumulado_proximo: Number(raw["valorEstimadoProximoConcurso"] ?? 0),
+    data_proximo_concurso: (raw["dataProximoConcurso"] as string) ?? "",
+    concurso_anterior: raw["numeroConcursoAnterior"] as number | undefined,
+    concurso_proximo: raw["numeroConcursoProximo"] as number | undefined,
   };
 }
 
@@ -136,7 +158,7 @@ export interface MegaSenaIngestorOptions {
 }
 
 export class MegaSenaIngestor extends BaseIngestor {
-  readonly contentType = LotteryContentTypes.MEGA_SENA;
+  readonly contentType = LotteryContentTypes.MEGA_SENA.uri;
   private readonly concursos: number[] | undefined;
 
   constructor(signer: CDSSigner, opts: MegaSenaIngestorOptions = {}) {
@@ -149,22 +171,20 @@ export class MegaSenaIngestor extends BaseIngestor {
     const events: CDSEvent[] = [];
 
     for (const concurso of targets) {
-      const url = concurso
-        ? `${CAIXA_BASE}/megasena/${concurso}`
-        : `${CAIXA_BASE}/megasena/`;
+      const url = concurso ? `${CAIXA_BASE}/megasena/${concurso}` : `${CAIXA_BASE}/megasena/`;
 
       const resp = await globalThis.fetch(url, {
-        headers: { "Accept": "application/json" },
+        headers: { Accept: "application/json" },
         redirect: "follow",
       });
       if (!resp.ok) throw new Error(`Caixa API HTTP ${resp.status} for concurso ${concurso}`);
 
-      const buf    = Buffer.from(await resp.arrayBuffer());
-      const fp     = "sha256:" + createHash("sha256").update(buf).digest("hex");
-      const raw    = JSON.parse(buf.toString("utf-8")) as R;
+      const buf = Buffer.from(await resp.arrayBuffer());
+      const fp = "sha256:" + createHash("sha256").update(buf).digest("hex");
+      const raw = JSON.parse(buf.toString("utf-8")) as R;
       const result = parseResponse(raw);
 
-      // occurred_at = draw date at 21:00 BRT (00:00 UTC next day ~ 21:00 UTC)
+      // occurred_at = draw date at 21:00 BRT (00:00 UTC next day)
       let occurred: string;
       try {
         const [d, m, y] = result.data_apuracao.split("/");
@@ -173,18 +193,20 @@ export class MegaSenaIngestor extends BaseIngestor {
         occurred = new Date().toISOString();
       }
 
-      events.push(new CDSEvent({
-        content_type: LotteryContentTypes.MEGA_SENA,
-        source:       { "@id": CDSSources.CAIXA_LOTERIAS, fingerprint: fp },
-        occurred_at:  occurred,
-        lang:         "pt-BR",
-        payload:      result as unknown as Record<string, unknown>,
-        context: {
-          summary:      buildSummary(result),
-          model:        "rule-based-v1",
-          generated_at: new Date().toISOString(),
-        } satisfies ContextMeta,
-      }));
+      events.push(
+        new CDSEvent({
+          content_type: LotteryContentTypes.MEGA_SENA.uri,
+          source: { "@id": CDSSources.CAIXA_LOTERIAS, fingerprint: fp },
+          occurred_at: occurred,
+          lang: "pt-BR",
+          payload: result as unknown as Record<string, unknown>,
+          context: {
+            summary: buildSummary(result),
+            model: "rule-based-v1",
+            generated_at: new Date().toISOString(),
+          } satisfies ContextMeta,
+        }),
+      );
     }
 
     return events;
