@@ -35,10 +35,10 @@ cd infra && npm install && npx cdk synth
 ## Releasing
 
 ```bash
-# Python SDK  →  triggers release-python.yml  →  PyPI
+# Python SDK  →  triggers release.yaml (publish-pypi job)  →  PyPI
 git tag sdk-py-v0.2.0 && git push origin sdk-py-v0.2.0
 
-# TypeScript SDK  →  triggers release-typescript.yml  →  npm
+# TypeScript SDK  →  triggers release.yaml (publish-npm job)  →  npm
 git tag sdk-ts-v0.2.0 && git push origin sdk-ts-v0.2.0
 
 # Site     — auto on push to main when site/** changes
