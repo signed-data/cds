@@ -8,7 +8,8 @@ WORKDIR /app
 COPY sdk/python /tmp/sdk/python
 COPY mcp/lottery /tmp/mcp/lottery
 
-RUN pip install --no-cache-dir /tmp/sdk/python /tmp/mcp/lottery \
+RUN pip install --no-cache-dir /tmp/sdk/python \
+    && pip install --no-cache-dir --no-deps /tmp/mcp/lottery \
     && rm -rf /tmp/sdk /tmp/mcp
 
 EXPOSE 8001
