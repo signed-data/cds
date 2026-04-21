@@ -1,13 +1,44 @@
-// Updated LotteryContentTypes
-const LotteryContentTypes = {
-    MEGA_SENA: { uri: 'desired_uri_for_mega_sena', mime_type: 'application/vnd.cds.lottery-brazil.mega-sena-result+json;v=1' },
-    LOTTO: { uri: 'desired_uri_for_lotto', mime_type: 'application/vnd.cds.lottery-brazil.lotto-result+json;v=1' },
-    POWERBALL: { uri: 'desired_uri_for_powerball', mime_type: 'application/vnd.cds.lottery-brazil.powerball-result+json;v=1' }
-    // Add other lottery types as needed
-};
+/**
+ * SignedData CDS — Lottery Source
+ */
 
-// Update MegaSenaIngestor
-MegaSenaIngestor.contentType = LotteryContentTypes.MEGA_SENA.uri;
+import { CDSEvent } from "../schema.js";
+import { BaseIngestor } from "../ingestor.js";
+import { CDSVocab } from "../vocab.js";
 
-// Update CDSEvent content_type
-CDSEvent.content_type = LotteryContentTypes.MEGA_SENA.uri;
+export const LotteryContentTypes = {
+  MEGA_SENA: CDSVocab.LOTTERY_MEGA_SENA,
+  LOTOFACIL: CDSVocab.LOTTERY_LOTOFACIL,
+  QUINA: CDSVocab.LOTTERY_QUINA,
+  LOTOMANIA: CDSVocab.LOTTERY_LOTOMANIA,
+  DUPLA_SENA: CDSVocab.LOTTERY_DUPLA_SENA,
+} as const;
+
+export interface PrizeTier {
+  tier: number;
+  description: string;
+  winners: number;
+  prize_amount: number;
+  total_prize: number;
+}
+
+export interface MegaSenaResult {
+  game: "mega_sena";
+  concurso: number;
+  data_apuracao: string;
+  dezenas: string[];
+  arrecadacao_total: number;
+  acumulou: boolean;
+  acumulada_prox_concurso: number;
+  data_prox_concurso: string;
+  premio_estimado_prox_concurso: number;
+  premiacoes: PrizeTier[];
+}
+
+export class MegaSenaIngestor extends BaseIngestor {
+  readonly contentType = LotteryContentTypes.MEGA_SENA;
+
+  async fetch(): Promise<CDSEvent[]> {
+    return [];
+  }
+}
