@@ -1,26 +1,14 @@
 /**
- * SignedData CDS — Brazil Lottery Source
- * Source: Caixa Econômica Federal public API (no auth required)
- *
- * Endpoints:
- *   Latest:   GET /portaldeloterias/api/megasena/
- *   Specific: GET /portaldeloterias/api/megasena/{concurso}
- *
- * Other games:
- *   /portaldeloterias/api/lotofacil/{concurso}
- *   /portaldeloterias/api/quina/{concurso}
- *   /portaldeloterias/api/lotomania/{concurso}
+ * SignedData CDS — Lottery Source
  */
-import { CDSContentType, CDSEvent } from "../schema.js";
-import { CDSSigner } from "../signer.js";
+import { CDSEvent } from "../schema.js";
 import { BaseIngestor } from "../ingestor.js";
 export declare const LotteryContentTypes: {
-    readonly MEGA_SENA: CDSContentType;
-    readonly LOTOFACIL: CDSContentType;
-    readonly QUINA: CDSContentType;
-    readonly LOTOMANIA: CDSContentType;
-    readonly TIMEMANIA: CDSContentType;
-    readonly DUPLA_SENA: CDSContentType;
+    readonly MEGA_SENA: string;
+    readonly LOTOFACIL: string;
+    readonly QUINA: string;
+    readonly LOTOMANIA: string;
+    readonly DUPLA_SENA: string;
 };
 export interface PrizeTier {
     tier: number;
@@ -30,29 +18,19 @@ export interface PrizeTier {
     total_prize: number;
 }
 export interface MegaSenaResult {
+    game: "mega_sena";
     concurso: number;
     data_apuracao: string;
-    data_apuracao_iso: string;
-    local_sorteio: string;
-    cidade_uf: string;
     dezenas: string[];
-    dezenas_ordem_sorteio: string[];
-    acumulado: boolean;
+    arrecadacao_total: number;
+    acumulou: boolean;
+    acumulada_prox_concurso: number;
+    data_prox_concurso: string;
+    premio_estimado_prox_concurso: number;
     premiacoes: PrizeTier[];
-    valor_arrecadado: number;
-    valor_acumulado_proximo: number;
-    data_proximo_concurso: string;
-    concurso_anterior?: number;
-    concurso_proximo?: number;
-}
-export interface MegaSenaIngestorOptions {
-    /** Specific draw numbers to fetch. Omit to fetch only the latest. */
-    concursos?: number[];
 }
 export declare class MegaSenaIngestor extends BaseIngestor {
-    readonly contentType: CDSContentType;
-    private readonly concursos;
-    constructor(signer: CDSSigner, opts?: MegaSenaIngestorOptions);
+    readonly contentType: string;
     fetch(): Promise<CDSEvent[]>;
 }
 //# sourceMappingURL=lottery.d.ts.map
