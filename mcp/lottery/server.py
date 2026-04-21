@@ -25,16 +25,16 @@ from typing import Any
 import httpx
 
 # ── Path setup ─────────────────────────────────────────────
-# Allows running directly or as part of the monorepo
-_ROOT = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(_ROOT / "sdk/python"))
+# Note: The signeddata-cds package is now a proper dependency;
+# sys.path injection is no longer needed
 
 from fastmcp import FastMCP
-from cds.schema import CDSContentType, CDSEvent, ContextMeta, SourceMeta
+from cds.schema import CDSEvent, ContextMeta, SourceMeta
+from cds.vocab import CDSVocab, CDSSources
 from cds.signer import CDSSigner, CDSVerifier
 from cds.sources.lottery_models import LotteryContentTypes, MegaSenaResult, PrizeTier
 from cds.sources.lottery import (
-    CAIXA_BASE, SOURCE_ID,
+    CAIXA_BASE,
     _parse_response, _build_summary, _parse_premiacao, _parse_date_iso,
 )
 
