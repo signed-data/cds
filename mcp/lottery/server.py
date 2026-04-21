@@ -13,12 +13,10 @@ Install:
 """
 from __future__ import annotations
 
-import asyncio
-import argparse
 import json
 import os
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -31,14 +29,16 @@ sys.path.insert(0, str(_ROOT / "sdk/python"))
 
 from fastmcp import FastMCP
 from cds.schema import CDSEvent, ContextMeta, SourceMeta
-from cds.signer import CDSSigner, CDSVerifier
-from cds.sources.lottery_models import LotteryContentTypes
+from cds.vocab import CDSSources
+from cds.signer import CDSSigner
+from cds.sources.lottery_models import LotteryContentTypes, MegaSenaResult, PrizeTier
 from cds.sources.lottery import (
     CAIXA_BASE,
     _build_summary,
     _parse_response,
 )
-from cds.vocab import CDSSources
+
+SOURCE_ID = CDSSources.CAIXA_LOTERIAS
 
 # ── Server config ───────────────────────────────────────────
 mcp = FastMCP(
@@ -54,41 +54,60 @@ mcp = FastMCP(
 # ── Signing (optional — uses env var or skips) ──────────────
 _PRIVATE_KEY_PATH = os.environ.get("CDS_PRIVATE_KEY_PATH", "")
 _ISSUER           = os.environ.get("CDS_ISSUER", "signed-data.org")
-_PUBLIC_KEY_PATH  = os.environ.get("CDS_PUBLIC_KEY_PATH", "")
+
 
 def _get_signer() -> CDSSigner | None:
     if _PRIVATE_KEY_PATH and Path(_PRIVATE_KEY_PATH).exists():
         return CDSSigner(_PRIVATE_KEY_PATH, issuer=_ISSUER)
     return None
 
-def _get_verifier() -> CDSVerifier | None:
-    if _PUBLIC_KEY_PATH and Path(_PUBLIC_KEY_PATH).exists():
-        return CDSVerifier(_PUBLIC_KEY_PATH)
-    return None
 
 def _brl(value: float) -> str:
     """Format BRL: 45000000.0 → 'R$ 45.000.000,00'"""
     formatted = f"{value:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
     return f"R$ {formatted}"
 
+# BRT is UTC−03:00; draws are at 21:00 BRT = 00:00 UTC the next day
+_BRT = timezone(timedelta(hours=-3))
+
+def _occurred_at(data_apuracao: str) -> datetime:
+    """Convert a 'DD/MM/YYYY' draw date to UTC.
+
+    Mega Sena draws occur at 21:00 BRT (UTC−03:00), which is 00:00 UTC the
+    following day.  This function constructs a timezone-aware datetime in BRT
+    and converts it to UTC so all timestamps are stored consistently.
+    """
+    d, m, y = data_apuracao.split("/")
+    return datetime(int(y), int(m), int(d), 21, 0, 0, tzinfo=_BRT).astimezone(timezone.utc)
+
 # ── HTTP helper ─────────────────────────────────────────────
-async def _fetch_caixa(game: str, concurso: int | None = None) -> dict[str, Any]:
+async def _fetch_caixa(
+    game: str,
+    concurso: int | None = None,
+    *,
+    client: httpx.AsyncClient | None = None,
+) -> dict[str, Any]:
     url = f"{CAIXA_BASE}/{game}/{concurso}" if concurso else f"{CAIXA_BASE}/{game}/"
-    async with httpx.AsyncClient(timeout=15, follow_redirects=True) as client:
+    if client is not None:
         resp = await client.get(url, headers={"Accept": "application/json"})
         resp.raise_for_status()
         return resp.json()
+    async with httpx.AsyncClient(timeout=15, follow_redirects=True) as _client:
+        resp = await _client.get(url, headers={"Accept": "application/json"})
+        resp.raise_for_status()
+        return resp.json()
+
 
 def _event_to_dict(event: CDSEvent) -> dict[str, Any]:
     """Serialise a CDSEvent to a plain dict for MCP response."""
     return {
-        "cds_event_id":    event.id,
-        "content_type":    event.content_type,
-        "occurred_at":     event.occurred_at.isoformat() if isinstance(event.occurred_at, datetime) else event.occurred_at,
-        "signed_by":       event.integrity.signed_by if event.integrity else None,
-        "hash":            event.integrity.hash[:20] + "..." if event.integrity else None,
-        "summary":         event.event_context.summary if event.event_context else "",
-        "payload":         event.payload,
+        "cds_event_id": event.id,
+        "content_type": event.content_type,
+        "occurred_at": event.occurred_at.isoformat(),
+        "signed_by": event.integrity.signed_by if event.integrity else None,
+        "hash": event.integrity.hash[:20] + "..." if event.integrity else None,
+        "summary": event.event_context.summary if event.event_context else "",
+        "payload": event.payload,
     }
 
 # ═══════════════════════════════════════════════════════════
@@ -111,18 +130,17 @@ async def get_mega_sena_latest() -> dict[str, Any]:
     signer = _get_signer()
 
     try:
-        d, m, y = result.data_apuracao.split("/")
-        occurred = datetime(int(y), int(m), int(d), 21, 0, 0, tzinfo=timezone.utc)
+        occurred = _occurred_at(result.data_apuracao)
     except Exception:
         occurred = datetime.now(timezone.utc)
 
     event = CDSEvent(
         content_type = LotteryContentTypes.MEGA_SENA,
-        source       = SourceMeta(id=CDSSources.CAIXA_LOTERIAS),
+        source       = SourceMeta(id=SOURCE_ID),
         occurred_at  = occurred,
         lang         = "pt-BR",
         payload      = result.model_dump(mode="json"),
-        event_context= ContextMeta(summary=_build_summary(result), model="rule-based-v1"),
+        event_context=ContextMeta(summary=_build_summary(result), model="rule-based-v1"),
     )
     if signer:
         signer.sign(event)
@@ -144,18 +162,17 @@ async def get_mega_sena_by_concurso(concurso: int) -> dict[str, Any]:
     signer = _get_signer()
 
     try:
-        d, m, y = result.data_apuracao.split("/")
-        occurred = datetime(int(y), int(m), int(d), 21, 0, 0, tzinfo=timezone.utc)
+        occurred = _occurred_at(result.data_apuracao)
     except Exception:
         occurred = datetime.now(timezone.utc)
 
     event = CDSEvent(
         content_type = LotteryContentTypes.MEGA_SENA,
-        source       = SourceMeta(id=CDSSources.CAIXA_LOTERIAS),
+        source       = SourceMeta(id=SOURCE_ID),
         occurred_at  = occurred,
         lang         = "pt-BR",
         payload      = result.model_dump(mode="json"),
-        event_context= ContextMeta(summary=_build_summary(result), model="rule-based-v1"),
+        event_context=ContextMeta(summary=_build_summary(result), model="rule-based-v1"),
     )
     if signer:
         signer.sign(event)
@@ -174,37 +191,37 @@ async def get_mega_sena_recent(last_n: int = 5) -> list[dict[str, Any]]:
     """
     last_n = max(1, min(last_n, 20))
 
-    # Get latest first to find current concurso number
-    latest_raw    = await _fetch_caixa("megasena")
-    latest_result = _parse_response(latest_raw)
-    latest_num    = latest_result.concurso
+    async with httpx.AsyncClient(timeout=15, follow_redirects=True) as client:
+        # Get latest first to find current concurso number
+        latest_raw    = await _fetch_caixa("megasena", client=client)
+        latest_result = _parse_response(latest_raw)
+        latest_num    = latest_result.concurso
 
-    concursos = list(range(latest_num - last_n + 1, latest_num + 1))
-    results: list[dict[str, Any]] = []
-
-    for concurso in concursos:
-        raw    = await _fetch_caixa("megasena", concurso)
-        result = _parse_response(raw)
+        concursos = list(range(latest_num - last_n + 1, latest_num + 1))
+        results: list[dict[str, Any]] = []
         signer = _get_signer()
 
-        try:
-            d, m, y = result.data_apuracao.split("/")
-            occurred = datetime(int(y), int(m), int(d), 21, 0, 0, tzinfo=timezone.utc)
-        except Exception:
-            occurred = datetime.now(timezone.utc)
+        for concurso in concursos:
+            raw    = await _fetch_caixa("megasena", concurso, client=client)
+            result = _parse_response(raw)
 
-        event = CDSEvent(
-            content_type = LotteryContentTypes.MEGA_SENA,
-            source       = SourceMeta(id=CDSSources.CAIXA_LOTERIAS),
-            occurred_at  = occurred,
-            lang         = "pt-BR",
-            payload      = result.model_dump(mode="json"),
-            event_context= ContextMeta(summary=_build_summary(result), model="rule-based-v1"),
-        )
-        if signer:
-            signer.sign(event)
+            try:
+                occurred = _occurred_at(result.data_apuracao)
+            except Exception:
+                occurred = datetime.now(timezone.utc)
 
-        results.append(_event_to_dict(event))
+            event = CDSEvent(
+                content_type = LotteryContentTypes.MEGA_SENA,
+                source       = SourceMeta(id=SOURCE_ID),
+                occurred_at  = occurred,
+                lang         = "pt-BR",
+                payload      = result.model_dump(mode="json"),
+                context      = ContextMeta(summary=_build_summary(result), model="rule-based-v1"),
+            )
+            if signer:
+                signer.sign(event)
+
+            results.append(_event_to_dict(event))
 
     return results
 
@@ -267,37 +284,41 @@ async def get_mega_sena_statistics(last_n: int = 20) -> dict[str, Any]:
     """
     last_n = max(5, min(last_n, 50))
 
-    latest_raw = await _fetch_caixa("megasena")
-    latest     = _parse_response(latest_raw)
-    latest_num = latest.concurso
+    async with httpx.AsyncClient(timeout=15, follow_redirects=True) as client:
+        latest_raw = await _fetch_caixa("megasena", client=client)
+        latest     = _parse_response(latest_raw)
+        latest_num = latest.concurso
 
-    concursos = range(max(1, latest_num - last_n + 1), latest_num + 1)
-    freq: dict[str, int] = {}
-    accumulated = 0
-    total_draws = 0
+        concursos = range(max(1, latest_num - last_n + 1), latest_num + 1)
+        freq: dict[str, int] = {}
+        accumulated = 0
+        total_draws = 0
 
-    for concurso in concursos:
-        try:
-            raw    = await _fetch_caixa("megasena", concurso)
-            result = _parse_response(raw)
-            for d in result.dezenas:
-                freq[d] = freq.get(d, 0) + 1
-            if result.acumulado:
-                accumulated += 1
-            total_draws += 1
-        except Exception:
-            continue
+        for concurso in concursos:
+            try:
+                raw    = await _fetch_caixa("megasena", concurso, client=client)
+                result = _parse_response(raw)
+                for d in result.dezenas:
+                    freq[d] = freq.get(d, 0) + 1
+                if result.acumulado:
+                    accumulated += 1
+                total_draws += 1
+            except Exception:
+                continue
+
+    if total_draws == 0:
+        return {"error": "Could not fetch any draw data. Check your network connection and that the Caixa API is accessible."}
 
     sorted_freq  = sorted(freq.items(), key=lambda x: x[1], reverse=True)
     most_common  = sorted_freq[:10]
     least_common = sorted_freq[-10:]
 
     return {
-        "draws_analysed":       total_draws,
-        "from_concurso":        max(1, latest_num - last_n + 1),
-        "to_concurso":          latest_num,
-        "accumulated_draws":    accumulated,
-        "jackpot_hit_rate":     f"{((total_draws - accumulated) / total_draws * 100):.1f}%",
+        "draws_analysed":         total_draws,
+        "from_concurso":          max(1, latest_num - last_n + 1),
+        "to_concurso":            latest_num,
+        "accumulated_draws":      accumulated,
+        "jackpot_hit_rate":       f"{((total_draws - accumulated) / total_draws * 100):.1f}%",
         "most_frequent_numbers":  [{"number": n, "times": t} for n, t in most_common],
         "least_frequent_numbers": [{"number": n, "times": t} for n, t in least_common],
     }
@@ -329,7 +350,7 @@ async def mega_sena_schema_resource() -> str:
     return json.dumps({
         "content_type": LotteryContentTypes.MEGA_SENA,
         "issuer":       _ISSUER,
-        "source":       CDSSources.CAIXA_LOTERIAS,
+        "source":       SOURCE_ID,
         "payload_fields": {
             "concurso":               "int — draw number",
             "data_apuracao":          "str — draw date (DD/MM/YYYY)",
@@ -344,29 +365,21 @@ async def mega_sena_schema_resource() -> str:
     }, ensure_ascii=False, indent=2)
 
 
-def main(argv: list[str] | None = None) -> None:
-    """Entry point for signeddata-mcp-lottery CLI."""
-    parser = argparse.ArgumentParser(description="SignedData CDS Lottery MCP Server")
-    parser.add_argument(
-        "game",
-        nargs="?",
-        default="mega-sena",
-        choices=["mega-sena"],
-        help="Lottery game to expose. Only mega-sena is available in this release.",
-    )
+# ═══════════════════════════════════════════════════════════
+# ENTRY POINT
+# ═══════════════════════════════════════════════════════════
+
+def main() -> None:
+    import argparse
+    parser = argparse.ArgumentParser()
     parser.add_argument("--transport", choices=["stdio", "sse"], default="stdio")
     parser.add_argument("--port", type=int, default=8001)
-    args = parser.parse_args(argv)
+    args = parser.parse_args()
 
     if args.transport == "sse":
         mcp.run(transport="sse", port=args.port)
     else:
         mcp.run(transport="stdio")
-
-
-# ═══════════════════════════════════════════════════════════
-# ENTRY POINT
-# ═══════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
     main()

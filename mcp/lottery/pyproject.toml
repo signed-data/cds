@@ -6,13 +6,11 @@ build-backend = "setuptools.build_meta"
 name = "signeddata-mcp-lottery"
 version = "0.1.1"
 description = "SignedData CDS MCP Server — Brazil Lottery"
-readme = "README.md"
-license = { text = "MIT" }
 requires-python = ">=3.12"
 dependencies = [
     "signeddata-cds @ git+https://github.com/signed-data/cds.git@sdk-py-v0.3.1#subdirectory=sdk/python",
     "fastmcp>=3.2,<4",
-    "httpx>=0.27",
+    "httpx>=0.28",
     "pydantic>=2.0",
     "cryptography>=42.0",
 ]
@@ -21,4 +19,4 @@ dependencies = [
 signeddata-mcp-lottery = "server:main"
 
 [tool.setuptools]
-py-modules = ["server", "cds_mcp_lottery"]
+py-modules = ["server"]

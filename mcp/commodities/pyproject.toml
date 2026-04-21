@@ -8,9 +8,9 @@ version = "0.1.1"
 description = "SignedData CDS MCP Server — Brazil Commodities (B3 futures, CONAB spot)"
 requires-python = ">=3.12"
 dependencies = [
-    "signeddata-cds @ git+https://github.com/signed-data/cds.git@v0.3.0#subdirectory=sdk/python",
-    "fastmcp>=0.4",
-    "httpx>=0.27",
+    "signeddata-cds @ git+https://github.com/signed-data/cds.git@main#subdirectory=sdk/python",
+    "fastmcp>=3.2,<4",
+    "httpx>=0.28",
     "pydantic>=2.0",
     "cryptography>=42.0",
 ]

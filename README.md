@@ -157,6 +157,58 @@ import os; os.makedirs("keys", exist_ok=True)
 generate_keypair("keys/private.pem", "keys/public.pem")
 ```
 
+## MCP Servers
+
+All MCP servers are published to PyPI and Docker Hub. Use them with Claude Desktop, command-line MCP clients, or self-host locally.
+
+| Server | Package | Hosted Endpoint | Tools |
+|--------|---------|-----------------|-------|
+| **Finance** | `signeddata-mcp-finance` | `https://finance.mcp.signed-data.org/mcp` | SELIC, IPCA, PTAX FX, B3 quotes, Copom |
+| **Commodities** | `signeddata-mcp-commodities` | `https://commodities.mcp.signed-data.org/mcp` | B3 agro futures, CONAB spot prices, basis spreads |
+| **Companies** | `signeddata-mcp-companies` | `https://companies.mcp.signed-data.org/mcp` | CNPJ lookup, company verification |
+| **Lottery** | `signeddata-mcp-lottery` | `https://lottery.mcp.signed-data.org/mcp` | Mega Sena, Lotofácil, Quina, Lotomania, Dupla Sena |
+| **Gov-BR** | `signeddata-mcp-gov-br` | `https://gov-br.mcp.signed-data.org/mcp` | Federal sanctions (CEIS/CNEP) lookups |
+
+### Install locally
+
+```bash
+pip install signeddata-mcp-finance
+pip install signeddata-mcp-commodities
+pip install signeddata-mcp-companies
+pip install signeddata-mcp-lottery
+pip install signeddata-mcp-gov-br
+```
+
+Add to Claude Desktop (`~/.config/claude/claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "signeddata-finance": { "command": "signeddata-mcp-finance" },
+    "signeddata-commodities": { "command": "signeddata-mcp-commodities" },
+    "signeddata-companies": { "command": "signeddata-mcp-companies" },
+    "signeddata-lottery": { "command": "signeddata-mcp-lottery" },
+    "signeddata-gov-br": { "command": "signeddata-mcp-gov-br", "env": { "PORTAL_TRANSPARENCIA_TOKEN": "your-free-token" } }
+  }
+}
+```
+
+Or use the hosted endpoints (zero install):
+
+```json
+{
+  "mcpServers": {
+    "signeddata-finance": { "url": "https://finance.mcp.signed-data.org/mcp" },
+    "signeddata-commodities": { "url": "https://commodities.mcp.signed-data.org/mcp" },
+    "signeddata-companies": { "url": "https://companies.mcp.signed-data.org/mcp" },
+    "signeddata-lottery": { "url": "https://lottery.mcp.signed-data.org/mcp" },
+    "signeddata-gov-br": { "url": "https://gov-br.mcp.signed-data.org/mcp" }
+  }
+}
+```
+
+Full product pages with domain specs, tools, and examples: [signed-data.org/products](https://signed-data.org/products)
+
 ---
 
 ## Repository structure
@@ -195,6 +247,7 @@ cds/
 │           └── sources/
 ├── mcp/
 │   ├── finance/                    # signeddata-mcp-finance
+│   ├── companies/                  # signeddata-mcp-companies
 │   ├── commodities/                # signeddata-mcp-commodities
 │   └── lottery/                    # signeddata-mcp-lottery
 └── docs/
@@ -210,7 +263,9 @@ cds/
 
 ## How signing works
 
-Signing is deterministic RSA-PSS SHA-256 over a canonical JSON serialisation of the event.
+CDS signing uses RSA-PSS SHA-256 over a canonical JSON serialisation of the event.
+The canonical bytes — and therefore the hash — are deterministic; RSA-PSS signatures
+use a random salt per the standard.
 
 **Sign (producer):**
 1. Serialise the event to canonical JSON — `sort_keys=True`, UTF-8, excluding `integrity` and `ingested_at`; including `@context`, `@type`, `@id`
@@ -259,6 +314,8 @@ https://signed-data.org/vocab/weather/forecast-current
 | `finance` | `quote.stock`, `quote.crypto`, `quote.forex`, `index.update` | Brapi | [finance.jsonld](vocab/domains/finance.jsonld) |
 | `finance.brazil` | `rate.selic`, `index.ipca`, `fx.usd-brl`, `decision.copom`, `quote.stock` | Banco Central + Brapi | [finance-brazil.jsonld](vocab/domains/finance-brazil.jsonld) |
 | `commodities.brazil` | `futures.soja`, `spot.soja`, `spot.milho`, `index.worldbank` | Brapi + CONAB + World Bank | [commodities-brazil.jsonld](vocab/domains/commodities-brazil.jsonld) |
+| `companies.brazil` | `profile.cnpj`, `partners.cnpj`, `cnae.profile` | BrasilAPI / Receita Federal | [companies-brazil.jsonld](vocab/domains/companies-brazil.jsonld) |
+| `integrity.brazil` | `sanctions.consolidated`, `sanctions.ceis`, `sanctions.cnep`, `sanctions.cepim` | Portal da Transparência | [integrity-brazil.jsonld](vocab/domains/integrity-brazil.jsonld) |
 | `religion.bible` | `verse`, `passage`, `daily` | bible-api.com | [religion-bible.jsonld](vocab/domains/religion-bible.jsonld) |
 | `government.brazil` | `diario.oficial`, `licitacao`, `lei` | official APIs | [government-brazil.jsonld](vocab/domains/government-brazil.jsonld) |
 | `lottery.brazil` | `mega-sena.result`, `lotofacil.result`, `quina.result`, `lotomania.result`, `dupla-sena.result` | Caixa | [lottery-brazil.jsonld](vocab/domains/lottery-brazil.jsonld) |
@@ -269,10 +326,12 @@ https://signed-data.org/vocab/weather/forecast-current
 
 CDS events are designed to be consumed by LLMs via the [Model Context Protocol](https://modelcontextprotocol.io).
 
-| Server | Games / domains | Install |
+| Server | Domains | Source install |
 |---|---|---|
-| [`mcp/finance`](mcp/finance) | SELIC, IPCA, PTAX FX, B3 quotes, Copom | `pip install signeddata-mcp-finance` |
-| [`mcp/commodities`](mcp/commodities) | B3 agro futures, CONAB spot prices, basis spreads | `pip install signeddata-mcp-commodities` |
+| [`mcp/finance`](mcp/finance) | SELIC, IPCA, PTAX FX, B3 quotes, Copom | `pip install "git+https://github.com/signed-data/cds.git#subdirectory=mcp/finance"` |
+| [`mcp/commodities`](mcp/commodities) | B3 agro futures, CONAB spot prices, basis spreads | `pip install "git+https://github.com/signed-data/cds.git#subdirectory=mcp/commodities"` |
+| [`mcp/companies`](mcp/companies) | CNPJ profile, partners (QSA), CNAE info, CNPJ validation | `pip install "git+https://github.com/signed-data/cds.git#subdirectory=mcp/companies"` |
+| [`mcp/integrity`](mcp/integrity) | CEIS / CNEP / CEPIM sanction lookup by CNPJ | `pip install "git+https://github.com/signed-data/cds.git#subdirectory=mcp/integrity"` |
 | [mcp-lottery](https://github.com/signed-data/mcp-lottery) | Mega Sena, Lotofacil, Quina, Lotomania, Dupla Sena | `pip install signeddata-mcp-lottery` |
 
 ---
@@ -308,13 +367,13 @@ signer = CDSSigner("./keys/private.pem", issuer="https://mycompany.example.com")
 
 Consumers verify with your public key. The trust anchor is your organisation, not ours. Publish your vocabulary and public key at your domain for full Linked Data compliance.
 
-For a complete self-hosting example with AWS CDK (Lambda + S3 + EventBridge), see the [magj/cds-services](https://github.com/magj/cds-services) reference deployment.
+For a complete self-hosting example with AWS CDK (ECS/Fargate + Lambda + ALB + Route53 + CloudWatch), see the [signed-data/cds-services](https://github.com/signed-data/cds-services) reference deployment. It includes infrastructure as code for running all MCP servers in production.
 
 ---
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](docs/contributing.md).
 
 To propose a new domain or schema, open an issue with the tag `domain-proposal`. Include: the data source, sample API response, and a draft payload schema.
 
@@ -322,28 +381,41 @@ To propose a new domain or schema, open an issue with the tag `domain-proposal`.
 
 ## Changelog
 
-### v0.2.0 — 2026-04 (current)
+See [CHANGELOG.md](CHANGELOG.md) for the full release history.
 
-- **Linked Data rebuild** — every identity is now a dereferenceable HTTP URI
-- Events are valid JSON-LD with `@context`, `@type`, `@id`
-- `content_type` is a URI string (was `CDSContentType` object) — **breaking**
-- `source.@id` replaces `source.id` — **breaking**
-- `integrity.signed_by` is a full URI — **breaking**
-- New `CDSVocab` and `CDSSources` URI constants in both SDKs
-- Vocabulary, context, and source registry as JSON-LD files
-- Domain specs and vocab for `finance.brazil` and `commodities.brazil`
-- MCP packages for `signeddata-mcp-finance` and `signeddata-mcp-commodities`
-- 5-star Linked Data rating achieved
+### v0.4.0 — 2026-04
+
+- Add `integrity.brazil` domain: federal sanction lookup (CEIS, CNEP, CEPIM) via Portal da Transparência
+- Add `mcp/integrity` MCP server with `check_sanctions_by_cnpj` tool — KYC/due-diligence companion to `mcp/companies`
+- Register new JSON-LD source: `api.portaldatransparencia.gov.br.v1` (api-key auth, LAI 12.527/2011)
+- New typed Python SDK models: `SanctionRecord`, `SanctionsConsolidated`, `SanctionsFetcher`
+
+### v0.3.1 — 2026-04
+
+- Fix `mcp/commodities` packaging so the installed CLI works consistently
+- Add MCP product docs for finance and commodities
+- Refresh architecture and operator-facing docs
+
+### v0.3.0 — 2026-04
+
+- Add `finance.brazil`, `companies.brazil`, and `commodities.brazil`
+- Add MCP servers for finance, companies, and commodities
+- Add typed Python and TypeScript SDK support for the new domains
+- Register new JSON-LD vocabularies and source registries
+
+### v0.2.0 — 2026-03
+
+- Linked Data rebuild with `@context`, `@type`, and `@id`
+- URI-based `content_type` and `source.@id`
+- Shared vocabulary, context, and source registry JSON-LD files
 - See [MIGRATION-v0.1-to-v0.2.md](spec/MIGRATION-v0.1-to-v0.2.md)
 
 ### v0.1.0 — 2026-03
 
 - Initial release
-- Core envelope: `CDSEvent`, `CDSContentType`, `IntegrityMeta`
-- RSA-PSS SHA-256 signing and verification
+- Core envelope, signing, and verification
 - Python SDK (`signeddata-cds`) and TypeScript SDK (`@signeddata/cds-sdk`)
-- Domains: `weather`, `sports.football`, `news`, `finance`, `religion.bible`, `government.brazil`, `lottery.brazil`
-- MCP server: `mcp-lottery` (Mega Sena, Lotofacil, Quina, Lotomania, Dupla Sena)
+- Initial domains: `weather`, `sports.football`, `news`, `finance`, `religion.bible`, `government.brazil`, `lottery.brazil`
 
 ---
 
