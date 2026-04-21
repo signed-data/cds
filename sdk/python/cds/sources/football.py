@@ -12,6 +12,7 @@ Usage:
     )
     events = await ingestor.ingest()
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -33,29 +34,41 @@ from cds.vocab import CDSSources
 API_BASE = "https://v3.football.api-sports.io"
 
 LEAGUE_IDS: dict[str, int] = {
-    "brasileirao_a":    71,
-    "brasileirao_b":    72,
-    "copa_brasil":      73,
-    "libertadores":     13,
-    "sul_americana":    11,
-    "premier_league":   39,
+    "brasileirao_a": 71,
+    "brasileirao_b": 72,
+    "copa_brasil": 73,
+    "libertadores": 13,
+    "sul_americana": 11,
+    "premier_league": 39,
     "champions_league": 2,
 }
 
 STATUS_MAP: dict[str, str] = {
     "NS": "scheduled",
-    "1H": "live", "HT": "live", "2H": "live",
-    "ET": "live", "BT": "live", "P": "live",
-    "FT": "finished", "AET": "finished", "PEN": "finished",
-    "PST": "postponed", "CANC": "cancelled", "ABD": "cancelled",
-    "AWD": "finished", "WO": "finished",
+    "1H": "live",
+    "HT": "live",
+    "2H": "live",
+    "ET": "live",
+    "BT": "live",
+    "P": "live",
+    "FT": "finished",
+    "AET": "finished",
+    "PEN": "finished",
+    "PST": "postponed",
+    "CANC": "cancelled",
+    "ABD": "cancelled",
+    "AWD": "finished",
+    "WO": "finished",
 }
 
 
 def _summary(
-    home: str, away: str,
-    hs: int | None, as_: int | None,
-    status: str, competition: str,
+    home: str,
+    away: str,
+    hs: int | None,
+    as_: int | None,
+    status: str,
+    competition: str,
     minute: int | None,
 ) -> str:
     if status == "finished":
@@ -88,9 +101,9 @@ class FootballIngestor(BaseIngestor):
         season: int | None = None,
     ) -> None:
         super().__init__(signer)
-        self.api_key    = api_key
+        self.api_key = api_key
         self.league_ids = league_ids or [LEAGUE_IDS["brasileirao_a"]]
-        self.season     = season or datetime.now(UTC).year
+        self.season = season or datetime.now(UTC).year
 
     async def fetch(self) -> list[CDSEvent]:
         events: list[CDSEvent] = []
@@ -108,14 +121,14 @@ class FootballIngestor(BaseIngestor):
         return events
 
     def _build_event(self, f: dict[str, Any], fingerprint: str) -> CDSEvent:
-        fx     = f["fixture"]
-        teams  = f["teams"]
-        goals  = f["goals"]
+        fx = f["fixture"]
+        teams = f["teams"]
+        goals = f["goals"]
         league = f["league"]
-        venue  = fx.get("venue", {})
+        venue = fx.get("venue", {})
 
-        hs     = goals.get("home")
-        as_    = goals.get("away")
+        hs = goals.get("home")
+        as_ = goals.get("away")
         status = STATUS_MAP.get(fx.get("status", {}).get("short", "NS"), "scheduled")
         minute = fx.get("status", {}).get("elapsed")
 
@@ -123,7 +136,7 @@ class FootballIngestor(BaseIngestor):
         home_team.score = hs
         away_team = _team(teams["away"])
         away_team.score = as_
-        competition     = league.get("name", "")
+        competition = league.get("name", "")
 
         ct = (
             FootballContentTypes.MATCH_LIVE
@@ -133,7 +146,8 @@ class FootballIngestor(BaseIngestor):
 
         payload = FootballMatchPayload(
             match_id=fx.get("id"),
-            home=home_team, away=away_team,
+            home=home_team,
+            away=away_team,
             status=status,  # type: ignore[arg-type]
             competition=competition,
             competition_id=league.get("id"),
@@ -148,9 +162,9 @@ class FootballIngestor(BaseIngestor):
         return CDSEvent(
             content_type=ct,
             source=SourceMeta(id=CDSSources.API_FOOTBALL, fingerprint=fingerprint),
-            occurred_at=datetime.fromisoformat(
-                fx["date"].replace("Z", "+00:00")
-            ) if fx.get("date") else datetime.now(UTC),
+            occurred_at=datetime.fromisoformat(fx["date"].replace("Z", "+00:00"))
+            if fx.get("date")
+            else datetime.now(UTC),
             lang="en",
             payload=payload.model_dump(mode="json"),
             event_context=ContextMeta(

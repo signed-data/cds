@@ -2,6 +2,7 @@
 SignedData CDS — Signer & Verifier
 RSA-PSS SHA-256.  Keys are PEM file paths or PEM strings.
 """
+
 from __future__ import annotations
 
 import base64
@@ -16,21 +17,25 @@ from cds.schema import CDSEvent, IntegrityMeta
 
 def generate_keypair(
     private_key_path: str = "keys/private.pem",
-    public_key_path: str  = "keys/public.pem",
+    public_key_path: str = "keys/public.pem",
 ) -> None:
     """Generate and persist an RSA-4096 keypair."""
     key = rsa.generate_private_key(public_exponent=65537, key_size=4096)
     with open(private_key_path, "wb") as f:
-        f.write(key.private_bytes(
-            serialization.Encoding.PEM,
-            serialization.PrivateFormat.PKCS8,
-            serialization.NoEncryption(),
-        ))
+        f.write(
+            key.private_bytes(
+                serialization.Encoding.PEM,
+                serialization.PrivateFormat.PKCS8,
+                serialization.NoEncryption(),
+            )
+        )
     with open(public_key_path, "wb") as f:
-        f.write(key.public_key().public_bytes(
-            serialization.Encoding.PEM,
-            serialization.PublicFormat.SubjectPublicKeyInfo,
-        ))
+        f.write(
+            key.public_key().public_bytes(
+                serialization.Encoding.PEM,
+                serialization.PublicFormat.SubjectPublicKeyInfo,
+            )
+        )
     print(f"✅ Keypair: {private_key_path} / {public_key_path}")
 
 
@@ -90,11 +95,13 @@ class CDSVerifier:
         if not event.integrity:
             raise ValueError("Event has no integrity metadata.")
         canonical = event.canonical_bytes()
-        expected  = "sha256:" + hashlib.sha256(canonical).hexdigest()
+        expected = "sha256:" + hashlib.sha256(canonical).hexdigest()
         if expected != event.integrity.hash:
             raise ValueError(f"Hash mismatch. Expected {expected}")
         self._key.verify(
             base64.b64decode(event.integrity.signature),
-            canonical, _PSS, hashes.SHA256(),
+            canonical,
+            _PSS,
+            hashes.SHA256(),
         )
         return True

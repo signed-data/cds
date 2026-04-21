@@ -2,6 +2,7 @@
 CDS Companies Brazil Test Suite
 Tests for CNPJ validation, models, fetcher (mocked), event signing, summaries.
 """
+
 import json
 from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -132,9 +133,12 @@ class TestCompanyProfileModel:
             size="ME",
             main_cnae=CNAECode(code="4711302", description="Comércio varejista"),
             address=CompanyAddress(
-                street="RUA A", number="1",
-                neighborhood="CENTRO", zip_code="01000000",
-                city="SÃO PAULO", state="SP",
+                street="RUA A",
+                number="1",
+                neighborhood="CENTRO",
+                zip_code="01000000",
+                city="SÃO PAULO",
+                state="SP",
             ),
             query_timestamp="2026-04-02T14:30:00-03:00",
         )
@@ -176,8 +180,10 @@ class TestCompaniesContentTypes:
         assert CompaniesContentTypes.PROFILE == CDSVocab.COMPANIES_PROFILE_CNPJ
 
     def test_profile_uri_value(self):
-        assert CompaniesContentTypes.PROFILE == \
-            "https://signed-data.org/vocab/companies-brazil/profile-cnpj"
+        assert (
+            CompaniesContentTypes.PROFILE
+            == "https://signed-data.org/vocab/companies-brazil/profile-cnpj"
+        )
 
 
 # ── Event Tests ───────────────────────────────────────────
@@ -238,8 +244,12 @@ class TestSummary:
             share_capital=205431960490.52,
             main_cnae=CNAECode(code="0610600", description="Extração de petróleo"),
             address=CompanyAddress(
-                street="AV", number="65", neighborhood="CENTRO",
-                zip_code="20031170", city="RIO DE JANEIRO", state="RJ",
+                street="AV",
+                number="65",
+                neighborhood="CENTRO",
+                zip_code="20031170",
+                city="RIO DE JANEIRO",
+                state="RJ",
             ),
             query_timestamp="2026-04-02T14:30:00-03:00",
         )
@@ -260,8 +270,12 @@ class TestSummary:
             size="ME",
             main_cnae=CNAECode(code="4711302", description="Comércio varejista"),
             address=CompanyAddress(
-                street="R", number="1", neighborhood="C",
-                zip_code="01000000", city="SP", state="SP",
+                street="R",
+                number="1",
+                neighborhood="C",
+                zip_code="01000000",
+                city="SP",
+                state="SP",
             ),
             query_timestamp="2026-04-02T14:30:00-03:00",
         )
