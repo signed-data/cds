@@ -1,0 +1,40 @@
+{
+  "@context": {
+    "@vocab": "https://signed-data.org/vocab/",
+    "rdfs":   "http://www.w3.org/2000/01/rdf-schema#",
+    "cds":    "https://signed-data.org/vocab/cds/"
+  },
+  "@graph": [
+    {
+      "@id":          "https://signed-data.org/vocab/gov-br",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "gov-br",
+      "rdfs:comment": "Brazilian government transparency data from Portal da Transparência: sanctions, contracts, procurement, and budget execution.",
+      "rdfs:seeAlso": "https://signed-data.org/spec/domains/gov-br"
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/gov-br/sanctions-consolidated",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "sanctions.consolidated",
+      "rdfs:comment": "CNPJ sanction status consolidated from CEIS (empresas inidôneas) and CNEP (Lei Anticorrupção). Covers suspension/disqualification status and active penalty dates.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/gov-br" },
+      "cds:source": { "@id": "https://signed-data.org/sources/api.portaldatransparencia.gov.br.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/gov-br/sanctions-ceis",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "sanctions.ceis",
+      "rdfs:comment": "CEIS registry entry — Cadastro de Empresas Inidôneas e Suspensas. Companies suspended by federal procurement agencies. Internal use only; exposed via sanctions.consolidated.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/gov-br" },
+      "cds:source": { "@id": "https://signed-data.org/sources/api.portaldatransparencia.gov.br.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/gov-br/sanctions-cnep",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "sanctions.cnep",
+      "rdfs:comment": "CNEP registry entry — Cadastro Nacional de Empresas Punidas. Companies punished under Lei Anticorrupção (Law 12.846/2013). Internal use only; exposed via sanctions.consolidated.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/gov-br" },
+      "cds:source": { "@id": "https://signed-data.org/sources/api.portaldatransparencia.gov.br.v1" }
+    }
+  ]
+}
