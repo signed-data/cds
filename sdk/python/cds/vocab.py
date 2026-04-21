@@ -111,6 +111,10 @@ class CDSVocab:
     COMMODITY_SPOT_TRIGO = content_type_uri("commodities.brazil", "spot.trigo")
     COMMODITY_SPOT_ALGODAO = content_type_uri("commodities.brazil", "spot.algodao")
     COMMODITY_INDEX_WORLDBANK = content_type_uri("commodities.brazil", "index.worldbank")
+    # government.brazil — sanctions (Phase 1)
+    GOV_BR_SANCTIONS_CONSOLIDATED = content_type_uri("government.brazil", "sanctions.consolidated")
+    GOV_BR_SANCTIONS_CEIS         = content_type_uri("government.brazil", "sanctions.ceis")
+    GOV_BR_SANCTIONS_CNEP         = content_type_uri("government.brazil", "sanctions.cnep")
 
 
 # ── Pre-built source URI constants ─────────────────────────
