@@ -92,6 +92,13 @@ class CDSVocab:
     COMPANIES_PROFILE_CNPJ = content_type_uri("companies.brazil", "profile.cnpj")
     COMPANIES_PARTNERS_CNPJ = content_type_uri("companies.brazil", "partners.cnpj")
     COMPANIES_CNAE_PROFILE = content_type_uri("companies.brazil", "cnae.profile")
+    # integrity.brazil
+    INTEGRITY_SANCTIONS_CONSOLIDATED = content_type_uri(
+        "integrity.brazil", "sanctions.consolidated"
+    )
+    INTEGRITY_SANCTIONS_CEIS = content_type_uri("integrity.brazil", "sanctions.ceis")
+    INTEGRITY_SANCTIONS_CNEP = content_type_uri("integrity.brazil", "sanctions.cnep")
+    INTEGRITY_SANCTIONS_CEPIM = content_type_uri("integrity.brazil", "sanctions.cepim")
     # commodities.brazil
     COMMODITY_FUTURES_SOJA = content_type_uri("commodities.brazil", "futures.soja")
     COMMODITY_FUTURES_MILHO = content_type_uri("commodities.brazil", "futures.milho")

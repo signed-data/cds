@@ -1,0 +1,48 @@
+{
+  "@context": {
+    "@vocab": "https://signed-data.org/vocab/",
+    "cds": "https://signed-data.org/vocab/",
+    "rdfs":   "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id":          "https://signed-data.org/vocab/integrity-brazil",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "integrity.brazil",
+      "rdfs:comment": "Brazilian federal integrity data: sanctions, contracts, and public spending from Portal da Transparência.",
+      "rdfs:seeAlso": "https://signed-data.org/spec/domains/integrity.brazil"
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/integrity-brazil/sanctions-consolidated",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "sanctions.consolidated",
+      "rdfs:comment": "Consolidated federal sanction status for a CNPJ across CEIS, CNEP and CEPIM registries.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/integrity-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/api.portaldatransparencia.gov.br.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/integrity-brazil/sanctions-ceis",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "sanctions.ceis",
+      "rdfs:comment": "CEIS — Cadastro Nacional de Empresas Inidôneas e Suspensas.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/integrity-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/api.portaldatransparencia.gov.br.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/integrity-brazil/sanctions-cnep",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "sanctions.cnep",
+      "rdfs:comment": "CNEP — Cadastro Nacional de Empresas Punidas (Lei Anticorrupção).",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/integrity-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/api.portaldatransparencia.gov.br.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/integrity-brazil/sanctions-cepim",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "sanctions.cepim",
+      "rdfs:comment": "CEPIM — Entidades Privadas sem Fins Lucrativos Impedidas.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/integrity-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/api.portaldatransparencia.gov.br.v1" }
+    }
+  ]
+}
