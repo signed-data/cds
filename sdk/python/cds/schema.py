@@ -2,6 +2,7 @@
 CDS Python SDK — Core Schema v0.2.0
 Every identity is a dereferenceable HTTP URI.
 """
+
 from __future__ import annotations
 
 import json
@@ -32,9 +33,10 @@ class SourceMeta(BaseModel):
         SourceMeta(id=CDSSources.CAIXA_LOTERIAS, fingerprint="sha256:...")
         # serialises to: { "@id": "https://...", "fingerprint": "sha256:..." }
     """
+
     model_config = ConfigDict(populate_by_name=True)
 
-    id:          str = Field(..., alias="@id")
+    id: str = Field(..., alias="@id")
     fingerprint: str | None = None
 
     @property
@@ -44,16 +46,18 @@ class SourceMeta(BaseModel):
 
 class ContextMeta(BaseModel):
     """LLM-generated context summary attached to a CDS event."""
-    summary:      str
-    model:        str = "rule-based-v1"
+
+    summary: str
+    model: str = "rule-based-v1"
     generated_at: datetime = Field(default_factory=_now_utc)
 
 
 class IntegrityMeta(BaseModel):
     """Cryptographic proof of a CDSEvent. `signed_by` is an HTTP URI."""
-    hash:      str   # "sha256:<hex>"
-    signature: str   # base64 RSA-PSS
-    signed_by: str   # URI — "https://signed-data.org"
+
+    hash: str  # "sha256:<hex>"
+    signature: str  # base64 RSA-PSS
+    signed_by: str  # URI — "https://signed-data.org"
 
 
 class CDSEvent(BaseModel):
@@ -72,24 +76,25 @@ class CDSEvent(BaseModel):
         )
         event.to_jsonld()  # → dict with @context, @type, @id
     """
+
     model_config = ConfigDict(populate_by_name=True)
 
     # Linked Data fields — serialise with @ prefix via aliases
-    ld_context: str = Field(default=CONTEXT_URI,   alias="@context")
-    ld_type:    str = Field(default=EVENT_TYPE_URI, alias="@type")
-    ld_id:      str = Field(default="",             alias="@id")
+    ld_context: str = Field(default=CONTEXT_URI, alias="@context")
+    ld_type: str = Field(default=EVENT_TYPE_URI, alias="@type")
+    ld_id: str = Field(default="", alias="@id")
 
     # Standard envelope
-    spec_version:  str = "0.2.0"
-    id:            str = Field(default_factory=_new_uuid)
-    content_type:  str                   # URI — use CDSVocab constants
-    source:        SourceMeta
-    occurred_at:   datetime
-    ingested_at:   datetime = Field(default_factory=_now_utc)
-    lang:          str = "en"
-    payload:       dict[str, Any]
+    spec_version: str = "0.2.0"
+    id: str = Field(default_factory=_new_uuid)
+    content_type: str  # URI — use CDSVocab constants
+    source: SourceMeta
+    occurred_at: datetime
+    ingested_at: datetime = Field(default_factory=_now_utc)
+    lang: str = "en"
+    payload: dict[str, Any]
     event_context: ContextMeta | None = Field(default=None, alias="context")
-    integrity:     IntegrityMeta | None = None
+    integrity: IntegrityMeta | None = None
 
     def model_post_init(self, __context: Any) -> None:
         if not self.ld_id:
@@ -100,8 +105,8 @@ class CDSEvent(BaseModel):
         raw = self.model_dump(by_alias=True, mode="json")
         result: dict[str, Any] = {
             "@context": raw.pop("@context"),
-            "@type":    raw.pop("@type"),
-            "@id":      raw.pop("@id"),
+            "@type": raw.pop("@type"),
+            "@id": raw.pop("@id"),
         }
         result.update(raw)
         return result
@@ -143,13 +148,13 @@ class CDSEvent(BaseModel):
         Reverses the last hyphen to a dot (the original schema_name separator).
         """
         try:
-            seg   = self.content_type.split("/vocab/")[1]
+            seg = self.content_type.split("/vocab/")[1]
             parts = seg.split("/")
-            slug  = parts[1] if len(parts) >= 2 else parts[0]
+            slug = parts[1] if len(parts) >= 2 else parts[0]
             # Reverse the LAST hyphen→dot (the original schema_name dot)
             idx = slug.rfind("-")
             if idx >= 0:
-                return slug[:idx] + "." + slug[idx + 1:]
+                return slug[:idx] + "." + slug[idx + 1 :]
             return slug
         except (IndexError, AttributeError):
             return ""

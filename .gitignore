@@ -27,3 +27,22 @@ keys/
 
 # Spec implementation guide (not a project artifact)
 CDS-v0.2.0-SPEC.md
+**/.mypy_cache/
+**/.ruff_cache/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/.Python
+**/venv/
+**/.venv/
+**/env/
+**/*.egg
+**/.tox/
+**/.hypothesis/
+**/*.swp
+**/*.swo
+**/*~
+**/.env.local
+**/.env.*.local
+dist-newstyle/
+.stack-work/

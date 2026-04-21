@@ -3,6 +3,7 @@ CDS SDK Test Suite v0.2.0
 25 tests across: CDSVocab, SourceMeta, CDSEvent, canonical bytes,
 signing/verification, domain models.
 """
+
 import hashlib
 import json
 from datetime import UTC, datetime
@@ -24,11 +25,12 @@ from cds.vocab import (
 
 # ── Fixtures ───────────────────────────────────────────────
 
+
 @pytest.fixture(scope="session")
 def keypair(tmp_path_factory):
-    d    = tmp_path_factory.mktemp("keys")
+    d = tmp_path_factory.mktemp("keys")
     priv = str(d / "private.pem")
-    pub  = str(d / "public.pem")
+    pub = str(d / "public.pem")
     generate_keypair(priv, pub)
     return priv, pub
 
@@ -46,53 +48,64 @@ def verifier(keypair):
 @pytest.fixture
 def lottery_event():
     return CDSEvent(
-        content_type  = CDSVocab.LOTTERY_MEGA_SENA,
-        source        = SourceMeta(id=CDSSources.CAIXA_LOTERIAS, fingerprint="sha256:mock"),
-        occurred_at   = datetime(2026, 3, 29, tzinfo=UTC),
-        lang          = "pt-BR",
-        payload       = {"concurso": 2800, "dezenas": ["04","12","25","36","47","59"]},
-        event_context = ContextMeta(summary="Mega Sena 2800", model="rule-based-v1"),
+        content_type=CDSVocab.LOTTERY_MEGA_SENA,
+        source=SourceMeta(id=CDSSources.CAIXA_LOTERIAS, fingerprint="sha256:mock"),
+        occurred_at=datetime(2026, 3, 29, tzinfo=UTC),
+        lang="pt-BR",
+        payload={"concurso": 2800, "dezenas": ["04", "12", "25", "36", "47", "59"]},
+        event_context=ContextMeta(summary="Mega Sena 2800", model="rule-based-v1"),
     )
 
 
 @pytest.fixture
 def football_event():
     return CDSEvent(
-        content_type  = CDSVocab.FOOTBALL_MATCH_RESULT,
-        source        = SourceMeta(id=CDSSources.API_FOOTBALL, fingerprint="sha256:mock"),
-        occurred_at   = datetime(2026, 3, 22, 21, tzinfo=UTC),
-        lang          = "pt-BR",
-        payload       = {"home": {"name": "Flamengo", "score": 2},
-                         "away": {"name": "Fluminense", "score": 1}},
-        event_context = ContextMeta(summary="Flamengo 2-1 Fluminense"),
+        content_type=CDSVocab.FOOTBALL_MATCH_RESULT,
+        source=SourceMeta(id=CDSSources.API_FOOTBALL, fingerprint="sha256:mock"),
+        occurred_at=datetime(2026, 3, 22, 21, tzinfo=UTC),
+        lang="pt-BR",
+        payload={
+            "home": {"name": "Flamengo", "score": 2},
+            "away": {"name": "Fluminense", "score": 1},
+        },
+        event_context=ContextMeta(summary="Flamengo 2-1 Fluminense"),
     )
 
 
 # ── CDSVocab ───────────────────────────────────────────────
 
+
 class TestCDSVocab:
     def test_lottery_mega_sena_uri(self):
-        assert CDSVocab.LOTTERY_MEGA_SENA == \
-            "https://signed-data.org/vocab/lottery-brazil/mega-sena-result"
+        assert (
+            CDSVocab.LOTTERY_MEGA_SENA
+            == "https://signed-data.org/vocab/lottery-brazil/mega-sena-result"
+        )
 
     def test_football_match_result_uri(self):
-        assert CDSVocab.FOOTBALL_MATCH_RESULT == \
-            "https://signed-data.org/vocab/sports-football/match-result"
+        assert (
+            CDSVocab.FOOTBALL_MATCH_RESULT
+            == "https://signed-data.org/vocab/sports-football/match-result"
+        )
 
     def test_weather_current_uri(self):
-        assert CDSVocab.WEATHER_CURRENT == \
-            "https://signed-data.org/vocab/weather/forecast-current"
+        assert CDSVocab.WEATHER_CURRENT == "https://signed-data.org/vocab/weather/forecast-current"
 
     def test_content_type_uri_builder(self):
-        assert content_type_uri("lottery.brazil", "mega-sena.result") == \
-            "https://signed-data.org/vocab/lottery-brazil/mega-sena-result"
+        assert (
+            content_type_uri("lottery.brazil", "mega-sena.result")
+            == "https://signed-data.org/vocab/lottery-brazil/mega-sena-result"
+        )
 
     def test_source_uri_keeps_dots(self):
-        assert source_uri("caixa.gov.br.loterias.v1") == \
-            "https://signed-data.org/sources/caixa.gov.br.loterias.v1"
+        assert (
+            source_uri("caixa.gov.br.loterias.v1")
+            == "https://signed-data.org/sources/caixa.gov.br.loterias.v1"
+        )
 
 
 # ── SourceMeta ─────────────────────────────────────────────
+
 
 class TestSourceMeta:
     def test_id_field_access(self):
@@ -104,13 +117,15 @@ class TestSourceMeta:
         assert s.id == CDSSources.CAIXA_LOTERIAS
 
     def test_serialises_with_at_id(self):
-        d = SourceMeta(id=CDSSources.CAIXA_LOTERIAS, fingerprint="sha256:abc") \
-            .model_dump(by_alias=True)
+        d = SourceMeta(id=CDSSources.CAIXA_LOTERIAS, fingerprint="sha256:abc").model_dump(
+            by_alias=True
+        )
         assert "@id" in d
-        assert "id"  not in d
+        assert "id" not in d
 
 
 # ── CDSEvent ───────────────────────────────────────────────
+
 
 class TestCDSEventConstruction:
     def test_at_context(self, lottery_event):
@@ -120,8 +135,7 @@ class TestCDSEventConstruction:
         assert lottery_event.ld_type == EVENT_TYPE_URI
 
     def test_at_id_auto_set(self, lottery_event):
-        assert lottery_event.ld_id == \
-            f"https://signed-data.org/events/{lottery_event.id}"
+        assert lottery_event.ld_id == f"https://signed-data.org/events/{lottery_event.id}"
 
     def test_content_type_is_uri(self, lottery_event):
         assert lottery_event.content_type.startswith("https://signed-data.org/vocab/")
@@ -139,18 +153,19 @@ class TestCDSEventConstruction:
         assert lottery_event.event_type == "mega-sena.result"
 
     def test_football_shortcuts(self, football_event):
-        assert football_event.domain     == "sports.football"
+        assert football_event.domain == "sports.football"
         assert football_event.event_type == "match.result"
 
 
 # ── Serialisation ──────────────────────────────────────────
 
+
 class TestSerialisation:
     def test_at_fields_present(self, lottery_event):
         d = lottery_event.to_jsonld()
         assert "@context" in d
-        assert "@type"    in d
-        assert "@id"      in d
+        assert "@type" in d
+        assert "@id" in d
 
     def test_at_fields_first(self, lottery_event):
         keys = list(lottery_event.to_jsonld().keys())
@@ -159,23 +174,24 @@ class TestSerialisation:
     def test_source_serialises_at_id(self, lottery_event):
         d = lottery_event.to_jsonld()
         assert "@id" in d["source"]
-        assert "id"  not in d["source"]
+        assert "id" not in d["source"]
 
     def test_json_roundtrip(self, lottery_event):
-        raw      = json.dumps(lottery_event.to_jsonld())
+        raw = json.dumps(lottery_event.to_jsonld())
         restored = CDSEvent.from_jsonld(json.loads(raw))
-        assert restored.id           == lottery_event.id
+        assert restored.id == lottery_event.id
         assert restored.content_type == lottery_event.content_type
 
 
 # ── Canonical bytes ────────────────────────────────────────
 
+
 class TestCanonicalBytes:
     def test_includes_at_fields(self, lottery_event):
         d = json.loads(lottery_event.canonical_bytes())
         assert "@context" in d
-        assert "@type"    in d
-        assert "@id"      in d
+        assert "@type" in d
+        assert "@id" in d
 
     def test_excludes_integrity(self, lottery_event, signer):
         signer.sign(lottery_event)
@@ -195,6 +211,7 @@ class TestCanonicalBytes:
 
 
 # ── Signing and verification ───────────────────────────────
+
 
 class TestSigning:
     def test_sign_attaches_integrity(self, lottery_event, signer):
@@ -238,11 +255,16 @@ class TestSigning:
 
 # ── Domain models ──────────────────────────────────────────
 
+
 class TestLotteryModels:
     def test_content_types_are_uris(self):
-        for ct in [LotteryContentTypes.MEGA_SENA, LotteryContentTypes.LOTOFACIL,
-                   LotteryContentTypes.QUINA, LotteryContentTypes.LOTOMANIA,
-                   LotteryContentTypes.DUPLA_SENA]:
+        for ct in [
+            LotteryContentTypes.MEGA_SENA,
+            LotteryContentTypes.LOTOFACIL,
+            LotteryContentTypes.QUINA,
+            LotteryContentTypes.LOTOMANIA,
+            LotteryContentTypes.DUPLA_SENA,
+        ]:
             assert ct.startswith("https://"), ct
 
     def test_mega_sena_equals_vocab(self):
@@ -250,9 +272,11 @@ class TestLotteryModels:
 
     def test_mega_sena_result_model(self):
         r = MegaSenaResult(
-            concurso=2800, data_apuracao="29/03/2026",
+            concurso=2800,
+            data_apuracao="29/03/2026",
             data_apuracao_iso="2026-03-29",
-            dezenas=["04","12","25","36","47","59"], acumulado=False,
+            dezenas=["04", "12", "25", "36", "47", "59"],
+            acumulado=False,
         )
         assert r.dezenas_formatted == "04 \u00b7 12 \u00b7 25 \u00b7 36 \u00b7 47 \u00b7 59"
 

@@ -2,6 +2,7 @@
 CDS Finance Brazil Test Suite
 Tests for models, content types, ingestors (mocked), signing, and summaries.
 """
+
 import json
 from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -180,8 +181,9 @@ class TestFinanceContentTypes:
         assert FinanceContentTypes.COPOM == CDSVocab.FINANCE_DECISION_COPOM
 
     def test_selic_uri_value(self):
-        assert FinanceContentTypes.SELIC == \
-            "https://signed-data.org/vocab/finance-brazil/rate-selic"
+        assert (
+            FinanceContentTypes.SELIC == "https://signed-data.org/vocab/finance-brazil/rate-selic"
+        )
 
 
 # ── CDS Event Tests ───────────────────────────────────────
@@ -385,28 +387,32 @@ class TestBrapiQuotesIngestor:
         mock_signer.sign = lambda e: e
 
         mock_resp = MagicMock()
-        mock_resp.content = json.dumps({
-            "results": [{"symbol": "PETR4", "regularMarketPrice": 38.92}],
-        }).encode()
+        mock_resp.content = json.dumps(
+            {
+                "results": [{"symbol": "PETR4", "regularMarketPrice": 38.92}],
+            }
+        ).encode()
         mock_resp.json.return_value = {
-            "results": [{
-                "symbol": "PETR4",
-                "shortName": "PETROBRAS PN",
-                "longName": "Petrobras",
-                "currency": "BRL",
-                "regularMarketPrice": 38.92,
-                "regularMarketChange": 0.45,
-                "regularMarketChangePercent": 1.17,
-                "regularMarketPreviousClose": 38.47,
-                "regularMarketOpen": 38.50,
-                "regularMarketDayHigh": 39.10,
-                "regularMarketDayLow": 38.40,
-                "regularMarketVolume": 42891300,
-                "marketCap": 507840000000,
-                "fullExchangeName": "SAO",
-                "marketState": "REGULAR",
-                "regularMarketTime": "2026-04-02T17:30:00-03:00",
-            }],
+            "results": [
+                {
+                    "symbol": "PETR4",
+                    "shortName": "PETROBRAS PN",
+                    "longName": "Petrobras",
+                    "currency": "BRL",
+                    "regularMarketPrice": 38.92,
+                    "regularMarketChange": 0.45,
+                    "regularMarketChangePercent": 1.17,
+                    "regularMarketPreviousClose": 38.47,
+                    "regularMarketOpen": 38.50,
+                    "regularMarketDayHigh": 39.10,
+                    "regularMarketDayLow": 38.40,
+                    "regularMarketVolume": 42891300,
+                    "marketCap": 507840000000,
+                    "fullExchangeName": "SAO",
+                    "marketState": "REGULAR",
+                    "regularMarketTime": "2026-04-02T17:30:00-03:00",
+                }
+            ],
         }
         mock_resp.raise_for_status = MagicMock()
 
