@@ -5,23 +5,18 @@ event signing, and the MCP server tool definitions.
 """
 from __future__ import annotations
 
-from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from cds.schema import CDSEvent, ContextMeta, SourceMeta
 from cds.signer import CDSSigner, CDSVerifier, generate_keypair
 from cds.sources.lottery import (
-    CAIXA_BASE,
     MegaSenaIngestor,
     _build_summary,
     _parse_response,
 )
 from cds.sources.lottery_models import (
     LotteryContentTypes,
-    MegaSenaResult,
-    PrizeTier,
 )
 from cds.vocab import CDSSources, CDSVocab
 

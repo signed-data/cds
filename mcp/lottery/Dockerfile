@@ -5,9 +5,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-COPY . .
+COPY sdk/python /tmp/sdk/python
+COPY mcp/lottery /tmp/mcp/lottery
 
-RUN pip install --no-cache-dir .
+RUN pip install --no-cache-dir /tmp/sdk/python /tmp/mcp/lottery \
+    && rm -rf /tmp/sdk /tmp/mcp
 
 EXPOSE 8001
 
