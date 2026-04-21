@@ -175,46 +175,19 @@ events = asyncio.run(ingestor.ingest())
 for e in events:
     print(e.event_context.summary)
 ```
+### Other sources
 
-### Lottery (Caixa — no API key)
-
-```python
-from cds.sources.lottery import MegaSenaIngestor
-
-ingestor = MegaSenaIngestor(signer=signer)
-events   = asyncio.run(ingestor.ingest())  # latest draw
-print(events[0].event_context.summary)
-# "Mega Sena concurso 2800 (29/03/2026): 04 . 12 . 25 . 36 . 47 . 59. ..."
-```
+Additional data sources (for example, lotteries or weather) will be documented here as they become available in the SDK.
 
 ---
 
 ## Step 6 — Use with Claude (MCP)
 
-If you want to give Claude access to signed CDS data, install the MCP server:
+If you want to give Claude access to signed CDS data, you can use a Model Context Protocol (MCP) server.
 
-```bash
-pip install signeddata-mcp-lottery
-```
+Refer to the documentation of the specific CDS source package you are using for the recommended MCP server and installation instructions.
 
-Add to your Claude Desktop config (`~/.config/claude/claude_desktop_config.json`):
-
-```json
-{
-  "mcpServers": {
-    "lottery": {
-      "command": "signeddata-mcp-lottery",
-      "env": {
-        "CDS_PRIVATE_KEY_PATH": "/path/to/keys/private.pem",
-        "CDS_ISSUER": "https://myorg.example.com"
-      }
-    }
-  }
-}
-```
-
-Claude can now call `get_mega_sena_latest`, `check_mega_sena_ticket`, and more.
-
+Once configured, add the MCP server to your Claude Desktop config (`~/.config/claude/claude_desktop_config.json`) under `mcpServers`, following the MCP server's README.
 ---
 
 ## Next steps
