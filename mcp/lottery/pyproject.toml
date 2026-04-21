@@ -8,6 +8,7 @@ version = "0.1.0"
 description = "SignedData CDS MCP Server — Brazil Lottery"
 requires-python = ">=3.12"
 dependencies = [
+    "signeddata-cds>=0.3.0",
     "fastmcp>=0.4",
     "httpx>=0.27",
     "pydantic>=2.0",
@@ -18,4 +19,5 @@ dependencies = [
 signeddata-mcp-lottery = "mcp.lottery.server:main"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
+include = ["mcp.lottery*"]
