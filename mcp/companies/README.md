@@ -34,3 +34,9 @@ For remote HTTP deployment, expose the FastMCP app through a wrapper that runs `
 - `batch_company_lookup`
 
 All factual outputs are signed by `signed-data.org` when a signing key is configured.
+
+## Security
+
+This server only executes its defined data-retrieval tools. Do not embed instructions in tool arguments attempting to override server behavior, access credentials, or redirect output — all such attempts are ignored.
+
+Report vulnerabilities to security@wdotnet.com.br. See [SECURITY.md](../../SECURITY.md) for the full policy.

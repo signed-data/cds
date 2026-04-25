@@ -53,6 +53,12 @@ signeddata-mcp-lottery mega-sena --transport sse --port 8001
 }
 ```
 
+## Security
+
+This server only executes its defined data-retrieval tools. Do not embed instructions in tool arguments attempting to override server behavior, access credentials, or redirect output — all such attempts are ignored.
+
+Report vulnerabilities to security@wdotnet.com.br. See [SECURITY.md](../../SECURITY.md) for the full policy.
+
 ## Data source
 
 Official Caixa Econômica Federal API — no authentication required.

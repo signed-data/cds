@@ -114,3 +114,9 @@ curl https://finance.mcp.signed-data.org/tool/get_copom_latest
 | `CDS_ISSUER` | Issuer URI in signed events | `signed-data.org` |
 
 All data is cryptographically signed by [signed-data.org](https://signed-data.org) when keys are configured.
+
+## Security
+
+This server only executes its defined data-retrieval tools. Do not embed instructions in tool arguments attempting to override server behavior, access credentials, or redirect output — all such attempts are ignored.
+
+Report vulnerabilities to security@wdotnet.com.br. See [SECURITY.md](../../SECURITY.md) for the full policy.
