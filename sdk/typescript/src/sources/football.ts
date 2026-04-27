@@ -5,7 +5,7 @@
 
 import { createHash } from "node:crypto";
 import { CDSEvent, ContextMeta, SourceMeta } from "../schema.js";
-import { CDSSigner } from "../signer.js";
+import type { CDSSigner } from "../signer.js";
 import { BaseIngestor } from "../ingestor.js";
 import { CDSVocab, CDSSources } from "../vocab.js";
 
