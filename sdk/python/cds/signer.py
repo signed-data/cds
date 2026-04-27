@@ -146,9 +146,9 @@ class CDSSigner:
         proof_value = "u" + base64.urlsafe_b64encode(raw_sig).rstrip(b"=").decode()
         vc = event.to_vc20()
         vc["proof"] = DataIntegrityProof(
-            verificationMethod=VERIFICATION_METHOD_KEY1,
+            verification_method=VERIFICATION_METHOD_KEY1,
             created=event.ingested_at,
-            proofValue=proof_value,
+            proof_value=proof_value,
         ).to_dict()
         return vc
 

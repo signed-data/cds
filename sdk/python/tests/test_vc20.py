@@ -159,9 +159,9 @@ def test_from_vc20_with_proof(event):
 
 def test_data_integrity_proof_serialisation():
     proof = DataIntegrityProof(
-        verificationMethod="did:web:signed-data.org#key-1",
+        verification_method="did:web:signed-data.org#key-1",
         created=datetime(2026, 1, 15, tzinfo=UTC),
-        proofValue="uABCD",
+        proof_value="uABCD",
     )
     d = proof.to_dict()
     assert d["type"] == "DataIntegrityProof"
