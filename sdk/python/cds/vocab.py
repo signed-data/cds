@@ -145,6 +145,15 @@ class CDSVocab:
     # location.brazil — CEP postal codes
     LOCATION_CEP_ADDRESS          = content_type_uri("location.brazil", "cep.address")
     LOCATION_CEP_SEARCH           = content_type_uri("location.brazil", "cep.search")
+    # regulatory.brazil — ANVISA
+    ANVISA_MEDICAMENTO_SEARCH     = content_type_uri("regulatory.brazil", "medicamento.search")
+    ANVISA_MEDICAMENTO_DETAIL     = content_type_uri("regulatory.brazil", "medicamento.detail")
+    ANVISA_COSMETICO_SEARCH       = content_type_uri("regulatory.brazil", "cosmetico.search")
+    ANVISA_ALIMENTO_SEARCH        = content_type_uri("regulatory.brazil", "alimento.search")
+    # energy.brazil — ANEEL tariffs
+    ENERGY_TARIFF                 = content_type_uri("energy.brazil", "tariff.electricity")
+    ENERGY_DISTRIBUTOR_LIST       = content_type_uri("energy.brazil", "distributor.list")
+    ENERGY_GENERATION_MIX         = content_type_uri("energy.brazil", "generation.mix")
 
 
 # ── Pre-built source URI constants ─────────────────────────
@@ -170,3 +179,5 @@ class CDSSources:
     GDELT                = source_uri("api.gdeltproject.org.v2")
     NEWSAPI              = source_uri("newsapi.org.v2")
     VIACEP               = source_uri("viacep.com.br.v1")
+    ANVISA               = source_uri("consultas.anvisa.gov.br.v1")
+    ANEEL                = source_uri("dadosabertos.aneel.gov.br.v1")
