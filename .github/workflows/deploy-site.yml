@@ -32,8 +32,11 @@ jobs:
 
       - name: Sync site to S3
         run: |
-          aws s3 sync site/ s3://${{ vars.SITE_BUCKET }} \
-            --delete \
+          aws s3 cp site/index.html s3://${{ vars.SITE_BUCKET }}/index.html \
+            --cache-control "public, max-age=0, must-revalidate" \
+            --content-type "text/html; charset=utf-8"
+          aws s3 sync site/ s3://${{ vars.SITE_BUCKET }}/ \
+            --exclude "index.html" \
             --cache-control "public, max-age=3600"
 
       - name: Invalidate CloudFront cache
