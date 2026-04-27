@@ -157,3 +157,5 @@ class CDSSources:
     AWESOME_API          = source_uri("economia.awesomeapi.com.br.v1")
     BCB_PTAX             = source_uri("olinda.bcb.gov.br.ptax.v1")
     DATAJUD              = source_uri("api-publica.datajud.cnj.jus.br.v1")
+    GDELT                = source_uri("api.gdeltproject.org.v2")
+    NEWSAPI              = source_uri("newsapi.org.v2")
