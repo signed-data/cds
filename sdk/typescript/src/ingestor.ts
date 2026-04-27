@@ -1,8 +1,8 @@
 /**
  * SignedData CDS — Base Ingestor
  */
-import { CDSEvent } from "./schema.js";
-import { CDSSigner } from "./signer.js";
+import type { CDSEvent } from "./schema.js";
+import type { CDSSigner } from "./signer.js";
 
 export abstract class BaseIngestor {
   abstract readonly contentType: string;  // URI — use CDSVocab constants

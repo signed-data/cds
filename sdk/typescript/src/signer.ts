@@ -8,7 +8,7 @@ import {
   generateKeyPairSync, createHash,
 } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
-import { CDSEvent } from "./schema.js";
+import type { CDSEvent } from "./schema.js";
 
 export function generateKeypair(
   privateKeyPath = "keys/private.pem",
