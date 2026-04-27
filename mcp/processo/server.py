@@ -121,11 +121,21 @@ mcp = FastMCP(
 _PRIVATE_KEY_PATH = os.environ.get("CDS_PRIVATE_KEY_PATH", "")
 _ISSUER           = os.environ.get("CDS_ISSUER", "signed-data.org")
 
+# ── DataJud API key (required — register at datajud-wiki.cnj.jus.br) ────
+_DATAJUD_API_KEY  = os.environ.get("DATAJUD_API_KEY", "")
+
 
 def _get_signer() -> CDSSigner | None:
     if _PRIVATE_KEY_PATH and Path(_PRIVATE_KEY_PATH).exists():
         return CDSSigner(_PRIVATE_KEY_PATH, issuer=_ISSUER)
     return None
+
+
+def _http_headers() -> dict[str, str]:
+    headers: dict[str, str] = {"Content-Type": "application/json"}
+    if _DATAJUD_API_KEY:
+        headers["Authorization"] = f"ApiKey {_DATAJUD_API_KEY}"
+    return headers
 
 
 def _event_to_dict(event: CDSEvent) -> dict[str, Any]:
@@ -185,7 +195,7 @@ async def search_processes(
 ) -> dict[str, Any]:
     """
     Search judicial processes in a given court by free-text query.
-    Uses the CNJ DataJud public Elasticsearch API (no auth required).
+    Uses the CNJ DataJud Elasticsearch API (requires DATAJUD_API_KEY env var).
     Returns a signed CDSEvent with matching processes.
 
     Args:
@@ -229,7 +239,7 @@ async def search_processes(
         ],
     }
 
-    async with httpx.AsyncClient(timeout=DATAJUD_TIMEOUT) as client:
+    async with httpx.AsyncClient(timeout=DATAJUD_TIMEOUT, headers=_http_headers()) as client:
         resp = await client.post(url, json=body)
         resp.raise_for_status()
         data = resp.json()
@@ -310,7 +320,7 @@ async def get_process_details(
         },
     }
 
-    async with httpx.AsyncClient(timeout=DATAJUD_TIMEOUT) as client:
+    async with httpx.AsyncClient(timeout=DATAJUD_TIMEOUT, headers=_http_headers()) as client:
         resp = await client.post(url, json=body)
         resp.raise_for_status()
         data = resp.json()
@@ -387,7 +397,7 @@ async def get_process_movements(
         "_source": ["numeroProcesso", "movimentos", "classe", "orgaoJulgador"],
     }
 
-    async with httpx.AsyncClient(timeout=DATAJUD_TIMEOUT) as client:
+    async with httpx.AsyncClient(timeout=DATAJUD_TIMEOUT, headers=_http_headers()) as client:
         resp = await client.post(url, json=body)
         resp.raise_for_status()
         data = resp.json()
