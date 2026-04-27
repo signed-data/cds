@@ -142,6 +142,9 @@ class CDSVocab:
     # legal.brazil — judicial processes
     LEGAL_PROCESSO                = content_type_uri("legal.brazil", "processo.judicial")
     LEGAL_MOVIMENTO               = content_type_uri("legal.brazil", "processo.movimento")
+    # location.brazil — CEP postal codes
+    LOCATION_CEP_ADDRESS          = content_type_uri("location.brazil", "cep.address")
+    LOCATION_CEP_SEARCH           = content_type_uri("location.brazil", "cep.search")
 
 
 # ── Pre-built source URI constants ─────────────────────────
@@ -166,3 +169,4 @@ class CDSSources:
     DATAJUD              = source_uri("api-publica.datajud.cnj.jus.br.v1")
     GDELT                = source_uri("api.gdeltproject.org.v2")
     NEWSAPI              = source_uri("newsapi.org.v2")
+    VIACEP               = source_uri("viacep.com.br.v1")
