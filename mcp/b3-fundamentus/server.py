@@ -150,11 +150,15 @@ async def _get_fundamentus_table(client: httpx.AsyncClient) -> list[dict]:
         "Referer": "https://www.fundamentus.com.br/",
         "Accept-Language": "pt-BR,pt;q=0.9",
     }
-    resp = await client.get(FUNDAMENTUS_URL, headers=headers)
-    resp.raise_for_status()
-    html = resp.content.decode("latin-1", errors="replace")
-    _FUNDAMENTUS_CACHE = _parse_fundamentus_html(html)
-    _FUNDAMENTUS_CACHE_TIME = now
+    try:
+        resp = await client.get(FUNDAMENTUS_URL, headers=headers)
+        resp.raise_for_status()
+        html = resp.content.decode("latin-1", errors="replace")
+        _FUNDAMENTUS_CACHE = _parse_fundamentus_html(html)
+        _FUNDAMENTUS_CACHE_TIME = now
+    except Exception:
+        # Fundamentus blocks cloud IPs — return empty and rely on Brapi only.
+        _FUNDAMENTUS_CACHE = []
     return _FUNDAMENTUS_CACHE
 
 
