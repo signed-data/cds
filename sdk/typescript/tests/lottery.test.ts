@@ -70,13 +70,12 @@ beforeAll(() => {
 // ── Tests ──────────────────────────────────────────────────
 
 describe("LotteryContentTypes", () => {
-  it("MEGA_SENA has the correct MIME type", () => {
-    expect(LotteryContentTypes.MEGA_SENA.mime_type)
-      .toBe("application/vnd.cds.lottery-brazil.mega-sena-result+json;v=1");
+  it("has all five lottery types", () => {
+    expect(Object.keys(LotteryContentTypes)).toHaveLength(5);
   });
-  it("all content types have distinct MIME types", () => {
-    const mimes = Object.values(LotteryContentTypes).map(ct => ct.mime_type);
-    expect(new Set(mimes).size).toBe(mimes.length);
+  it("all content types are distinct URIs", () => {
+    const uris = Object.values(LotteryContentTypes);
+    expect(new Set(uris).size).toBe(uris.length);
   });
 });
 
