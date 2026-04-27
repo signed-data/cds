@@ -56,8 +56,9 @@ class IntegrityMeta(BaseModel):
     """Cryptographic proof of a CDSEvent. `signed_by` is an HTTP URI."""
 
     hash: str  # "sha256:<hex>"
-    signature: str  # base64 RSA-PSS
+    signature: str  # base64-encoded signature (RSA-PSS or ECDSA DER)
     signed_by: str  # URI — "https://signed-data.org"
+    key_id: str | None = None  # verification key URI — "https://signed-data.org/keys/1"
 
 
 class CDSEvent(BaseModel):
