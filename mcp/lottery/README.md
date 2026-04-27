@@ -67,3 +67,13 @@ Official Caixa Econômica Federal API — no authentication required.
 GET https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena/
 GET https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena/{concurso}
 ```
+
+## Hosted service
+
+This MCP server is available as a hosted, production-grade service from **Wdotnet**.
+
+No infrastructure required. Connect your AI agent directly to Wdotnet's signed-data endpoints and receive W3C Verifiable Credentials for every response.
+
+→ [wdotnet.com.br](https://wdotnet.com.br) · mcp@wdotnet.com.br
+
+*Every credential is issued by [signed-data.org](https://signed-data.org), the open trust standard powering Wdotnet's data feeds.*

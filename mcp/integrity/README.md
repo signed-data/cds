@@ -130,3 +130,13 @@ Report vulnerabilities to security@wdotnet.com.br. See [SECURITY.md](../../SECUR
 ## Privacy Note
 
 CEIS, CNEP, and CEPIM records include CPF/CNPJ of sanctioned parties (natural persons and legal entities) as published by the Controladoria-Geral da União under Lei de Acesso à Informação 12.527/2011. The CDS signature attests to the source, not to the appropriateness of redistribution.
+
+## Hosted service
+
+This MCP server is available as a hosted, production-grade service from **Wdotnet**.
+
+No infrastructure required. Connect your AI agent directly to Wdotnet's signed-data endpoints and receive W3C Verifiable Credentials for every response.
+
+→ [wdotnet.com.br](https://wdotnet.com.br) · mcp@wdotnet.com.br
+
+*Every credential is issued by [signed-data.org](https://signed-data.org), the open trust standard powering Wdotnet's data feeds.*

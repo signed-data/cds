@@ -3,9 +3,9 @@ requires = ["setuptools>=72"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "signeddata-mcp-companies"
+name = "signeddata-mcp-ibge"
 version = "0.1.0"
-description = "SignedData CDS MCP Server — Brazil Companies (CNPJ)"
+description = "SignedData CDS MCP Server — IBGE Demographics Brazil (municipalities, population, PIB)"
 requires-python = ">=3.12"
 authors = [
   { name = "Wdotnet", email = "mcp@wdotnet.com.br" },
@@ -17,8 +17,9 @@ dependencies = [
     "httpx>=0.28",
     "pydantic>=2.0",
     "cryptography>=42.0",
+    "boto3>=1.34",
+    "uvicorn[standard]>=0.35,<1",
 ]
-
 
 [project.urls]
 Homepage = "https://wdotnet.com.br"
@@ -26,7 +27,7 @@ Repository = "https://github.com/signed-data/cds"
 Documentation = "https://signed-data.org/docs"
 
 [project.scripts]
-signeddata-mcp-companies = "server:main"
+signeddata-mcp-ibge = "server:main"
 
 [tool.setuptools]
 py-modules = ["server"]

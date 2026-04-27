@@ -7,6 +7,10 @@ name = "signeddata-mcp-integrity"
 version = "0.1.0"
 description = "SignedData CDS MCP Server — Brazil Integrity (CEIS/CNEP/CEPIM sanctions)"
 requires-python = ">=3.12"
+authors = [
+  { name = "Wdotnet", email = "mcp@wdotnet.com.br" },
+]
+license = "MIT"
 dependencies = [
     "signeddata-cds>=0.4.0,<0.5.0",
     "fastmcp>=0.4",
@@ -14,6 +18,12 @@ dependencies = [
     "pydantic>=2.0",
     "cryptography>=42.0",
 ]
+
+
+[project.urls]
+Homepage = "https://wdotnet.com.br"
+Repository = "https://github.com/signed-data/cds"
+Documentation = "https://signed-data.org/docs"
 
 [project.scripts]
 signeddata-mcp-integrity = "server:main"

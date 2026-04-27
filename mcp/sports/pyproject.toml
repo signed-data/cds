@@ -3,9 +3,9 @@ requires = ["setuptools>=72"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "signeddata-mcp-companies"
+name = "signeddata-mcp-sports"
 version = "0.1.0"
-description = "SignedData CDS MCP Server — Brazil Companies (CNPJ)"
+description = "SignedData CDS MCP Server — Sports Football (api-football.com)"
 requires-python = ">=3.12"
 authors = [
   { name = "Wdotnet", email = "mcp@wdotnet.com.br" },
@@ -26,7 +26,7 @@ Repository = "https://github.com/signed-data/cds"
 Documentation = "https://signed-data.org/docs"
 
 [project.scripts]
-signeddata-mcp-companies = "server:main"
+signeddata-mcp-sports = "server:main"
 
 [tool.setuptools]
 py-modules = ["server"]
