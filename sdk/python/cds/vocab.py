@@ -154,6 +154,14 @@ class CDSVocab:
     ENERGY_TARIFF                 = content_type_uri("energy.brazil", "tariff.electricity")
     ENERGY_DISTRIBUTOR_LIST       = content_type_uri("energy.brazil", "distributor.list")
     ENERGY_GENERATION_MIX         = content_type_uri("energy.brazil", "generation.mix")
+    # employment.brazil — CAGED
+    EMPLOYMENT_CAGED_NATIONAL     = content_type_uri("employment.brazil", "caged.national")
+    EMPLOYMENT_CAGED_STATE        = content_type_uri("employment.brazil", "caged.state")
+    EMPLOYMENT_CAGED_MUNICIPALITY = content_type_uri("employment.brazil", "caged.municipality")
+    # finance.brazil — BCB Focus market expectations
+    FINANCE_FOCUS_ANNUAL          = content_type_uri("finance.brazil", "focus.annual")
+    FINANCE_FOCUS_MONTHLY         = content_type_uri("finance.brazil", "focus.monthly")
+    FINANCE_FOCUS_TOP5            = content_type_uri("finance.brazil", "focus.top5")
 
 
 # ── Pre-built source URI constants ─────────────────────────
@@ -181,3 +189,4 @@ class CDSSources:
     VIACEP               = source_uri("viacep.com.br.v1")
     ANVISA               = source_uri("consultas.anvisa.gov.br.v1")
     ANEEL                = source_uri("dadosabertos.aneel.gov.br.v1")
+    BCB_FOCUS            = source_uri("olinda.bcb.gov.br.expectativas.v1")
