@@ -15,6 +15,13 @@ EVENT_TYPE_URI = f"{_BASE}/vocab/CuratedDataEvent"
 SOURCE_TYPE_URI = f"{_BASE}/vocab/DataSource"
 PUBLIC_KEY_URI = f"{_BASE}/.well-known/cds-public-key.pem"
 
+# ── W3C VC 2.0 ─────────────────────────────────────────────
+
+VC20_CONTEXT = "https://www.w3.org/ns/credentials/v2"
+ISSUER_DID = "did:web:signed-data.org"
+VC20_CRYPTOSUITE = "ecdsa-rdfc-2022"
+VERIFICATION_METHOD_KEY1 = f"{ISSUER_DID}#key-1"
+
 
 # ── URI builders ───────────────────────────────────────────
 

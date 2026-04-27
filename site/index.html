@@ -750,38 +750,50 @@
           <div class="roadmap-title">Foundation <span class="roadmap-tag tag-done">Done</span></div>
           <div class="roadmap-items">
             RSA-PSS · JSON-LD envelopes · Python SDK · first MCP servers (lottery, weather, sports).
-            Deprecated — all operators migrated to v0.2.0.
+            Deprecated — all operators migrated to v0.5.0.
           </div>
         </div>
       </div>
       <div class="roadmap-item">
-        <div class="roadmap-ver active">v0.2.0</div>
+        <div class="roadmap-ver done">v0.2.0 – v0.5.0</div>
         <div class="roadmap-body">
-          <div class="roadmap-title">ECDSA + production servers <span class="roadmap-tag tag-active">In Progress</span></div>
+          <div class="roadmap-title">ECDSA + nine production servers <span class="roadmap-tag tag-done">Done</span></div>
           <div class="roadmap-items">
-            ECDSA P-256 · ecdsa-rdfc-2022 · keypair published at did:web:signed-data.org ·
-            gov.brazil, ibge.brazil, currency, b3-fundamentus live · API key middleware ·
+            ECDSA P-256 · ecdsa-rdfc-2022 · keypair at did:web:signed-data.org ·
+            gov.brazil, lottery.brazil, weather.brazil, ibge.brazil, currency, b3-fundamentus,
+            finance.brazil, companies.brazil, commodities.brazil · API key middleware ·
             CloudFront + WAF on all servers.
           </div>
         </div>
       </div>
       <div class="roadmap-item">
-        <div class="roadmap-ver">v0.3.0</div>
+        <div class="roadmap-ver active">v0.6.0</div>
         <div class="roadmap-body">
-          <div class="roadmap-title">W3C VC 2.0 profile <span class="roadmap-tag tag-planned">Planned</span></div>
+          <div class="roadmap-title">W3C VC 2.0 profile <span class="roadmap-tag tag-active">In Progress</span></div>
           <div class="roadmap-items">
-            Full <code>VerifiableCredential</code> envelope · <code>credentialStatus</code> for revocation ·
-            finance.brazil + companies.brazil + processo.brazil · TypeScript SDK v0.3.0.
+            <code>VerifiableCredential</code> envelope · <code>DataIntegrityProof</code> ·
+            <code>to_vc20()</code> / <code>from_vc20()</code> / <code>sign_vc20()</code> in Python SDK ·
+            multibase base64url <code>proofValue</code> · <code>did:web:signed-data.org#key-1</code> verification method.
           </div>
         </div>
       </div>
       <div class="roadmap-item">
-        <div class="roadmap-ver">v0.4.0</div>
+        <div class="roadmap-ver">v0.7.0</div>
         <div class="roadmap-body">
-          <div class="roadmap-title">Agent-native <span class="roadmap-tag tag-vision">Vision</span></div>
+          <div class="roadmap-title">Revocation + TypeScript SDK <span class="roadmap-tag tag-planned">Planned</span></div>
           <div class="roadmap-items">
-            Selective disclosure · ZK-proofs over credentials ·
-            on-chain anchoring · cross-issuer trust registry.
+            <code>credentialStatus</code> · Status List 2021 revocation endpoint ·
+            TypeScript SDK parity with Python · processo.brazil domain.
+          </div>
+        </div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-ver">v1.0</div>
+        <div class="roadmap-body">
+          <div class="roadmap-title">Full RDNA canonicalization <span class="roadmap-tag tag-vision">Vision</span></div>
+          <div class="roadmap-items">
+            URDNA2015 canonicalization (true <code>ecdsa-rdfc-2022</code> conformance) ·
+            selective disclosure · ZK-proofs · cross-issuer trust registry.
           </div>
         </div>
       </div>

@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+from typing import Any
 
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec, padding, rsa
@@ -23,7 +24,8 @@ from cryptography.hazmat.primitives.asymmetric.ec import (
 )
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, RSAPublicKey
 
-from cds.schema import CDSEvent, IntegrityMeta
+from cds.schema import CDSEvent, DataIntegrityProof, IntegrityMeta
+from cds.vocab import VERIFICATION_METHOD_KEY1
 
 # ── RSA signing params ───────────────────────────────────────
 
@@ -114,22 +116,40 @@ class CDSSigner:
     def key_id(self) -> str:
         return KEY_URI_ECDSA_V1 if self._is_ecdsa else KEY_URI_RSA_V0
 
-    def sign(self, event: CDSEvent) -> CDSEvent:
-        canonical = event.canonical_bytes()
-        payload_hash = "sha256:" + hashlib.sha256(canonical).hexdigest()
-
+    def _raw_sign(self, data: bytes) -> bytes:
         if isinstance(self._key, EllipticCurvePrivateKey):
-            raw_sig = self._key.sign(canonical, ECDSA(hashes.SHA256()))
-        else:
-            raw_sig = self._key.sign(canonical, _PSS, hashes.SHA256())
+            return self._key.sign(data, ECDSA(hashes.SHA256()))
+        return self._key.sign(data, _PSS, hashes.SHA256())
 
+    def sign(self, event: CDSEvent) -> CDSEvent:
+        """Sign a CDSEvent, populating event.integrity."""
+        canonical = event.canonical_bytes()
+        raw_sig = self._raw_sign(canonical)
         event.integrity = IntegrityMeta(
-            hash=payload_hash,
+            hash="sha256:" + hashlib.sha256(canonical).hexdigest(),
             signature=base64.b64encode(raw_sig).decode(),
             signed_by=self.issuer,
             key_id=self.key_id,
         )
         return event
+
+    def sign_vc20(self, event: CDSEvent) -> dict[str, Any]:
+        """Sign a CDSEvent and return a W3C VC 2.0 VerifiableCredential dict.
+
+        Only valid for ECDSA keys — RSA is not supported in ecdsa-rdfc-2022.
+        """
+        if not self._is_ecdsa:
+            raise ValueError("VC 2.0 signing requires an ECDSA P-256 key.")
+        canonical = event.canonical_bytes_vc20()
+        raw_sig = self._raw_sign(canonical)
+        proof_value = "u" + base64.urlsafe_b64encode(raw_sig).rstrip(b"=").decode()
+        vc = event.to_vc20()
+        vc["proof"] = DataIntegrityProof(
+            verificationMethod=VERIFICATION_METHOD_KEY1,
+            created=event.ingested_at,
+            proofValue=proof_value,
+        ).to_dict()
+        return vc
 
 
 # ── Verifier ─────────────────────────────────────────────────
@@ -162,4 +182,22 @@ class CDSVerifier:
                 _PSS,
                 hashes.SHA256(),
             )
+        return True
+
+    def verify_vc20(self, vc: dict[str, Any]) -> bool:
+        """Verify a W3C VC 2.0 VerifiableCredential. Returns True or raises."""
+        proof = vc.get("proof")
+        if not proof or proof.get("type") != "DataIntegrityProof":
+            raise ValueError("Document has no DataIntegrityProof.")
+        if not isinstance(self._key, EllipticCurvePublicKey):
+            raise ValueError("VC 2.0 verification requires an ECDSA P-256 public key.")
+
+        pv = proof["proofValue"]
+        if not pv.startswith("u"):
+            raise ValueError(f"Unsupported multibase prefix in proofValue: {pv[:1]!r}")
+        raw_sig = base64.urlsafe_b64decode(pv[1:] + "==")
+
+        event = CDSEvent.from_vc20(vc)
+        canonical = event.canonical_bytes_vc20()
+        self._key.verify(raw_sig, canonical, ECDSA(hashes.SHA256()))
         return True
