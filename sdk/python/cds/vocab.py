@@ -132,6 +132,9 @@ class CDSVocab:
     FINANCE_FX_PTAX               = content_type_uri("finance.brazil", "fx.ptax")
     FINANCE_FX_CONVERSION         = content_type_uri("finance.brazil", "fx.conversion")
     FINANCE_FX_LATAM              = content_type_uri("finance.brazil", "fx.latam")
+    # legal.brazil — judicial processes
+    LEGAL_PROCESSO                = content_type_uri("legal.brazil", "processo.judicial")
+    LEGAL_MOVIMENTO               = content_type_uri("legal.brazil", "processo.movimento")
 
 
 # ── Pre-built source URI constants ─────────────────────────
@@ -153,3 +156,4 @@ class CDSSources:
     FUNDAMENTUS          = source_uri("fundamentus.com.br.v1")
     AWESOME_API          = source_uri("economia.awesomeapi.com.br.v1")
     BCB_PTAX             = source_uri("olinda.bcb.gov.br.ptax.v1")
+    DATAJUD              = source_uri("api-publica.datajud.cnj.jus.br.v1")
