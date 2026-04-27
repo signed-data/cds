@@ -54,6 +54,7 @@ jobs:
         with:
           packages-dir: sdk/python/dist/
           attestations: true
+          password: ${{ secrets.PYPI_TOKEN }}
 
   publish-npm:
     name: Publish to npm
