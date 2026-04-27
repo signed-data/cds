@@ -1,3 +1,24 @@
+## 0.5.0 - 2026-04-27
+
+### Features
+- Add `ibge.brazil` MCP server — demographic data (population, GDP, HDI, area) for all 5,570 Brazilian municipalities via IBGE API
+- Add `b3-fundamentus` MCP server — B3 equity fundamentals (P/E, P/BV, dividend yield, ROE, net income) for listed companies
+- Add `currency` MCP server — BCB official FX rates and conversion for BRL pairs
+- Upgrade signing algorithm to ECDSA P-256 with `ecdsa-rdfc-2022` cryptosuite across all MCP servers; retire RSA-PSS
+- Add Wdotnet operator branding to all MCP packages and site
+- Add `get_b3_indices` tool to `finance.brazil` MCP — complete 10-tool finance server
+- Add lottery MCP server (CDS v0.2.0) with full test coverage
+
+### Fixes
+- Fix companies MCP tool name and dependency versions
+- Fix commodities MCP dependency versions
+- Fix lottery MCP server correctness and packaging
+- Fix release automation: make lottery publish self-contained
+- Fix release automation: support PYPI_TOKEN secret as token auth fallback
+
+### Documentation
+- Replace signed-data.org homepage: correct signing algorithm (ECDSA P-256 / ecdsa-rdfc-2022), remove fake live endpoints, add W3C VC 2.0 positioning, did:web section, Wdotnet banner, accurate MCP server status grid
+
 ## 0.4.0 - 2026-04-07
 
 ### Features
