@@ -118,10 +118,10 @@ class CDSSigner:
         canonical = event.canonical_bytes()
         payload_hash = "sha256:" + hashlib.sha256(canonical).hexdigest()
 
-        if self._is_ecdsa:
+        if isinstance(self._key, EllipticCurvePrivateKey):
             raw_sig = self._key.sign(canonical, ECDSA(hashes.SHA256()))
         else:
-            raw_sig = self._key.sign(canonical, _PSS, hashes.SHA256())  # type: ignore[arg-type]
+            raw_sig = self._key.sign(canonical, _PSS, hashes.SHA256())
 
         event.integrity = IntegrityMeta(
             hash=payload_hash,
@@ -149,14 +149,14 @@ class CDSVerifier:
         if expected != event.integrity.hash:
             raise ValueError(f"Hash mismatch. Expected {expected}")
 
-        if self._is_ecdsa:
+        if isinstance(self._key, EllipticCurvePublicKey):
             self._key.verify(
                 base64.b64decode(event.integrity.signature),
                 canonical,
                 ECDSA(hashes.SHA256()),
             )
         else:
-            self._key.verify(  # type: ignore[arg-type]
+            self._key.verify(
                 base64.b64decode(event.integrity.signature),
                 canonical,
                 _PSS,
