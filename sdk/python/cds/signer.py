@@ -14,6 +14,7 @@ import base64
 import hashlib
 from typing import Any
 
+from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec, padding, rsa
 from cryptography.hazmat.primitives.asymmetric.ec import (
@@ -199,5 +200,8 @@ class CDSVerifier:
 
         event = CDSEvent.from_vc20(vc)
         canonical = event.canonical_bytes_vc20()
-        self._key.verify(raw_sig, canonical, ECDSA(hashes.SHA256()))
+        try:
+            self._key.verify(raw_sig, canonical, ECDSA(hashes.SHA256()))
+        except InvalidSignature as exc:
+            raise ValueError("VC 2.0 signature verification failed.") from exc
         return True

@@ -219,7 +219,9 @@ class CDSEvent(BaseModel):
             )
 
         event_id_uri = data.get("id", "")
-        uuid_part = event_id_uri.split("/events/")[-1] if "/events/" in event_id_uri else _new_uuid()
+        uuid_part = (
+            event_id_uri.split("/events/")[-1] if "/events/" in event_id_uri else _new_uuid()
+        )
 
         return cls.model_validate({
             "@context": CONTEXT_URI,

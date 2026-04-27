@@ -6,7 +6,6 @@ import base64
 from datetime import UTC, datetime
 
 import pytest
-from cryptography.hazmat.primitives.asymmetric import ec
 
 from cds.schema import CDSEvent, DataIntegrityProof, IntegrityMeta, SourceMeta
 from cds.signer import CDSSigner, CDSVerifier, generate_ecdsa_keypair
@@ -17,7 +16,6 @@ from cds.vocab import (
     CDSSources,
     CDSVocab,
 )
-
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
@@ -194,7 +192,7 @@ def test_sign_vc20_verify_vc20_round_trip(event, signer, verifier):
 def test_verify_vc20_rejects_tampered_payload(event, signer, verifier):
     vc = signer.sign_vc20(event)
     vc["credentialSubject"]["payload"]["concurso"] = 9999
-    with pytest.raises(Exception):
+    with pytest.raises(ValueError, match="signature verification failed"):
         verifier.verify_vc20(vc)
 
 
