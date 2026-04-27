@@ -7,6 +7,10 @@ name = "signeddata-mcp-finance"
 version = "0.1.0"
 description = "SignedData CDS MCP Server — Brazil Finance (SELIC, IPCA, FX, B3 quotes, Copom)"
 requires-python = ">=3.12"
+authors = [
+  { name = "Wdotnet", email = "mcp@wdotnet.com.br" },
+]
+license = "MIT"
 dependencies = [
     "signeddata-cds @ git+https://github.com/signed-data/cds.git@v0.3.0#subdirectory=sdk/python",
     "fastmcp>=0.4",
@@ -14,6 +18,12 @@ dependencies = [
     "pydantic>=2.0",
     "cryptography>=42.0",
 ]
+
+
+[project.urls]
+Homepage = "https://wdotnet.com.br"
+Repository = "https://github.com/signed-data/cds"
+Documentation = "https://signed-data.org/docs"
 
 [project.scripts]
 signeddata-mcp-finance = "server:main"

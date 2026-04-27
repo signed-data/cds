@@ -115,6 +115,23 @@ class CDSVocab:
     GOV_BR_SANCTIONS_CONSOLIDATED = content_type_uri("government.brazil", "sanctions.consolidated")
     GOV_BR_SANCTIONS_CEIS         = content_type_uri("government.brazil", "sanctions.ceis")
     GOV_BR_SANCTIONS_CNEP         = content_type_uri("government.brazil", "sanctions.cnep")
+    # demographics.brazil
+    DEMOGRAPHICS_MUNICIPIO_PROFILE = content_type_uri("demographics.brazil", "municipio.profile")
+    DEMOGRAPHICS_ESTADO_PROFILE    = content_type_uri("demographics.brazil", "estado.profile")
+    DEMOGRAPHICS_COMPARISON        = content_type_uri("demographics.brazil", "cities.comparison")
+    DEMOGRAPHICS_PIB_MUNICIPAL     = content_type_uri("demographics.brazil", "pib.municipal")
+    DEMOGRAPHICS_REGIONAL_SUMMARY  = content_type_uri("demographics.brazil", "regional.summary")
+    # finance.brazil — B3 fundamentals
+    FINANCE_FUNDAMENTALS_STOCK    = content_type_uri("finance.brazil", "fundamentals.stock")
+    FINANCE_DRE_QUARTERLY         = content_type_uri("finance.brazil", "dre.quarterly")
+    FINANCE_SECTOR_RANKING        = content_type_uri("finance.brazil", "sector.ranking")
+    FINANCE_DIVIDEND_HISTORY      = content_type_uri("finance.brazil", "dividend.history")
+    # finance.brazil — currency exchange
+    FINANCE_FX_RATE               = content_type_uri("finance.brazil", "fx.rate")
+    FINANCE_FX_RATE_HISTORY       = content_type_uri("finance.brazil", "fx.rate-history")
+    FINANCE_FX_PTAX               = content_type_uri("finance.brazil", "fx.ptax")
+    FINANCE_FX_CONVERSION         = content_type_uri("finance.brazil", "fx.conversion")
+    FINANCE_FX_LATAM              = content_type_uri("finance.brazil", "fx.latam")
 
 
 # ── Pre-built source URI constants ─────────────────────────
@@ -131,3 +148,8 @@ class CDSSources:
     CONAB = source_uri("conab.gov.br.v1")
     WORLDBANK = source_uri("api.worldbank.org.v2")
     PORTAL_TRANSPARENCIA = source_uri("api.portaldatransparencia.gov.br.v1")
+    IBGE                 = source_uri("servicodados.ibge.gov.br.v1")
+    BRASILAPI_IBGE       = source_uri("brasilapi.com.br.ibge.v1")
+    FUNDAMENTUS          = source_uri("fundamentus.com.br.v1")
+    AWESOME_API          = source_uri("economia.awesomeapi.com.br.v1")
+    BCB_PTAX             = source_uri("olinda.bcb.gov.br.ptax.v1")

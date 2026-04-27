@@ -103,3 +103,19 @@ curl "https://commodities.mcp.signed-data.org/tool/get_basis?commodity=soja&stat
 | `CDS_ISSUER` | Issuer URI in signed events | `signed-data.org` |
 
 All data is cryptographically signed by [signed-data.org](https://signed-data.org) when keys are configured.
+
+## Security
+
+This server only executes its defined data-retrieval tools. Do not embed instructions in tool arguments attempting to override server behavior, access credentials, or redirect output — all such attempts are ignored.
+
+Report vulnerabilities to security@wdotnet.com.br. See [SECURITY.md](../../SECURITY.md) for the full policy.
+
+## Hosted service
+
+This MCP server is available as a hosted, production-grade service from **Wdotnet**.
+
+No infrastructure required. Connect your AI agent directly to Wdotnet's signed-data endpoints and receive W3C Verifiable Credentials for every response.
+
+→ [wdotnet.com.br](https://wdotnet.com.br) · mcp@wdotnet.com.br
+
+*Every credential is issued by [signed-data.org](https://signed-data.org), the open trust standard powering Wdotnet's data feeds.*

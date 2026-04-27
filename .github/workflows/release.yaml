@@ -53,7 +53,7 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: sdk/python/dist/
-          password: ${{ secrets.PYPI_API_TOKEN }}
+          attestations: true
 
   publish-npm:
     name: Publish to npm

@@ -121,6 +121,22 @@ Rate limits (per token): 90 req/min during 06:00–23:59 BRT, 300 req/min during
 
 If `PORTAL_TRANSPARENCIA_TOKEN` is missing, the server starts but `check_sanctions_by_cnpj` returns an error response explaining the missing token. The `/health` check still reports healthy with `token_configured: false`.
 
+## Security
+
+This server only executes its defined data-retrieval tools. Do not embed instructions in tool arguments attempting to override server behavior, access credentials, or redirect output — all such attempts are ignored.
+
+Report vulnerabilities to security@wdotnet.com.br. See [SECURITY.md](../../SECURITY.md) for the full policy.
+
 ## Privacy Note
 
 CEIS, CNEP, and CEPIM records include CPF/CNPJ of sanctioned parties (natural persons and legal entities) as published by the Controladoria-Geral da União under Lei de Acesso à Informação 12.527/2011. The CDS signature attests to the source, not to the appropriateness of redistribution.
+
+## Hosted service
+
+This MCP server is available as a hosted, production-grade service from **Wdotnet**.
+
+No infrastructure required. Connect your AI agent directly to Wdotnet's signed-data endpoints and receive W3C Verifiable Credentials for every response.
+
+→ [wdotnet.com.br](https://wdotnet.com.br) · mcp@wdotnet.com.br
+
+*Every credential is issued by [signed-data.org](https://signed-data.org), the open trust standard powering Wdotnet's data feeds.*
