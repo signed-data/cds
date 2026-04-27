@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from cds.schema import CDSEvent, ContextMeta, SourceMeta
+from cds.schema import CDSEvent, SourceMeta
 from cds.signer import CDSSigner, CDSVerifier, generate_keypair
 from cds.sources.football import LEAGUE_IDS, FootballIngestor
 from cds.sources.football_models import (
@@ -13,7 +13,6 @@ from cds.sources.football_models import (
     FootballMatchPayload,
     FootballStandingsPayload,
     FootballTeam,
-    FootballVenue,
     StandingsEntry,
 )
 from cds.vocab import CDSSources, CDSVocab

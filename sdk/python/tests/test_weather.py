@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from cds.schema import CDSEvent, ContextMeta, SourceMeta
+from cds.schema import CDSEvent, SourceMeta
 from cds.signer import CDSSigner, CDSVerifier, generate_keypair
 from cds.sources.weather import WeatherIngestor
 from cds.vocab import CDSSources, CDSVocab
