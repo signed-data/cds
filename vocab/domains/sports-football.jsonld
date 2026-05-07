@@ -1,0 +1,37 @@
+{
+  "@context": {
+    "@vocab": "https://signed-data.org/vocab/",
+    "rdfs":   "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id":          "https://signed-data.org/vocab/sports-football",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "sports.football",
+      "rdfs:comment": "Association football (soccer) match data, standings, and statistics.",
+      "rdfs:seeAlso": "https://signed-data.org/spec/domains/sports.football"
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/sports-football/match-result",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "match.result",
+      "rdfs:comment": "Final result of a football match.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/sports-football" },
+      "cds:source": { "@id": "https://signed-data.org/sources/api-football.com.v3" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/sports-football/match-live",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "match.live",
+      "rdfs:comment": "Live in-progress football match update.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/sports-football" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/sports-football/standings-update",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "standings.update",
+      "rdfs:comment": "League standings table update.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/sports-football" }
+    }
+  ]
+}

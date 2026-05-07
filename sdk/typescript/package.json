@@ -1,0 +1,40 @@
+{
+  "name": "@signeddata/cds-sdk",
+  "version": "0.6.0",
+  "description": "Curated Data Standard SDK — by SignedData.Org",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:cov": "vitest run --coverage",
+    "lint": "biome lint src tests",
+    "format": "biome format --write src tests"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.7",
+    "@types/node": "^22.19.15",
+    "@vitest/coverage-v8": "^2.1.9",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.9"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/signed-data/cds.git"
+  },
+  "homepage": "https://signed-data.org",
+  "license": "MIT"
+}

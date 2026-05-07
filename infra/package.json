@@ -1,0 +1,25 @@
+{
+  "name": "signeddata-infra",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SignedData CDS — AWS CDK Infrastructure",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "synth": "cdk synth",
+    "diff": "cdk diff",
+    "deploy": "cdk deploy --all --require-approval never",
+    "destroy": "cdk destroy --all"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "aws-cdk": "^2.1114.1",
+    "typescript": "^6.0.2"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.245.0",
+    "constructs": "^10.6.0",
+    "source-map-support": "^0.5.21"
+  }
+}

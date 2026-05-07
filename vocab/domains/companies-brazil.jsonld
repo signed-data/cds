@@ -1,0 +1,39 @@
+{
+  "@context": {
+    "@vocab": "https://signed-data.org/vocab/",
+    "rdfs":   "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id":          "https://signed-data.org/vocab/companies-brazil",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "companies.brazil",
+      "rdfs:comment": "Brazilian company registration data from Receita Federal via BrasilAPI.",
+      "rdfs:seeAlso": "https://signed-data.org/spec/domains/companies.brazil"
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/companies-brazil/profile-cnpj",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "profile.cnpj",
+      "rdfs:comment": "Full company profile from CNPJ lookup: raz\u00e3o social, situa\u00e7\u00e3o cadastral, CNAE, endere\u00e7o, capital social.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/companies-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/brasilapi.com.br.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/companies-brazil/partners-cnpj",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "partners.cnpj",
+      "rdfs:comment": "QSA (quadro de s\u00f3cios e administradores) for a CNPJ.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/companies-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/brasilapi.com.br.v1" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/companies-brazil/cnae-profile",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "cnae.profile",
+      "rdfs:comment": "CNAE economic activity code description and sector classification.",
+      "rdfs:subClassOf": { "@id": "https://signed-data.org/vocab/companies-brazil" },
+      "cds:source": { "@id": "https://signed-data.org/sources/brasilapi.com.br.v1" }
+    }
+  ]
+}

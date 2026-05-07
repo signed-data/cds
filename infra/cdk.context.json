@@ -1,0 +1,10 @@
+{
+  "hosted-zone:account=257394450889:domainName=signed-data.org:region=us-east-1": {
+    "Id": "/hostedzone/Z10054051OZ09IGTY8HE6",
+    "Name": "signed-data.org."
+  },
+  "hosted-zone:account=257394450889:domainName=signeddata.org:region=us-east-1": {
+    "Id": "/hostedzone/Z04650341W2FYQRR40OKO",
+    "Name": "signeddata.org."
+  }
+}

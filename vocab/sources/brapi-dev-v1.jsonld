@@ -1,0 +1,27 @@
+{
+  "@context":  "https://signed-data.org/contexts/cds/v1.jsonld",
+  "@type":     "https://signed-data.org/vocab/DataSource",
+  "@id":       "https://signed-data.org/sources/brapi.dev.v1",
+  "name":      "Brapi \u2014 B3 e finan\u00e7as brasileiras",
+  "url":       "https://brapi.dev/api",
+  "auth":      "none",
+  "license":   "public",
+  "country":   "BR",
+  "domains": [
+    "https://signed-data.org/vocab/finance/quote-stock",
+    "https://signed-data.org/vocab/finance/quote-crypto",
+    "https://signed-data.org/vocab/finance/index-update",
+    "https://signed-data.org/vocab/finance-brazil/quote-stock",
+    "https://signed-data.org/vocab/finance-brazil/quote-fii",
+    "https://signed-data.org/vocab/finance-brazil/quote-crypto",
+    "https://signed-data.org/vocab/commodities-brazil/futures-soja",
+    "https://signed-data.org/vocab/commodities-brazil/futures-milho",
+    "https://signed-data.org/vocab/commodities-brazil/futures-boi-gordo",
+    "https://signed-data.org/vocab/commodities-brazil/futures-cafe",
+    "https://signed-data.org/vocab/commodities-brazil/futures-acucar",
+    "https://signed-data.org/vocab/commodities-brazil/futures-etanol"
+  ],
+  "fingerprint_algorithm": "sha256",
+  "certified_at": "2026-03-01",
+  "certified_by": "https://signed-data.org"
+}

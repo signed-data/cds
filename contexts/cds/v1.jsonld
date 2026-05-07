@@ -1,0 +1,27 @@
+{
+  "@context": {
+    "@vocab":       "https://signed-data.org/vocab/",
+    "cds":          "https://signed-data.org/vocab/",
+    "dc":           "http://purl.org/dc/terms/",
+    "schema":       "https://schema.org/",
+    "xsd":          "http://www.w3.org/2001/XMLSchema#",
+
+    "spec_version": "cds:specVersion",
+    "content_type": { "@id": "cds:contentType",  "@type": "@id"          },
+    "source":       { "@id": "cds:source",        "@type": "@id"          },
+    "occurred_at":  { "@id": "cds:occurredAt",    "@type": "xsd:dateTime" },
+    "ingested_at":  { "@id": "cds:ingestedAt",    "@type": "xsd:dateTime" },
+    "lang":         { "@id": "dc:language"                                },
+    "payload":      "cds:payload",
+    "context":      "cds:eventContext",
+    "summary":      "cds:summary",
+    "model":        "cds:model",
+    "generated_at": { "@id": "cds:generatedAt",   "@type": "xsd:dateTime" },
+    "integrity":    "cds:integrity",
+    "hash":         "cds:hash",
+    "signature":    "cds:signature",
+    "signed_by":    { "@id": "cds:signedBy",       "@type": "@id"          },
+    "fingerprint":  "cds:fingerprint",
+    "id":           "@id"
+  }
+}

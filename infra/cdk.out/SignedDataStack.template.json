@@ -1,0 +1,1809 @@
+{
+ "Resources": {
+  "SiteCert6025247C": {
+   "Type": "AWS::CertificateManager::Certificate",
+   "Properties": {
+    "DomainName": "signed-data.org",
+    "DomainValidationOptions": [
+     {
+      "DomainName": "signed-data.org",
+      "HostedZoneId": "Z10054051OZ09IGTY8HE6"
+     },
+     {
+      "DomainName": "www.signed-data.org",
+      "HostedZoneId": "Z10054051OZ09IGTY8HE6"
+     },
+     {
+      "DomainName": "signeddata.org",
+      "HostedZoneId": "Z04650341W2FYQRR40OKO"
+     },
+     {
+      "DomainName": "www.signeddata.org",
+      "HostedZoneId": "Z04650341W2FYQRR40OKO"
+     }
+    ],
+    "SubjectAlternativeNames": [
+     "www.signed-data.org",
+     "signeddata.org",
+     "www.signeddata.org"
+    ],
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "SignedDataStack/SiteCert"
+     }
+    ],
+    "ValidationMethod": "DNS"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/SiteCert/Resource"
+   }
+  },
+  "SiteBucket397A1860": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "AES256"
+       }
+      }
+     ]
+    },
+    "BucketName": "signeddata-site-257394450889-us-east-1",
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/SiteBucket/Resource"
+   }
+  },
+  "SiteBucketPolicy3AC1D0F8": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "SiteBucket397A1860"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:GetObject",
+       "Condition": {
+        "StringEquals": {
+         "AWS:SourceArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":cloudfront::",
+            {
+             "Ref": "AWS::AccountId"
+            },
+            ":distribution/",
+            {
+             "Ref": "SiteDistE3DA6676"
+            }
+           ]
+          ]
+         }
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "cloudfront.amazonaws.com"
+       },
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          {
+           "Fn::GetAtt": [
+            "SiteBucket397A1860",
+            "Arn"
+           ]
+          },
+          "/*"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/SiteBucket/Policy/Resource"
+   }
+  },
+  "SiteOAC0563DCF2": {
+   "Type": "AWS::CloudFront::OriginAccessControl",
+   "Properties": {
+    "OriginAccessControlConfig": {
+     "Description": "OAC for signed-data.org site bucket",
+     "Name": "SignedDataStackSiteOACE5FE52EA",
+     "OriginAccessControlOriginType": "s3",
+     "SigningBehavior": "always",
+     "SigningProtocol": "sigv4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/SiteOAC/Resource"
+   }
+  },
+  "SiteDistE3DA6676": {
+   "Type": "AWS::CloudFront::Distribution",
+   "Properties": {
+    "DistributionConfig": {
+     "Aliases": [
+      "signed-data.org",
+      "www.signed-data.org",
+      "signeddata.org",
+      "www.signeddata.org"
+     ],
+     "CustomErrorResponses": [
+      {
+       "ErrorCode": 403,
+       "ResponseCode": 200,
+       "ResponsePagePath": "/index.html"
+      },
+      {
+       "ErrorCode": 404,
+       "ResponseCode": 200,
+       "ResponsePagePath": "/index.html"
+      }
+     ],
+     "DefaultCacheBehavior": {
+      "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+      "Compress": true,
+      "TargetOriginId": "SignedDataStackSiteDistOrigin1D84A7C4B",
+      "ViewerProtocolPolicy": "redirect-to-https"
+     },
+     "DefaultRootObject": "index.html",
+     "Enabled": true,
+     "HttpVersion": "http2",
+     "IPV6Enabled": true,
+     "Origins": [
+      {
+       "DomainName": {
+        "Fn::GetAtt": [
+         "SiteBucket397A1860",
+         "RegionalDomainName"
+        ]
+       },
+       "Id": "SignedDataStackSiteDistOrigin1D84A7C4B",
+       "OriginAccessControlId": {
+        "Fn::GetAtt": [
+         "SiteOAC0563DCF2",
+         "Id"
+        ]
+       },
+       "S3OriginConfig": {
+        "OriginAccessIdentity": ""
+       }
+      }
+     ],
+     "PriceClass": "PriceClass_100",
+     "ViewerCertificate": {
+      "AcmCertificateArn": {
+       "Ref": "SiteCert6025247C"
+      },
+      "MinimumProtocolVersion": "TLSv1.2_2021",
+      "SslSupportMethod": "sni-only"
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/SiteDist/Resource"
+   }
+  },
+  "PrimaryARecordA4A3B3BF": {
+   "Type": "AWS::Route53::RecordSet",
+   "Properties": {
+    "AliasTarget": {
+     "DNSName": {
+      "Fn::GetAtt": [
+       "SiteDistE3DA6676",
+       "DomainName"
+      ]
+     },
+     "HostedZoneId": {
+      "Fn::FindInMap": [
+       "AWSCloudFrontPartitionHostedZoneIdMap",
+       {
+        "Ref": "AWS::Partition"
+       },
+       "zoneId"
+      ]
+     }
+    },
+    "HostedZoneId": "Z10054051OZ09IGTY8HE6",
+    "Name": "signed-data.org.",
+    "Type": "A"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/PrimaryARecord/Resource"
+   }
+  },
+  "PrimaryWwwARecord34216689": {
+   "Type": "AWS::Route53::RecordSet",
+   "Properties": {
+    "AliasTarget": {
+     "DNSName": {
+      "Fn::GetAtt": [
+       "SiteDistE3DA6676",
+       "DomainName"
+      ]
+     },
+     "HostedZoneId": {
+      "Fn::FindInMap": [
+       "AWSCloudFrontPartitionHostedZoneIdMap",
+       {
+        "Ref": "AWS::Partition"
+       },
+       "zoneId"
+      ]
+     }
+    },
+    "HostedZoneId": "Z10054051OZ09IGTY8HE6",
+    "Name": "www.signed-data.org.",
+    "Type": "A"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/PrimaryWwwARecord/Resource"
+   }
+  },
+  "AltARecord94C42410": {
+   "Type": "AWS::Route53::RecordSet",
+   "Properties": {
+    "AliasTarget": {
+     "DNSName": {
+      "Fn::GetAtt": [
+       "SiteDistE3DA6676",
+       "DomainName"
+      ]
+     },
+     "HostedZoneId": {
+      "Fn::FindInMap": [
+       "AWSCloudFrontPartitionHostedZoneIdMap",
+       {
+        "Ref": "AWS::Partition"
+       },
+       "zoneId"
+      ]
+     }
+    },
+    "HostedZoneId": "Z04650341W2FYQRR40OKO",
+    "Name": "signeddata.org.",
+    "Type": "A"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/AltARecord/Resource"
+   }
+  },
+  "AltWwwARecord0D88AF5E": {
+   "Type": "AWS::Route53::RecordSet",
+   "Properties": {
+    "AliasTarget": {
+     "DNSName": {
+      "Fn::GetAtt": [
+       "SiteDistE3DA6676",
+       "DomainName"
+      ]
+     },
+     "HostedZoneId": {
+      "Fn::FindInMap": [
+       "AWSCloudFrontPartitionHostedZoneIdMap",
+       {
+        "Ref": "AWS::Partition"
+       },
+       "zoneId"
+      ]
+     }
+    },
+    "HostedZoneId": "Z04650341W2FYQRR40OKO",
+    "Name": "www.signeddata.org.",
+    "Type": "A"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/AltWwwARecord/Resource"
+   }
+  },
+  "SigningKeyEEFC2790": {
+   "Type": "AWS::SecretsManager::Secret",
+   "Properties": {
+    "Description": "RSA-4096 private key for CDS event signing",
+    "GenerateSecretString": {},
+    "Name": "cds/signing-private-key"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/SigningKey/Resource"
+   }
+  },
+  "EventsBucketCD4657F9": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "AES256"
+       }
+      }
+     ]
+    },
+    "BucketName": "signeddata-events-257394450889-us-east-1",
+    "LifecycleConfiguration": {
+     "Rules": [
+      {
+       "Status": "Enabled",
+       "Transitions": [
+        {
+         "StorageClass": "INTELLIGENT_TIERING",
+         "TransitionInDays": 30
+        }
+       ]
+      }
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "VersioningConfiguration": {
+     "Status": "Enabled"
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/EventsBucket/Resource"
+   }
+  },
+  "IngestDlqAD9CBE6D": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "MessageRetentionPeriod": 1209600,
+    "QueueName": "signeddata-ingest-dlq"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/IngestDlq/Resource"
+   }
+  },
+  "IngestQueue2280FF4E": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "QueueName": "signeddata-ingest-queue",
+    "RedrivePolicy": {
+     "deadLetterTargetArn": {
+      "Fn::GetAtt": [
+       "IngestDlqAD9CBE6D",
+       "Arn"
+      ]
+     },
+     "maxReceiveCount": 3
+    },
+    "VisibilityTimeout": 90
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/IngestQueue/Resource"
+   }
+  },
+  "EventBus7B8748AA": {
+   "Type": "AWS::Events::EventBus",
+   "Properties": {
+    "Name": "signeddata-event-bus"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/EventBus/Resource"
+   }
+  },
+  "CdsLayerE3008A8F": {
+   "Type": "AWS::Lambda::LayerVersion",
+   "Properties": {
+    "CompatibleRuntimes": [
+     "python3.12"
+    ],
+    "Content": {
+     "S3Bucket": "cdk-hnb659fds-assets-257394450889-us-east-1",
+     "S3Key": "0e1da2e40b6682900f6fd0cccea0f513a84372274770c0059783120dd21b8cf0.zip"
+    },
+    "Description": "CDS schema, signer, and ingestor base classes",
+    "LayerName": "signeddata-cds-core"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/CdsLayer/Resource",
+    "aws:asset:path": "asset.0e1da2e40b6682900f6fd0cccea0f513a84372274770c0059783120dd21b8cf0",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Content"
+   }
+  },
+  "IngestorRole11F9DA46": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/IngestorRole/Resource"
+   }
+  },
+  "IngestorRoleDefaultPolicy9557DA01": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "secretsmanager:DescribeSecret",
+        "secretsmanager:GetSecretValue"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Ref": "SigningKeyEEFC2790"
+       }
+      },
+      {
+       "Action": [
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl",
+        "sqs:SendMessage"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "IngestQueue2280FF4E",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "IngestorRoleDefaultPolicy9557DA01",
+    "Roles": [
+     {
+      "Ref": "IngestorRole11F9DA46"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/IngestorRole/DefaultPolicy/Resource"
+   }
+  },
+  "ProcessorRoleFC8890DE": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/ProcessorRole/Resource"
+   }
+  },
+  "ProcessorRoleDefaultPolicy1C43AEFA": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:Abort*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "EventsBucketCD4657F9",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "EventsBucketCD4657F9",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "sqs:ChangeMessageVisibility",
+        "sqs:DeleteMessage",
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl",
+        "sqs:ReceiveMessage"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "IngestQueue2280FF4E",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "events:PutEvents",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "EventBus7B8748AA",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "bedrock:InvokeModel",
+       "Effect": "Allow",
+       "Resource": [
+        "arn:aws:bedrock:us-east-1::foundation-model/amazon.nova-lite-v1:0",
+        "arn:aws:bedrock:us-east-1::foundation-model/amazon.nova-micro-v1:0"
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ProcessorRoleDefaultPolicy1C43AEFA",
+    "Roles": [
+     {
+      "Ref": "ProcessorRoleFC8890DE"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/ProcessorRole/DefaultPolicy/Resource"
+   }
+  },
+  "ApiRole1873F438": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/ApiRole/Resource"
+   }
+  },
+  "ApiRoleDefaultPolicyCFEBAD31": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "EventsBucketCD4657F9",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "EventsBucketCD4657F9",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ApiRoleDefaultPolicyCFEBAD31",
+    "Roles": [
+     {
+      "Ref": "ApiRole1873F438"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/ApiRole/DefaultPolicy/Resource"
+   }
+  },
+  "WeatherIngestorLogGroupEFED3214": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/aws/lambda/signeddata-ingestor-weather",
+    "RetentionInDays": 7
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/WeatherIngestorLogGroup/Resource"
+   }
+  },
+  "WeatherIngestor3984E3A2": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-257394450889-us-east-1",
+     "S3Key": "5df96a7af28449d47f2ff2583857660ffd2ff1707fc6df584b9f5facd23c9755.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "QUEUE_URL": {
+       "Ref": "IngestQueue2280FF4E"
+      },
+      "SIGNING_SECRET_ARN": {
+       "Ref": "SigningKeyEEFC2790"
+      },
+      "CDS_ISSUER": "signed-data.org",
+      "LOCATIONS": "[{\"city\":\"São Paulo\",\"lat\":-23.55,\"lon\":-46.63},{\"city\":\"Jundiaí\",\"lat\":-23.19,\"lon\":-46.88},{\"city\":\"Rio de Janeiro\",\"lat\":-22.91,\"lon\":-43.17},{\"city\":\"Brasília\",\"lat\":-15.78,\"lon\":-47.93},{\"city\":\"London\",\"lat\":51.51,\"lon\":-0.13},{\"city\":\"New York\",\"lat\":40.71,\"lon\":-74.01}]"
+     }
+    },
+    "FunctionName": "signeddata-ingestor-weather",
+    "Handler": "handler.handler",
+    "Layers": [
+     {
+      "Ref": "CdsLayerE3008A8F"
+     }
+    ],
+    "LoggingConfig": {
+     "LogGroup": {
+      "Ref": "WeatherIngestorLogGroupEFED3214"
+     }
+    },
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "IngestorRole11F9DA46",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Timeout": 60
+   },
+   "DependsOn": [
+    "IngestorRoleDefaultPolicy9557DA01",
+    "IngestorRole11F9DA46"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/WeatherIngestor/Resource",
+    "aws:asset:path": "asset.5df96a7af28449d47f2ff2583857660ffd2ff1707fc6df584b9f5facd23c9755",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "WeatherScheduleE1135E9B": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "ScheduleExpression": "rate(30 minutes)",
+    "State": "ENABLED",
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::GetAtt": [
+        "WeatherIngestor3984E3A2",
+        "Arn"
+       ]
+      },
+      "Id": "Target0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/WeatherSchedule/Resource"
+   }
+  },
+  "WeatherScheduleAllowEventRuleSignedDataStackWeatherIngestor9D7422A703118C96": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "WeatherIngestor3984E3A2",
+      "Arn"
+     ]
+    },
+    "Principal": "events.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "WeatherScheduleE1135E9B",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/WeatherSchedule/AllowEventRuleSignedDataStackWeatherIngestor9D7422A7"
+   }
+  },
+  "ProcessorLogGroup6E9C0C0D": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/aws/lambda/signeddata-processor",
+    "RetentionInDays": 7
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/ProcessorLogGroup/Resource"
+   }
+  },
+  "Processor60228016": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-257394450889-us-east-1",
+     "S3Key": "69b7379531d5efc94954350e8525bfa77d193720732778e25bada5eaee7591a8.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "EVENTS_BUCKET": {
+       "Ref": "EventsBucketCD4657F9"
+      },
+      "EVENT_BUS_NAME": {
+       "Ref": "EventBus7B8748AA"
+      },
+      "BEDROCK_MODEL_ID": "amazon.nova-micro-v1:0",
+      "ENRICH_WITH_LLM": "true"
+     }
+    },
+    "FunctionName": "signeddata-processor",
+    "Handler": "handler.handler",
+    "Layers": [
+     {
+      "Ref": "CdsLayerE3008A8F"
+     }
+    ],
+    "LoggingConfig": {
+     "LogGroup": {
+      "Ref": "ProcessorLogGroup6E9C0C0D"
+     }
+    },
+    "MemorySize": 512,
+    "Role": {
+     "Fn::GetAtt": [
+      "ProcessorRoleFC8890DE",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Timeout": 90
+   },
+   "DependsOn": [
+    "ProcessorRoleDefaultPolicy1C43AEFA",
+    "ProcessorRoleFC8890DE"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Processor/Resource",
+    "aws:asset:path": "asset.69b7379531d5efc94954350e8525bfa77d193720732778e25bada5eaee7591a8",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ProcessorSqsEventSourceSignedDataStackIngestQueue03B984160BFD3C45": {
+   "Type": "AWS::Lambda::EventSourceMapping",
+   "Properties": {
+    "BatchSize": 10,
+    "EventSourceArn": {
+     "Fn::GetAtt": [
+      "IngestQueue2280FF4E",
+      "Arn"
+     ]
+    },
+    "FunctionName": {
+     "Ref": "Processor60228016"
+    },
+    "MaximumBatchingWindowInSeconds": 10
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Processor/SqsEventSource:SignedDataStackIngestQueue03B98416/Resource"
+   }
+  },
+  "ApiHandlerLogGroup4D57C896": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/aws/lambda/signeddata-api",
+    "RetentionInDays": 7
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/ApiHandlerLogGroup/Resource"
+   }
+  },
+  "ApiHandler5E7490E8": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-257394450889-us-east-1",
+     "S3Key": "b848b9b59246628de82eb35d2f7ca2b23e60592c092a76085034978ecde52448.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "EVENTS_BUCKET": {
+       "Ref": "EventsBucketCD4657F9"
+      }
+     }
+    },
+    "FunctionName": "signeddata-api",
+    "Handler": "handler.handler",
+    "Layers": [
+     {
+      "Ref": "CdsLayerE3008A8F"
+     }
+    ],
+    "LoggingConfig": {
+     "LogGroup": {
+      "Ref": "ApiHandlerLogGroup4D57C896"
+     }
+    },
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "ApiRole1873F438",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "ApiRoleDefaultPolicyCFEBAD31",
+    "ApiRole1873F438"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/ApiHandler/Resource",
+    "aws:asset:path": "asset.b848b9b59246628de82eb35d2f7ca2b23e60592c092a76085034978ecde52448",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ApiF70053CD": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Description": "Curated Data Standard — consumer API",
+    "Name": "SignedData CDS API"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Resource"
+   }
+  },
+  "ApiDeploymentB17BE62Daf925fb1c9b8ab2da0fade8bef6e22b6": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "Curated Data Standard — consumer API",
+    "RestApiId": {
+     "Ref": "ApiF70053CD"
+    }
+   },
+   "DependsOn": [
+    "ApieventsdomaineventtypeGET529CED57",
+    "ApieventsdomaineventtypeOPTIONS00557BD2",
+    "ApieventsdomaineventtypeA5D8C75D",
+    "ApieventsdomainOPTIONSBA803209",
+    "ApieventsdomainBFD44251",
+    "ApieventsidOPTIONSCEA48694",
+    "Apieventsid67ED1E49",
+    "ApieventsidverifyGET77196437",
+    "ApieventsidverifyOPTIONS8C851D0C",
+    "ApieventsidverifyB82CC83F",
+    "ApieventsGET3AFA0DCA",
+    "ApieventsOPTIONS2FA14021",
+    "Apievents93AD7B65",
+    "ApiOPTIONS5886EA5D"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Deployment/Resource",
+    "aws:cdk:do-not-refactor": true
+   }
+  },
+  "ApiDeploymentStagev102147F91": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "ApiDeploymentB17BE62Daf925fb1c9b8ab2da0fade8bef6e22b6"
+    },
+    "MethodSettings": [
+     {
+      "DataTraceEnabled": false,
+      "HttpMethod": "*",
+      "ResourcePath": "/*",
+      "ThrottlingBurstLimit": 200,
+      "ThrottlingRateLimit": 100
+     }
+    ],
+    "RestApiId": {
+     "Ref": "ApiF70053CD"
+    },
+    "StageName": "v1"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/DeploymentStage.v1/Resource"
+   }
+  },
+  "ApiOPTIONS5886EA5D": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "ApiF70053CD",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "ApiF70053CD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/OPTIONS/Resource"
+   }
+  },
+  "Apievents93AD7B65": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "ApiF70053CD",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "events",
+    "RestApiId": {
+     "Ref": "ApiF70053CD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/events/Resource"
+   }
+  },
+  "ApieventsOPTIONS2FA14021": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "Apievents93AD7B65"
+    },
+    "RestApiId": {
+     "Ref": "ApiF70053CD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/events/OPTIONS/Resource"
+   }
+  },
+  "ApieventsGETApiPermissionSignedDataStackApiC75B291BGETevents84AD291D": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ApiHandler5E7490E8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:257394450889:",
+       {
+        "Ref": "ApiF70053CD"
+       },
+       "/",
+       {
+        "Ref": "ApiDeploymentStagev102147F91"
+       },
+       "/GET/events"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/events/GET/ApiPermission.SignedDataStackApiC75B291B.GET..events"
+   }
+  },
+  "ApieventsGETApiPermissionTestSignedDataStackApiC75B291BGETeventsFC9E9317": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ApiHandler5E7490E8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:257394450889:",
+       {
+        "Ref": "ApiF70053CD"
+       },
+       "/test-invoke-stage/GET/events"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/events/GET/ApiPermission.Test.SignedDataStackApiC75B291B.GET..events"
+   }
+  },
+  "ApieventsGET3AFA0DCA": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ApiHandler5E7490E8",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "Apievents93AD7B65"
+    },
+    "RestApiId": {
+     "Ref": "ApiF70053CD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/events/GET/Resource"
+   }
+  },
+  "ApieventsdomainBFD44251": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "Apievents93AD7B65"
+    },
+    "PathPart": "{domain}",
+    "RestApiId": {
+     "Ref": "ApiF70053CD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/events/{domain}/Resource"
+   }
+  },
+  "ApieventsdomainOPTIONSBA803209": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ApieventsdomainBFD44251"
+    },
+    "RestApiId": {
+     "Ref": "ApiF70053CD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/events/{domain}/OPTIONS/Resource"
+   }
+  },
+  "ApieventsdomaineventtypeA5D8C75D": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "ApieventsdomainBFD44251"
+    },
+    "PathPart": "{event_type}",
+    "RestApiId": {
+     "Ref": "ApiF70053CD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/events/{domain}/{event_type}/Resource"
+   }
+  },
+  "ApieventsdomaineventtypeOPTIONS00557BD2": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ApieventsdomaineventtypeA5D8C75D"
+    },
+    "RestApiId": {
+     "Ref": "ApiF70053CD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/events/{domain}/{event_type}/OPTIONS/Resource"
+   }
+  },
+  "ApieventsdomaineventtypeGETApiPermissionSignedDataStackApiC75B291BGETeventsdomaineventtypeCB4A0922": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ApiHandler5E7490E8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:257394450889:",
+       {
+        "Ref": "ApiF70053CD"
+       },
+       "/",
+       {
+        "Ref": "ApiDeploymentStagev102147F91"
+       },
+       "/GET/events/*/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/events/{domain}/{event_type}/GET/ApiPermission.SignedDataStackApiC75B291B.GET..events.{domain}.{event_type}"
+   }
+  },
+  "ApieventsdomaineventtypeGETApiPermissionTestSignedDataStackApiC75B291BGETeventsdomaineventtypeC773D264": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ApiHandler5E7490E8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:257394450889:",
+       {
+        "Ref": "ApiF70053CD"
+       },
+       "/test-invoke-stage/GET/events/*/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/events/{domain}/{event_type}/GET/ApiPermission.Test.SignedDataStackApiC75B291B.GET..events.{domain}.{event_type}"
+   }
+  },
+  "ApieventsdomaineventtypeGET529CED57": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ApiHandler5E7490E8",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "ApieventsdomaineventtypeA5D8C75D"
+    },
+    "RestApiId": {
+     "Ref": "ApiF70053CD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/events/{domain}/{event_type}/GET/Resource"
+   }
+  },
+  "Apieventsid67ED1E49": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "Apievents93AD7B65"
+    },
+    "PathPart": "{id}",
+    "RestApiId": {
+     "Ref": "ApiF70053CD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/events/{id}/Resource"
+   }
+  },
+  "ApieventsidOPTIONSCEA48694": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "Apieventsid67ED1E49"
+    },
+    "RestApiId": {
+     "Ref": "ApiF70053CD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/events/{id}/OPTIONS/Resource"
+   }
+  },
+  "ApieventsidverifyB82CC83F": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "Apieventsid67ED1E49"
+    },
+    "PathPart": "verify",
+    "RestApiId": {
+     "Ref": "ApiF70053CD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/events/{id}/verify/Resource"
+   }
+  },
+  "ApieventsidverifyOPTIONS8C851D0C": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ApieventsidverifyB82CC83F"
+    },
+    "RestApiId": {
+     "Ref": "ApiF70053CD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/events/{id}/verify/OPTIONS/Resource"
+   }
+  },
+  "ApieventsidverifyGETApiPermissionSignedDataStackApiC75B291BGETeventsidverifyB4D63AF8": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ApiHandler5E7490E8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:257394450889:",
+       {
+        "Ref": "ApiF70053CD"
+       },
+       "/",
+       {
+        "Ref": "ApiDeploymentStagev102147F91"
+       },
+       "/GET/events/*/verify"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/events/{id}/verify/GET/ApiPermission.SignedDataStackApiC75B291B.GET..events.{id}.verify"
+   }
+  },
+  "ApieventsidverifyGETApiPermissionTestSignedDataStackApiC75B291BGETeventsidverify448C6D43": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ApiHandler5E7490E8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:257394450889:",
+       {
+        "Ref": "ApiF70053CD"
+       },
+       "/test-invoke-stage/GET/events/*/verify"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/events/{id}/verify/GET/ApiPermission.Test.SignedDataStackApiC75B291B.GET..events.{id}.verify"
+   }
+  },
+  "ApieventsidverifyGET77196437": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ApiHandler5E7490E8",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "ApieventsidverifyB82CC83F"
+    },
+    "RestApiId": {
+     "Ref": "ApiF70053CD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/Api/Default/events/{id}/verify/GET/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+1Z3W/bNhD/W6rHgdHSpsWAvDnux4IlrWcH24MRBDR1tq+hSOV4cuoK+t8HUtSHkzRot3YtCj9ZvC8ef3c8Huln6bPnL9LDJ/LWHajs+kDjIq1mLNW1mIKzJSkQ8tZdVQqIcYlKMuTSyBVQWo172rxKMptLNG9lDslx8ksiElcu3oPikWYgIxk34JkucjdSYyYZrQmE+lKMl2ZgsRbuKK1OSnUNPK+SRfgYWF9oq64n5UKjGikFrrULRtG2iHZnR1fno7ejN69eJiIhyO1G6onVqLbJcULAEk1Siwesb4AcWgNZcsxUwmNmP+WIxiWordIwLbVf9bxKmKRx6I24dtGPeSWz7Gxo5GEbIsz2S3LZQNggJpqfxmoH3wDpIT8Kn0gH82isNyqUtmW2JGs4rWZH7whXaJqFjq1hstrHHpwiLO5E8wFZ8RIdEy5KLxoUl7LUfAJruUFLyXGV2KDVxgHhFmhClq2yQ5AyJFB8wPZgzVy4RCRKqjV0El5Z2bygEBAfw1oMUrQN0iCtIyV6NLWW34X8bfOKyNIUXGGNi+H0M89Yctlao8j+/VOMiVzBRPI6Ru6/m7gUSUGoYKxlSLxJN7h6engY4zDEvBZkS4YXR2k1moKylM2r5KM10E3jaYOdwJJWbeaIvejniwboG4hnwLVwoAjYddVzFsbzKmkYAysP76ZGvhbuxqXVnyWUvuje+N+BKgGD8YoTILRZ5/RduQ06XKBG3l5gDrbkbmqZnQEzUJjB78eb5iOwc/lhCgpwA2NbmrjQxr0gXwvYgGGXVq/870np5lXDbsfCFzK/aLWGLNS0AXCu81dmWdCYSO+LSY7nTTEKnIuIsrcdYS411ELLfJHJtDqTW6C/mgo+rxI9GD6Csq8XGXSfeSEZF77wGsa2YDSzDe2L16VRsZgt4+cwHo12HK2lyTTQ/emCiy6uUiRke2B2wpNDbmk7w48tG8wGyZocTCui7eoN2bLYgXIo1Zb4y2/LPBsuydP26Px86OwuI2yOdj/47wlQji5sk7CbZ6GhPJdFgWble5m+XIpkIVmtB+7l8sOJJ6FZ/Y0ms7c9fWyNKonAdEc9QWGJg/wpQ/5aoi4J+p5QLjRk7ah3ZUTt3l+ib1PdzujVsOdrIGRC5XuZJa4GBeH+4nz3eiWdA3bpyP8IlHlaTW0oftK5MofsZOvra0FoFBZSj5TqiqqIMl5hpPqTwC/fnx9ZaHQwNiJD2rZdU92VSztpp2jbo1A5PZdZqvWp0Wi61qmvtI8yH7f70y/wM7j/QuVnxbM5pK0GEW8k3uNW4cJOQ826Y+c+Oct8Rwy+FLkd5O6Tv7X9r0L+Wk4GdBtga6HtyqXVWazkvv2Jnw91icnxb/dvoBk4JrsNB8B3Um7arKheC1ngSjLcym1aTcHxqMB55W9E/uvRli7e5saW3IRgqXG15ndFvD1XidTa3jbX1Lb0B9I58Npm3QU7g0Lb7UDPsVwN22lek2XWaFZTyXCGOfI9zklJjntW3V4QwiLEyzCFj+oD12mRyAJ7BCWaXnynZ76wZ3aFSurT7E5p2dO/jN5cnDuUxcxHPISmJbWvXF8hFZr7nTfUvbq1jzGXosnFJt8Dq20ImYuGFwloGFYkB1ljB5le8toSfgTaHZ222i0p6F9sC2iTXxb4B2yncFMi+R5qKbWDT8mHHmlts92HEhceMsZ9z9o/ZpDMoWu86ss6BuR8x8qXGhF7sP4vsGLt2cO9z80fDqx9bu5z80cFqzv2G4Xu3J9XSSGpby8KyeuJpP75+btw21Y1uFjXwe/moUOE1w3fu/iB/9On5KLkWhibQfre/bp59jx9+jw9fPLeIR7EN600vqr+A9SLlH9/HAAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SignedDataStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Mappings": {
+  "AWSCloudFrontPartitionHostedZoneIdMap": {
+   "aws": {
+    "zoneId": "Z2FDTNDATAQYW2"
+   },
+   "aws-cn": {
+    "zoneId": "Z3RFFRIM2A3IF5"
+   }
+  }
+ },
+ "Outputs": {
+  "ApiEndpoint4F160690": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "ApiF70053CD"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "ApiDeploymentStagev102147F91"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "SiteUrl": {
+   "Value": "https://signed-data.org"
+  },
+  "CfDistributionId": {
+   "Value": {
+    "Ref": "SiteDistE3DA6676"
+   },
+   "Export": {
+    "Name": "SignedDataCfDistId"
+   }
+  },
+  "SiteBucketName": {
+   "Value": {
+    "Ref": "SiteBucket397A1860"
+   },
+   "Export": {
+    "Name": "SignedDataSiteBucket"
+   }
+  },
+  "ApiEndpoint": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "ApiF70053CD"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "ApiDeploymentStagev102147F91"
+      },
+      "/"
+     ]
+    ]
+   },
+   "Export": {
+    "Name": "SignedDataApiEndpoint"
+   }
+  },
+  "EventsBucketOutput": {
+   "Value": {
+    "Ref": "EventsBucketCD4657F9"
+   },
+   "Export": {
+    "Name": "SignedDataEventsBucket"
+   }
+  },
+  "IngestQueueUrl": {
+   "Value": {
+    "Ref": "IngestQueue2280FF4E"
+   },
+   "Export": {
+    "Name": "SignedDataIngestQueue"
+   }
+  },
+  "EventBusName": {
+   "Value": {
+    "Ref": "EventBus7B8748AA"
+   },
+   "Export": {
+    "Name": "SignedDataEventBus"
+   }
+  },
+  "SigningSecretArn": {
+   "Value": {
+    "Ref": "SigningKeyEEFC2790"
+   },
+   "Export": {
+    "Name": "SignedDataSigningKey"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

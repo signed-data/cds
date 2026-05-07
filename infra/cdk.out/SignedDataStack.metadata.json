@@ -1,0 +1,1629 @@
+{
+  "/SignedDataStack": [
+    {
+      "type": "aws:cdk:stack-tags",
+      "data": [
+        {
+          "key": "ManagedBy",
+          "value": "cdk"
+        },
+        {
+          "key": "Project",
+          "value": "signeddata-cds"
+        }
+      ]
+    }
+  ],
+  "/SignedDataStack/SiteCert": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "domainName": "*",
+        "subjectAlternativeNames": "*",
+        "validation": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/SiteBucket": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "bucketName": "*",
+        "blockPublicAccess": "*",
+        "encryption": "S3_MANAGED",
+        "removalPolicy": "retain"
+      }
+    }
+  ],
+  "/SignedDataStack/SiteOAC": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "description": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/SiteDist": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "defaultBehavior": {
+          "origin": "*",
+          "viewerProtocolPolicy": "redirect-to-https",
+          "cachePolicy": "*",
+          "compress": true
+        },
+        "domainNames": "*",
+        "certificate": "*",
+        "defaultRootObject": "*",
+        "errorResponses": [
+          {
+            "httpStatus": "*",
+            "responseHttpStatus": "*",
+            "responsePagePath": "*"
+          },
+          {
+            "httpStatus": "*",
+            "responseHttpStatus": "*",
+            "responsePagePath": "*"
+          }
+        ],
+        "priceClass": "PriceClass_100"
+      }
+    }
+  ],
+  "/SignedDataStack/PrimaryARecord": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "zone": "*",
+        "recordName": "*",
+        "target": "*"
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "zone": "*",
+        "recordName": "*",
+        "target": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/AWSCloudFrontPartitionHostedZoneIdMap": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AWSCloudFrontPartitionHostedZoneIdMap"
+    }
+  ],
+  "/SignedDataStack/PrimaryWwwARecord": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "zone": "*",
+        "recordName": "*",
+        "target": "*"
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "zone": "*",
+        "recordName": "*",
+        "target": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/AltARecord": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "zone": "*",
+        "recordName": "*",
+        "target": "*"
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "zone": "*",
+        "recordName": "*",
+        "target": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/AltWwwARecord": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "zone": "*",
+        "recordName": "*",
+        "target": "*"
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "zone": "*",
+        "recordName": "*",
+        "target": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/SigningKey": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "secretName": "*",
+        "description": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/EventsBucket": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "bucketName": "*",
+        "versioned": true,
+        "encryption": "S3_MANAGED",
+        "blockPublicAccess": "*",
+        "lifecycleRules": [
+          {
+            "transitions": "*"
+          }
+        ],
+        "removalPolicy": "retain"
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addLifecycleRule": [
+          {
+            "transitions": "*"
+          },
+          "*",
+          "*"
+        ]
+      }
+    }
+  ],
+  "/SignedDataStack/IngestDlq": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "queueName": "*",
+        "retentionPeriod": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/IngestQueue": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "queueName": "*",
+        "visibilityTimeout": "*",
+        "deadLetterQueue": {
+          "queue": "*",
+          "maxReceiveCount": "*"
+        }
+      }
+    }
+  ],
+  "/SignedDataStack/EventBus": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {}
+    }
+  ],
+  "/SignedDataStack/CdsLayer": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "layerVersionName": "*",
+        "description": "*",
+        "code": "*",
+        "compatibleRuntimes": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/IngestorRole": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "assumedBy": {
+          "principalAccount": "*",
+          "assumeRoleAction": "*"
+        },
+        "managedPolicies": [
+          {
+            "managedPolicyArn": "*"
+          }
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToPrincipalPolicy": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "attachInlinePolicy": [
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "attachInlinePolicy": [
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToPrincipalPolicy": [
+          {}
+        ]
+      }
+    }
+  ],
+  "/SignedDataStack/ProcessorRole": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "assumedBy": {
+          "principalAccount": "*",
+          "assumeRoleAction": "*"
+        },
+        "managedPolicies": [
+          {
+            "managedPolicyArn": "*"
+          }
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToPrincipalPolicy": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "attachInlinePolicy": [
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "attachInlinePolicy": [
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToPrincipalPolicy": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToPrincipalPolicy": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToPolicy": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToPrincipalPolicy": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToPrincipalPolicy": [
+          {}
+        ]
+      }
+    }
+  ],
+  "/SignedDataStack/ApiRole": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "assumedBy": {
+          "principalAccount": "*",
+          "assumeRoleAction": "*"
+        },
+        "managedPolicies": [
+          {
+            "managedPolicyArn": "*"
+          }
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToPrincipalPolicy": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "attachInlinePolicy": [
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "attachInlinePolicy": [
+          "*"
+        ]
+      }
+    }
+  ],
+  "/SignedDataStack/WeatherIngestorLogGroup": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "logGroupName": "*",
+        "retention": 7,
+        "removalPolicy": "destroy"
+      }
+    }
+  ],
+  "/SignedDataStack/WeatherIngestor": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "functionName": "*",
+        "runtime": "*",
+        "handler": "*",
+        "code": "*",
+        "layers": [
+          "*"
+        ],
+        "role": "*",
+        "timeout": "*",
+        "memorySize": "*",
+        "environment": "*",
+        "logGroup": "*"
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addEnvironment": [
+          "*",
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addEnvironment": [
+          "*",
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addEnvironment": [
+          "*",
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addEnvironment": [
+          "*",
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addLayers": [
+          "*"
+        ]
+      }
+    }
+  ],
+  "/SignedDataStack/WeatherSchedule": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "schedule": "*",
+        "targets": "*"
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addEventPattern": [
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addTarget": [
+          {}
+        ]
+      }
+    }
+  ],
+  "/SignedDataStack/ProcessorLogGroup": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "logGroupName": "*",
+        "retention": 7,
+        "removalPolicy": "destroy"
+      }
+    }
+  ],
+  "/SignedDataStack/Processor": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "functionName": "*",
+        "runtime": "*",
+        "handler": "*",
+        "code": "*",
+        "layers": [
+          "*"
+        ],
+        "role": "*",
+        "timeout": "*",
+        "memorySize": "*",
+        "environment": "*",
+        "logGroup": "*"
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addEnvironment": [
+          "*",
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addEnvironment": [
+          "*",
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addEnvironment": [
+          "*",
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addEnvironment": [
+          "*",
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addLayers": [
+          "*"
+        ]
+      }
+    }
+  ],
+  "/SignedDataStack/ApiHandlerLogGroup": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "logGroupName": "*",
+        "retention": 7,
+        "removalPolicy": "destroy"
+      }
+    }
+  ],
+  "/SignedDataStack/ApiHandler": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "functionName": "*",
+        "runtime": "*",
+        "handler": "*",
+        "code": "*",
+        "layers": [
+          "*"
+        ],
+        "role": "*",
+        "timeout": "*",
+        "memorySize": "*",
+        "environment": "*",
+        "logGroup": "*"
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addEnvironment": [
+          "*",
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addLayers": [
+          "*"
+        ]
+      }
+    }
+  ],
+  "/SignedDataStack/Api": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "restApiName": "*",
+        "description": "*",
+        "defaultCorsPreflightOptions": {
+          "allowOrigins": "*",
+          "allowMethods": "*"
+        },
+        "deployOptions": {
+          "stageName": "*",
+          "throttlingRateLimit": "*",
+          "throttlingBurstLimit": "*"
+        }
+      }
+    }
+  ],
+  "/SignedDataStack/SiteUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SiteUrl"
+    }
+  ],
+  "/SignedDataStack/CfDistributionId": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CfDistributionId"
+    }
+  ],
+  "/SignedDataStack/SiteBucketName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SiteBucketName"
+    }
+  ],
+  "/SignedDataStack/ApiEndpoint": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiEndpoint"
+    }
+  ],
+  "/SignedDataStack/EventsBucketOutput": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EventsBucketOutput"
+    }
+  ],
+  "/SignedDataStack/IngestQueueUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "IngestQueueUrl"
+    }
+  ],
+  "/SignedDataStack/EventBusName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EventBusName"
+    }
+  ],
+  "/SignedDataStack/SigningSecretArn": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SigningSecretArn"
+    }
+  ],
+  "/SignedDataStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/SignedDataStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/SignedDataStack/SiteCert/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SiteCert6025247C"
+    }
+  ],
+  "/SignedDataStack/SiteBucket/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SiteBucket397A1860"
+    }
+  ],
+  "/SignedDataStack/SiteBucket/Policy": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "bucket": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/SiteOAC/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SiteOAC0563DCF2"
+    }
+  ],
+  "/SignedDataStack/SiteDist/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SiteDistE3DA6676"
+    }
+  ],
+  "/SignedDataStack/PrimaryARecord/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "PrimaryARecordA4A3B3BF"
+    }
+  ],
+  "/SignedDataStack/PrimaryWwwARecord/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "PrimaryWwwARecord34216689"
+    }
+  ],
+  "/SignedDataStack/AltARecord/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AltARecord94C42410"
+    }
+  ],
+  "/SignedDataStack/AltWwwARecord/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AltWwwARecord0D88AF5E"
+    }
+  ],
+  "/SignedDataStack/SigningKey/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SigningKeyEEFC2790"
+    }
+  ],
+  "/SignedDataStack/EventsBucket/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EventsBucketCD4657F9"
+    }
+  ],
+  "/SignedDataStack/IngestDlq/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "IngestDlqAD9CBE6D"
+    }
+  ],
+  "/SignedDataStack/IngestQueue/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "IngestQueue2280FF4E"
+    }
+  ],
+  "/SignedDataStack/EventBus/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EventBus7B8748AA"
+    }
+  ],
+  "/SignedDataStack/CdsLayer/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CdsLayerE3008A8F"
+    }
+  ],
+  "/SignedDataStack/IngestorRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "IngestorRole11F9DA46"
+    }
+  ],
+  "/SignedDataStack/IngestorRole/DefaultPolicy": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": "*"
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "attachToRole": [
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "attachToRole": [
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addStatements": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addStatements": [
+          {}
+        ]
+      }
+    }
+  ],
+  "/SignedDataStack/ProcessorRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ProcessorRoleFC8890DE"
+    }
+  ],
+  "/SignedDataStack/ProcessorRole/DefaultPolicy": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": "*"
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "attachToRole": [
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "attachToRole": [
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addStatements": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addStatements": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addStatements": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addStatements": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addStatements": [
+          {}
+        ]
+      }
+    }
+  ],
+  "/SignedDataStack/ApiRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiRole1873F438"
+    }
+  ],
+  "/SignedDataStack/ApiRole/DefaultPolicy": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": "*"
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "attachToRole": [
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "attachToRole": [
+          "*"
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addStatements": [
+          {}
+        ]
+      }
+    }
+  ],
+  "/SignedDataStack/WeatherIngestorLogGroup/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WeatherIngestorLogGroupEFED3214"
+    }
+  ],
+  "/SignedDataStack/WeatherIngestor/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WeatherIngestor3984E3A2"
+    }
+  ],
+  "/SignedDataStack/WeatherSchedule/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WeatherScheduleE1135E9B"
+    }
+  ],
+  "/SignedDataStack/WeatherSchedule/AllowEventRuleSignedDataStackWeatherIngestor9D7422A7": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WeatherScheduleAllowEventRuleSignedDataStackWeatherIngestor9D7422A703118C96"
+    }
+  ],
+  "/SignedDataStack/ProcessorLogGroup/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ProcessorLogGroup6E9C0C0D"
+    }
+  ],
+  "/SignedDataStack/Processor/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "Processor60228016"
+    }
+  ],
+  "/SignedDataStack/Processor/SqsEventSource:SignedDataStackIngestQueue03B98416": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "target": "*",
+        "batchSize": "*",
+        "maxBatchingWindow": "*",
+        "maxConcurrency": "*",
+        "reportBatchItemFailures": "*",
+        "enabled": "*",
+        "eventSourceArn": "*",
+        "filters": "*",
+        "filterEncryption": "*",
+        "metricsConfig": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/ApiHandlerLogGroup/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiHandlerLogGroup4D57C896"
+    }
+  ],
+  "/SignedDataStack/ApiHandler/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiHandler5E7490E8"
+    }
+  ],
+  "/SignedDataStack/Api/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiF70053CD"
+    }
+  ],
+  "/SignedDataStack/Api/Deployment": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "description": "*",
+        "api": "*",
+        "retainDeployments": "*"
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToLogicalId": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToLogicalId": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToLogicalId": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToLogicalId": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToLogicalId": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToLogicalId": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToLogicalId": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToLogicalId": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToLogicalId": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToLogicalId": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToLogicalId": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToLogicalId": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToLogicalId": [
+          {}
+        ]
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addToLogicalId": [
+          {}
+        ]
+      }
+    }
+  ],
+  "/SignedDataStack/Api/DeploymentStage.v1": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "deployment": "*",
+        "stageName": "*",
+        "throttlingRateLimit": "*",
+        "throttlingBurstLimit": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/Api/Endpoint": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiEndpoint4F160690"
+    }
+  ],
+  "/SignedDataStack/Api/Default": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": "*"
+    }
+  ],
+  "/SignedDataStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/SignedDataStack/SiteBucket/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SiteBucketPolicy3AC1D0F8"
+    }
+  ],
+  "/SignedDataStack/CdsLayer/Code/AssetBucket": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": "*"
+    }
+  ],
+  "/SignedDataStack/IngestorRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "IngestorRoleDefaultPolicy9557DA01"
+    }
+  ],
+  "/SignedDataStack/ProcessorRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ProcessorRoleDefaultPolicy1C43AEFA"
+    }
+  ],
+  "/SignedDataStack/ApiRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiRoleDefaultPolicyCFEBAD31"
+    }
+  ],
+  "/SignedDataStack/WeatherIngestor/Code/AssetBucket": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": "*"
+    }
+  ],
+  "/SignedDataStack/Processor/Code/AssetBucket": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": "*"
+    }
+  ],
+  "/SignedDataStack/Processor/SqsEventSource:SignedDataStackIngestQueue03B98416/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ProcessorSqsEventSourceSignedDataStackIngestQueue03B984160BFD3C45"
+    }
+  ],
+  "/SignedDataStack/ApiHandler/Code/AssetBucket": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": "*"
+    }
+  ],
+  "/SignedDataStack/Api/Deployment/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiDeploymentB17BE62Daf925fb1c9b8ab2da0fade8bef6e22b6"
+    }
+  ],
+  "/SignedDataStack/Api/DeploymentStage.v1/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiDeploymentStagev102147F91"
+    }
+  ],
+  "/SignedDataStack/Api/Default/OPTIONS": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "resource": "*",
+        "httpMethod": "*",
+        "integration": "*",
+        "options": {
+          "authorizer": {
+            "authorizerId": "*",
+            "authorizationType": "*"
+          },
+          "apiKeyRequired": false,
+          "authorizationType": "*",
+          "methodResponses": [
+            {
+              "statusCode": "*",
+              "responseParameters": "*"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addMethodResponse": [
+          {
+            "statusCode": "*",
+            "responseParameters": "*"
+          }
+        ]
+      }
+    }
+  ],
+  "/SignedDataStack/Api/Default/events": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "parent": "*",
+        "pathPart": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/Api/Default/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiOPTIONS5886EA5D"
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "Apievents93AD7B65"
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/OPTIONS": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "resource": "*",
+        "httpMethod": "*",
+        "integration": "*",
+        "options": {
+          "authorizer": {
+            "authorizerId": "*",
+            "authorizationType": "*"
+          },
+          "apiKeyRequired": false,
+          "authorizationType": "*",
+          "methodResponses": [
+            {
+              "statusCode": "*",
+              "responseParameters": "*"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addMethodResponse": [
+          {
+            "statusCode": "*",
+            "responseParameters": "*"
+          }
+        ]
+      }
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/GET": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "resource": "*",
+        "httpMethod": "*",
+        "integration": "*",
+        "options": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{domain}": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "parent": "*",
+        "pathPart": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{id}": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "parent": "*",
+        "pathPart": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApieventsOPTIONS2FA14021"
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/GET/ApiPermission.SignedDataStackApiC75B291B.GET..events": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApieventsGETApiPermissionSignedDataStackApiC75B291BGETevents84AD291D"
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/GET/ApiPermission.Test.SignedDataStackApiC75B291B.GET..events": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApieventsGETApiPermissionTestSignedDataStackApiC75B291BGETeventsFC9E9317"
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/GET/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApieventsGET3AFA0DCA"
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{domain}/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApieventsdomainBFD44251"
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{domain}/OPTIONS": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "resource": "*",
+        "httpMethod": "*",
+        "integration": "*",
+        "options": {
+          "authorizer": {
+            "authorizerId": "*",
+            "authorizationType": "*"
+          },
+          "apiKeyRequired": false,
+          "authorizationType": "*",
+          "methodResponses": [
+            {
+              "statusCode": "*",
+              "responseParameters": "*"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addMethodResponse": [
+          {
+            "statusCode": "*",
+            "responseParameters": "*"
+          }
+        ]
+      }
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{domain}/{event_type}": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "parent": "*",
+        "pathPart": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{id}/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "Apieventsid67ED1E49"
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{id}/OPTIONS": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "resource": "*",
+        "httpMethod": "*",
+        "integration": "*",
+        "options": {
+          "authorizer": {
+            "authorizerId": "*",
+            "authorizationType": "*"
+          },
+          "apiKeyRequired": false,
+          "authorizationType": "*",
+          "methodResponses": [
+            {
+              "statusCode": "*",
+              "responseParameters": "*"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addMethodResponse": [
+          {
+            "statusCode": "*",
+            "responseParameters": "*"
+          }
+        ]
+      }
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{id}/verify": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "parent": "*",
+        "pathPart": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{domain}/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApieventsdomainOPTIONSBA803209"
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{domain}/{event_type}/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApieventsdomaineventtypeA5D8C75D"
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{domain}/{event_type}/OPTIONS": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "resource": "*",
+        "httpMethod": "*",
+        "integration": "*",
+        "options": {
+          "authorizer": {
+            "authorizerId": "*",
+            "authorizationType": "*"
+          },
+          "apiKeyRequired": false,
+          "authorizationType": "*",
+          "methodResponses": [
+            {
+              "statusCode": "*",
+              "responseParameters": "*"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addMethodResponse": [
+          {
+            "statusCode": "*",
+            "responseParameters": "*"
+          }
+        ]
+      }
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{domain}/{event_type}/GET": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "resource": "*",
+        "httpMethod": "*",
+        "integration": "*",
+        "options": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{id}/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApieventsidOPTIONSCEA48694"
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{id}/verify/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApieventsidverifyB82CC83F"
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{id}/verify/OPTIONS": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "resource": "*",
+        "httpMethod": "*",
+        "integration": "*",
+        "options": {
+          "authorizer": {
+            "authorizerId": "*",
+            "authorizationType": "*"
+          },
+          "apiKeyRequired": false,
+          "authorizationType": "*",
+          "methodResponses": [
+            {
+              "statusCode": "*",
+              "responseParameters": "*"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "aws:cdk:analytics:method",
+      "data": {
+        "addMethodResponse": [
+          {
+            "statusCode": "*",
+            "responseParameters": "*"
+          }
+        ]
+      }
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{id}/verify/GET": [
+    {
+      "type": "aws:cdk:analytics:construct",
+      "data": {
+        "resource": "*",
+        "httpMethod": "*",
+        "integration": "*",
+        "options": "*"
+      }
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{domain}/{event_type}/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApieventsdomaineventtypeOPTIONS00557BD2"
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{domain}/{event_type}/GET/ApiPermission.SignedDataStackApiC75B291B.GET..events.{domain}.{event_type}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApieventsdomaineventtypeGETApiPermissionSignedDataStackApiC75B291BGETeventsdomaineventtypeCB4A0922"
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{domain}/{event_type}/GET/ApiPermission.Test.SignedDataStackApiC75B291B.GET..events.{domain}.{event_type}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApieventsdomaineventtypeGETApiPermissionTestSignedDataStackApiC75B291BGETeventsdomaineventtypeC773D264"
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{domain}/{event_type}/GET/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApieventsdomaineventtypeGET529CED57"
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{id}/verify/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApieventsidverifyOPTIONS8C851D0C"
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{id}/verify/GET/ApiPermission.SignedDataStackApiC75B291B.GET..events.{id}.verify": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApieventsidverifyGETApiPermissionSignedDataStackApiC75B291BGETeventsidverifyB4D63AF8"
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{id}/verify/GET/ApiPermission.Test.SignedDataStackApiC75B291B.GET..events.{id}.verify": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApieventsidverifyGETApiPermissionTestSignedDataStackApiC75B291BGETeventsidverify448C6D43"
+    }
+  ],
+  "/SignedDataStack/Api/Default/events/{id}/verify/GET/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApieventsidverifyGET77196437"
+    }
+  ]
+}

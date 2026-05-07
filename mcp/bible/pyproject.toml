@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=72"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cds-mcp-bible"
+version = "0.1.0"
+description = "SignedData CDS MCP Server — Bible (bible-api.com)"
+requires-python = ">=3.12"
+authors = [
+  { name = "Wdotnet", email = "mcp@wdotnet.com.br" },
+]
+license = "MIT"
+dependencies = [
+    "signeddata-cds @ git+https://github.com/signed-data/cds.git@main#subdirectory=sdk/python",
+    "fastmcp>=3.2,<4",
+    "httpx>=0.28",
+    "pydantic>=2.0",
+    "cryptography>=42.0",
+]
+
+[project.urls]
+Homepage = "https://wdotnet.com.br"
+Repository = "https://github.com/signed-data/cds"
+Documentation = "https://signed-data.org/docs"
+
+[project.scripts]
+signeddata-mcp-bible = "server:main"
+
+[tool.setuptools]
+py-modules = ["server"]

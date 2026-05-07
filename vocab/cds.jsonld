@@ -1,0 +1,82 @@
+{
+  "@context": {
+    "@vocab": "https://signed-data.org/vocab/",
+    "rdf":    "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs":   "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd":    "http://www.w3.org/2001/XMLSchema#",
+    "dc":     "http://purl.org/dc/terms/",
+    "schema": "https://schema.org/"
+  },
+  "@graph": [
+    {
+      "@id":          "https://signed-data.org/vocab/CuratedDataEvent",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "Curated Data Event",
+      "rdfs:comment": "A real-time data event curated, normalised, and cryptographically signed by a certified producer.",
+      "rdfs:seeAlso": "https://signed-data.org/spec/CDS-v0.2.0"
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/IntegrityMeta",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "Integrity Metadata",
+      "rdfs:comment": "Cryptographic proof of a CuratedDataEvent's authenticity."
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/DataSource",
+      "@type":        "rdfs:Class",
+      "rdfs:label":   "Data Source",
+      "rdfs:comment": "A certified upstream data source registered with SignedData.Org."
+    },
+    {
+      "@id":        "https://signed-data.org/vocab/specVersion",
+      "@type":      "rdf:Property",
+      "rdfs:domain": { "@id": "https://signed-data.org/vocab/CuratedDataEvent" },
+      "rdfs:range":  { "@id": "xsd:string" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/contentType",
+      "@type":        "rdf:Property",
+      "rdfs:label":   "content type",
+      "rdfs:comment": "URI identifying the semantic domain and schema of the payload.",
+      "rdfs:domain":  { "@id": "https://signed-data.org/vocab/CuratedDataEvent" },
+      "rdfs:range":   { "@id": "rdfs:Resource" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/occurredAt",
+      "@type":        "rdf:Property",
+      "rdfs:label":   "occurred at",
+      "rdfs:comment": "When the event happened at the source.",
+      "rdfs:domain":  { "@id": "https://signed-data.org/vocab/CuratedDataEvent" },
+      "rdfs:range":   { "@id": "xsd:dateTime" },
+      "rdfs:subPropertyOf": { "@id": "dc:date" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/ingestedAt",
+      "@type":        "rdf:Property",
+      "rdfs:label":   "ingested at",
+      "rdfs:domain":  { "@id": "https://signed-data.org/vocab/CuratedDataEvent" },
+      "rdfs:range":   { "@id": "xsd:dateTime" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/summary",
+      "@type":        "rdf:Property",
+      "rdfs:label":   "summary",
+      "rdfs:comment": "LLM-generated human-readable summary of the event payload.",
+      "rdfs:subPropertyOf": { "@id": "dc:description" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/signedBy",
+      "@type":        "rdf:Property",
+      "rdfs:label":   "signed by",
+      "rdfs:comment": "URI of the organisation that produced and signed this event.",
+      "rdfs:domain":  { "@id": "https://signed-data.org/vocab/IntegrityMeta" },
+      "rdfs:range":   { "@id": "rdfs:Resource" }
+    },
+    {
+      "@id":          "https://signed-data.org/vocab/fingerprint",
+      "@type":        "rdf:Property",
+      "rdfs:label":   "fingerprint",
+      "rdfs:comment": "SHA-256 hash of the raw upstream API response bytes."
+    }
+  ]
+}
